@@ -1641,8 +1641,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             } else {
                 let errorMsg = esc(err.message);
                 let hint = '<span class="s-cmt">// check api_key in configuration</span>';
-                if (err.message.includes('Daily limit')) {
-                    hint = `<span class="s-cmt">// add your own API key in cfg to continue without limits</span>`;
+                if (err.message.includes('consultas') || err.message.includes('Daily limit')) {
+                    hint = `<span class="s-cmt">// agrega tu API key en cfg para uso ilimitado</span>`;
                 } else if (err.message.includes('credit balance') || err.message.includes('balance is too low')) {
                     hint = `<span class="s-warn">// try switching to a different model in cfg</span>\n<span class="s-cmt">// current: ${esc(state.model)}</span>`;
                 } else if (err.message.includes('Could not resolve') || err.message.includes('not found')) {
