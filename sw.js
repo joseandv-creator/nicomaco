@@ -1,11 +1,11 @@
-const CACHE_NAME = 'lc-v6';
+const CACHE_NAME = 'nicomaco-v1';
 const ASSETS = [
   '/',
   '/index.html',
-  '/glosario.html',
-  '/motivos.html',
   '/manifest.json',
-  'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap'
+  '/icon-192.png',
+  '/icon-512.png',
+  'https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap'
 ];
 
 // Install — cache core assets
@@ -26,7 +26,7 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// Fetch — network first, fallback to cache (for API calls, always network)
+// Fetch — network first, fallback to cache (API calls always network)
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
@@ -38,7 +38,6 @@ self.addEventListener('fetch', e => {
   e.respondWith(
     fetch(e.request)
       .then(res => {
-        // Cache successful GET responses
         if (res.ok && e.request.method === 'GET') {
           const clone = res.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));

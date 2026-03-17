@@ -1,7 +1,7 @@
 {
-  "name": "Lenguaje Cartográfico",
-  "short_name": "LC",
-  "description": "Detect lies, stolen concepts, and perverse incentives. A is A.",
+  "name": "Nicómaco",
+  "short_name": "Nicómaco",
+  "description": "Analyze ideas with objective philosophical criteria. A is A.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0a",
