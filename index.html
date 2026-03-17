@@ -2608,7 +2608,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         state.currentTab = name;
         $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
         $$('.tab-content').forEach(tc => tc.style.display = 'none');
-        $(`#tab-${name}`).style.display = '';
+        $(`#tab-${name}`).style.display = name === 'tool' ? 'flex' : '';
         if (name === 'knowledge') renderIntegrated();
     }
 
