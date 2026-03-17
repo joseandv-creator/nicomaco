@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nicómaco Pro</title>
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F5F0E8;
+            --surface: #FAF7F2;
+            --text: #4a3728;
+            --text-bright: #2c1810;
+            --cyan: #8B4513;
+            --border: #d4c5b0;
+            --comment: #9a8b7a;
+            --gold: #D4AF37;
+            --font-serif: 'Crimson Text', Georgia, serif;
+            --font-sans: 'Inter', system-ui, sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-serif);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+        .logo {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--cyan);
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 12px;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: var(--comment);
+            font-style: italic;
+            margin-bottom: 40px;
+        }
+        .price-card {
+            background: var(--surface);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 32px 24px;
+            margin-bottom: 32px;
+        }
+        .price {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--text-bright);
+        }
+        .price-period {
+            font-size: 16px;
+            color: var(--comment);
+        }
+        .features {
+            text-align: left;
+            margin: 24px 0;
+            list-style: none;
+        }
+        .features li {
+            padding: 8px 0;
+            font-size: 16px;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+        }
+        .features li:last-child { border: none; }
+        .features li::before {
+            content: ">";
+            color: var(--cyan);
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        .btn-subscribe {
+            display: block;
+            width: 100%;
+            background: var(--cyan);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: var(--font-sans);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            text-decoration: none;
+        }
+        .btn-subscribe:hover { opacity: 0.9; }
+        .note {
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--comment);
+            font-family: var(--font-sans);
+        }
+        .back {
+            display: inline-block;
+            margin-top: 32px;
+            color: var(--cyan);
+            text-decoration: none;
+            font-family: var(--font-sans);
+            font-size: 14px;
+        }
+        .free-info {
+            margin-bottom: 32px;
+            padding: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--comment);
+            font-family: var(--font-sans);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">NICOMACO</div>
+        <h1>Pro</h1>
+        <p class="subtitle">Consultas ilimitadas. Decisiones mas claras.</p>
+
+        <div class="free-info">
+            La version gratuita incluye 3 consultas por dia.<br>
+            Pro elimina ese limite.
+        </div>
+
+        <div class="price-card">
+            <div class="price">$149 <span class="price-period">MXN/mes</span></div>
+            <ul class="features">
+                <li>Consultas ilimitadas</li>
+                <li>Historial de analisis guardado</li>
+                <li>Analisis de URLs ilimitado</li>
+                <li>Acceso prioritario</li>
+            </ul>
+            <a href="#" class="btn-subscribe" id="btn-checkout">suscribirme</a>
+        </div>
+
+        <p class="note">Cancela cuando quieras. Sin compromisos.<br>Pago seguro via Stripe.</p>
+
+        <a href="/" class="back">volver a nicomaco</a>
+    </div>
+
+    <script>
+    // Stripe Checkout will be configured here once you have your Stripe keys
+    document.getElementById('btn-checkout').addEventListener('click', async (e) => {
+        e.preventDefault();
+        alert('Stripe aun no configurado. Necesitas crear tu cuenta en stripe.com y agregar las API keys.');
+        // Future flow:
+        // const res = await fetch('https://nicomaco-api.joseandv.workers.dev/api/create-checkout', { method: 'POST' });
+        // const { url } = await res.json();
+        // window.location.href = url;
+    });
+    </script>
+</body>
+</html>
