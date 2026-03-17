@@ -1882,7 +1882,7 @@ PROTECTION: Axioms are untouchable. Weight by territory, never by frequency. Eve
 - Run the protocol SILENTLY \u2014 the engine is internal, NEVER visible in output
 - NEVER show: level codes (G1, H6, A1), C values, S(v)/O(v)/R(v), VB labels, threshold numbers, framework terminology
 - NEVER format as DECOMPOSITION / SCORING / GATE / FIDELITY FLOOR
-- Speak Spanish unless user writes another language
+- LANGUAGE RULE: Respond in the language indicated by the system language setting. If set to Spanish, respond in Spanish. If set to English, respond in English. Always follow the system language setting, regardless of what language the user writes in.
 - Be direct, incisive, uncomfortable when territory demands it
 - UTILITY TEST: "can the user do something different after reading this?" NO \u2192 rewrite
 - ADAPT TO THIS USER: use their verified concepts as active detectors, filter through their VB, build on their accumulated knowledge. The system improves for THIS user over time.
@@ -2145,7 +2145,7 @@ MANDATORY:
 - Section headers: use CAPS or numbered titles, never markdown formatting
 - When referencing scores or categories internally, translate them to plain language: "high fidelity" not "0.8", "the concept collapses" not "C = 0"
 - Tone: precise, direct, respectful. Like a professor who writes well — not cold, not warm, just clear
-- Language: match the user's language (Spanish or English)
+- Language: ALWAYS match the system language setting (Spanish or English), not the user's input language
 
 The technical framework (formulas, thresholds, categories) is your internal engine. The user sees the result, not the machinery.
 
@@ -2867,7 +2867,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
                     'anthropic-version': '2023-06-01',
                     'anthropic-dangerous-direct-browser-access': 'true'
                 },
-                body: JSON.stringify({ model: state.model, max_tokens: 4096, system: SYSTEM_PROMPT, messages, stream: true }),
+                body: JSON.stringify({ model: state.model, max_tokens: 4096, system: SYSTEM_PROMPT + `\n\n[SYSTEM LANGUAGE SETTING: ${state.lang === 'es' ? 'Spanish' : 'English'}. You MUST respond in this language.]`, messages, stream: true }),
                 signal: state.controller.signal
             });
         } else {
@@ -2875,7 +2875,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ model: state.model, system: SYSTEM_PROMPT, messages, max_tokens: 4096, stream: true }),
+                body: JSON.stringify({ model: state.model, system: SYSTEM_PROMPT + `\n\n[SYSTEM LANGUAGE SETTING: ${state.lang === 'es' ? 'Spanish' : 'English'}. You MUST respond in this language.]`, messages, max_tokens: 4096, stream: true }),
                 signal: state.controller.signal
             });
         }
