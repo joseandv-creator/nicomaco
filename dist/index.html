@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
+    <title>Nicómaco</title>
+    <meta name="description" content="Filosofía aplicada a la toma de decisiones.">
+    <meta property="og:title" content="Nicómaco">
+    <meta property="og:description" content="Filosofía aplicada a la toma de decisiones.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://nicomaco.org/icon-512.png">
+    <meta name="theme-color" content="#faf7f2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Nicómaco">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,8 92,50 50,92 8,50' fill='none' stroke='%238b4513' stroke-width='7'/><text x='50' y='62' text-anchor='middle' font-family='serif' font-size='42' fill='%238b4513'>A</text></svg>">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #faf7f2;
+            --surface: #f2ede5;
+            --elevated: #ece6db;
+            --border: #d4cbbf;
+            --text: #2c2c2c;
+            --text-bright: #1a1a1a;
+            --text-dim: #5a5347;
+            --comment: #7a6f63;
+            --blue: #1a5276;
+            --green: #2e7d32;
+            --purple: #6a1b9a;
+            --yellow: #9e7c0c;
+            --red: #b71c1c;
+            --cyan: #8b4513;
+            --orange: #bf6c00;
+            --font-serif: 'Crimson Text', 'Georgia', 'Times New Roman', serif;
+            --font-sans: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+            --font-mono: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+            --font: var(--font-serif);
+        }
+
+        html, body {
+            height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 17px;
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--comment); }
+
+        #app {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 24px 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* -- header -- */
+        .header {
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .header-left {}
+        .header-title {
+            color: var(--cyan);
+            font-family: var(--font-sans);
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .header-sub { color: var(--comment); font-family: var(--font-serif); font-size: 14px; font-style: italic; }
+        .header-nav {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+        .header-nav a {
+            color: var(--comment);
+            text-decoration: none;
+            font-family: var(--font-sans);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+        .header-nav a:hover { color: var(--cyan); }
+
+        /* -- config -- */
+        .screen { display: none; flex-direction: column; flex: 1; }
+        .screen.active { display: flex; }
+
+        .cfg-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0;
+        }
+        .cfg-line label { color: var(--blue); white-space: nowrap; font-family: var(--font-sans); font-size: 14px; }
+        .cfg-line input, .cfg-line select {
+            background: #fff;
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            padding: 6px 10px;
+            flex: 1;
+            outline: none;
+            border-radius: 3px;
+        }
+        .cfg-line input:focus, .cfg-line select:focus { border-color: var(--cyan); }
+        .cfg-line select { color: var(--text); }
+        .cfg-line select option { background: #fff; }
+
+        .btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            padding: 6px 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 3px;
+        }
+        .btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(139,69,19,0.05); }
+        .btn-sm { padding: 3px 12px; font-size: 12px; }
+
+        /* -- tabs -- */
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--comment);
+            font-family: var(--font-serif);
+            cursor: pointer;
+            padding: 18px 16px 14px;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+        .tab .tab-symbol {
+            display: block;
+            font-size: 26px;
+            line-height: 1;
+            margin-bottom: 8px;
+            color: var(--comment);
+            transition: color 0.3s;
+        }
+        .tab .tab-name {
+            display: block;
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            transition: color 0.3s;
+        }
+        .tab .tab-teaser {
+            display: block;
+            font-size: 12px;
+            font-family: var(--font-sans);
+            color: var(--comment);
+            font-style: italic;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        .tab:hover {
+            border-color: rgba(139,69,19,0.4);
+            background: var(--surface);
+        }
+        .tab:hover .tab-name { color: var(--text-bright); }
+        .tab:hover .tab-symbol { color: var(--cyan); }
+        .tab.active {
+            border-color: var(--cyan);
+            background: var(--surface);
+            box-shadow: 0 0 12px rgba(139,69,19,0.08);
+        }
+        .tab.active .tab-symbol { color: var(--cyan); }
+        .tab.active .tab-name { color: var(--cyan); }
+        .tab.active .tab-teaser { opacity: 1; }
+
+        /* Golden pulse on teoria when inactive */
+        .tab[data-tab="knowledge"]:not(.active) {
+            animation: teoria-pulse 3s ease-in-out infinite;
+        }
+        @keyframes teoria-pulse {
+            0%, 100% { border-color: var(--border); }
+            50% { border-color: rgba(212,175,55,0.5); box-shadow: 0 0 8px rgba(212,175,55,0.1); }
+        }
+
+        /* -- output -- */
+        #output {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 16px;
+        }
+
+        .block {
+            margin-bottom: 24px;
+            animation: fadeUp 0.25s ease;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .code-block { display: flex; gap: 0; }
+        .gutter {
+            display: none;
+        }
+        .code {
+            flex: 1;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: var(--font-serif);
+        }
+
+        /* syntax */
+        .s-kw { color: var(--blue); font-weight: 600; }
+        .s-str { color: var(--green); }
+        .s-num { color: var(--purple); }
+        .s-cmt { color: var(--comment); font-style: italic; }
+        .s-op { color: var(--cyan); }
+        .s-err { color: var(--red); font-weight: 600; }
+        .s-warn { color: var(--yellow); font-weight: 600; }
+        .s-ok { color: var(--green); font-weight: 600; }
+        .s-section { color: var(--cyan); font-weight: 700; font-family: var(--font-sans); }
+        .s-verdict-ok { color: var(--green); font-weight: 700; }
+        .s-verdict-warn { color: var(--yellow); font-weight: 700; }
+        .s-verdict-fail { color: var(--red); font-weight: 700; }
+        .s-cyan { color: var(--cyan); }
+        .s-orange { color: var(--orange); }
+        .s-bright { color: var(--text-bright); }
+        .user-bubble {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            font-family: var(--font-sans);
+            font-size: 15px;
+            color: var(--text-bright);
+            line-height: 1.5;
+        }
+        .s-blue { color: var(--blue); }
+        .s-yellow { color: var(--yellow); }
+        .s-green { color: var(--green); }
+
+        .rule-ref {
+            color: var(--cyan);
+            cursor: help;
+            position: relative;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 3px;
+        }
+        .rule-ref:hover { color: var(--blue); }
+        .rule-ref:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 0;
+            background: #fff;
+            color: var(--text);
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 13px;
+            font-style: normal;
+            z-index: 10;
+            max-width: 400px;
+            white-space: normal;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        /* -- tab-tool layout -- */
+        #tab-tool {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        #tab-tool #output {
+            flex: 1;
+        }
+
+        /* -- input -- */
+        #input-bar {
+            padding: 16px 0 16px;
+            flex-shrink: 0;
+            position: sticky;
+            bottom: 0;
+            background: var(--bg);
+            z-index: 5;
+        }
+        .input-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 12px 12px 16px;
+        }
+        .input-row:focus-within {
+            border-color: var(--cyan);
+        }
+        .input-chevron {
+            display: none;
+        }
+        .input-ctx {
+            color: var(--orange);
+            font-size: 13px;
+            line-height: 1.8;
+            font-family: var(--font-sans);
+        }
+        #input {
+            background: transparent;
+            border: none;
+            color: var(--text-bright);
+            font-family: var(--font-serif);
+            font-size: 17px;
+            line-height: 1.7;
+            flex: 1;
+            outline: none;
+            resize: none;
+            min-height: 28px;
+            overflow: hidden;
+        }
+        #input::placeholder { color: var(--comment); }
+        .btn-send {
+            background: var(--cyan);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: opacity 0.2s;
+        }
+        .btn-send:hover { opacity: 0.85; }
+        .input-hints {
+            color: var(--border);
+            font-size: 11px;
+            font-family: var(--font-sans);
+            margin-top: 4px;
+            margin-left: 20px;
+        }
+
+        /* -- loading -- */
+        .loading-dots span { animation: pulse 1.4s infinite; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.15; }
+            50% { opacity: 0.7; }
+        }
+
+        /* -- actions -- */
+        .actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            margin-left: 42px;
+        }
+
+        /* -- history & integrated -- */
+        .list-item {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .list-item:hover { background: var(--surface); }
+        .list-item .meta { color: var(--comment); font-size: 12px; font-family: var(--font-sans); }
+        .list-item .candidate-text { color: var(--text); font-size: 15px; }
+
+        /* -- footer -- */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 14px 0;
+            margin-top: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .footer-sig {
+            color: var(--text);
+            font-size: 13px;
+            font-family: var(--font-sans);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .footer-btc {
+            color: var(--border);
+            font-size: 11px;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+        .footer-btc:hover { color: var(--comment); }
+
+        /* -- config panel -- */
+        .cfg-panel { padding: 4px 0; }
+
+        /* -- knowledge sub-nav -- */
+        .knowledge-nav {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .knowledge-btn {
+            background: none;
+            border: none;
+            color: var(--comment);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 2px 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .knowledge-btn:hover { color: var(--text-bright); }
+        .knowledge-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+        /* -- motives styles -- */
+        .motives-section { margin-bottom: 28px; }
+        .motives-section p { color: var(--text); margin-bottom: 14px; }
+        .motives-section p.dim { color: var(--comment); }
+        .highlight { color: var(--text-bright); }
+
+        .section-title {
+            color: var(--cyan);
+            font-family: var(--font-serif);
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        .pillars {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .pillar {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 18px 20px;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .pillar:hover { border-color: var(--cyan); background: rgba(139,69,19,0.03); }
+        .pillar-title {
+            color: var(--cyan);
+            font-family: var(--font-sans);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .pillar-desc { color: var(--text-dim); font-size: 15px; line-height: 1.7; }
+
+        .code-section {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 20px 24px;
+            margin: 20px 0;
+            line-height: 1.8;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 14px;
+        }
+
+        .donate-box {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 24px;
+            margin-top: 16px;
+        }
+        .donate-box p { margin-bottom: 10px; }
+
+        .truth-box {
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--cyan);
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 28px 32px;
+            margin-bottom: 40px;
+        }
+        .truth-box-title {
+            font-family: var(--font-serif);
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 8px;
+        }
+        .truth-box-def {
+            font-family: var(--font-serif);
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: var(--text);
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+        .truth-types {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .truth-type {
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: 6px;
+            line-height: 1.7;
+        }
+        .truth-type-name {
+            font-weight: 700;
+            color: var(--cyan);
+        }
+        @media (max-width: 600px) {
+            .truth-box { padding: 20px 16px; }
+        }
+
+        /* -- glossary styles -- */
+        .search-bar {
+            margin-bottom: 16px;
+        }
+        .search-bar input {
+            width: 100%;
+            background: #fff;
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: var(--font-serif);
+            font-size: 16px;
+            padding: 10px 14px;
+            outline: none;
+            border-radius: 4px;
+            transition: border-color 0.2s;
+        }
+        .search-bar input:focus { border-color: var(--cyan); }
+        .search-bar input::placeholder { color: var(--border); }
+
+        .section { margin-bottom: 10px; border: 1px solid var(--border); border-radius: 4px; }
+        .section.hidden { display: none; }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .section-header:hover { background: var(--surface); }
+        .section-toggle {
+            color: var(--comment);
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        .section.open .section-toggle { transform: rotate(90deg); }
+        .section-body {
+            display: none;
+            padding: 0 14px 14px;
+        }
+        .section.open .section-body { display: block; }
+
+        .def { margin-bottom: 16px; }
+        .def-term {
+            color: var(--cyan);
+            font-weight: 700;
+            font-family: var(--font-serif);
+        }
+        .def-formula { color: var(--purple); font-family: var(--font-mono); font-size: 14px; }
+        .def-body { color: var(--text); margin-top: 4px; line-height: 1.7; }
+        .def-sub { margin-top: 10px; padding-left: 18px; border-left: 2px solid var(--border); }
+        .def-sub .def-term { color: var(--orange); }
+
+        .no-results { color: var(--comment); padding: 20px 0; text-align: center; }
+
+        /* -- principles -- */
+        .principles-list { margin: 8px 0 16px; }
+        .principle {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            line-height: 1.7;
+        }
+        .principle:last-child { border-bottom: none; }
+        .principle-name {
+            color: var(--cyan);
+            font-weight: 700;
+        }
+        .protocol-steps { margin-top: 8px; }
+        .protocol-step {
+            padding: 10px 0 10px 28px;
+            border-bottom: 1px solid var(--border);
+            line-height: 1.7;
+            position: relative;
+        }
+        .protocol-step:last-of-type { border-bottom: none; }
+        .step-number {
+            position: absolute;
+            left: 0;
+            color: var(--comment);
+            font-weight: 600;
+        }
+        .step-name {
+            color: var(--cyan);
+            font-weight: 700;
+        }
+        .verdict-list {
+            padding-left: 28px;
+            margin-top: 4px;
+        }
+        .verdict-item {
+            padding: 4px 0;
+            line-height: 1.6;
+        }
+        .verdict-label {
+            font-weight: 700;
+        }
+
+        /* -- welcome -- */
+        .welcome-block { text-align: center; padding: 60px 20px 40px; }
+        .welcome-title {
+            font-family: var(--font-serif);
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 24px;
+            letter-spacing: 1px;
+        }
+        .welcome-body p {
+            font-family: var(--font-serif);
+            font-size: 17px;
+            color: var(--comment);
+            font-style: italic;
+            line-height: 1.9;
+            margin-bottom: 4px;
+        }
+        .welcome-accent {
+            color: var(--cyan) !important;
+            font-style: italic !important;
+            margin-top: 16px !important;
+            font-size: 18px !important;
+        }
+
+        /* -- bilingual toggle -- */
+        .en-only, .es-only { }
+
+        /* -- responsive -- */
+        @media (max-width: 600px) {
+            #app { padding: 16px 12px 0; }
+            .gutter { display: none; }
+            .header { flex-direction: column; gap: 8px; }
+            .pillars { grid-template-columns: 1fr; }
+            #input-bar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+                background: var(--bg);
+                border-top: 1px solid var(--border);
+                z-index: 100;
+            }
+            #tab-tool #output {
+                padding-bottom: 100px;
+            }
+            .input-hints { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- config -->
+        <div id="screen-config" class="screen">
+            <div class="header">
+                <div class="header-left">
+                    <div class="header-sub">Configuration</div>
+                </div>
+            </div>
+
+            <div class="cfg-panel">
+                <div class="s-cmt" style="margin-bottom:12px">Model selection</div>
+                <div class="cfg-line">
+                    <label>model: </label>
+                    <select id="cfg-model">
+                        <option value="claude-sonnet-4-20250514">claude-sonnet-4</option>
+                        <option value="claude-opus-4-20250514">claude-opus-4</option>
+                        <option value="claude-3-7-sonnet-20250219">claude-3.7-sonnet</option>
+                        <option value="claude-3-5-haiku-20241022">claude-3.5-haiku</option>
+                    </select>
+                </div>
+                <div class="s-cmt" style="margin-top:20px;margin-bottom:8px">API key (required)</div>
+                <div class="cfg-line">
+                    <label>api_key:</label>
+                    <input type="password" id="cfg-key" placeholder="sk-ant-..." />
+                </div>
+                <div class="s-cmt" style="font-size:11px">Stored locally, never transmitted to third parties. Get yours at console.anthropic.com</div>
+                <div style="margin-top:16px">
+                    <button class="btn" id="cfg-save">save</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- main -->
+        <div id="screen-main" class="screen">
+            <div class="header">
+                <div class="header-left">
+                    <div class="header-title" id="main-title">NICÓMACO</div>
+                    <div class="header-sub" id="main-subtitle">filosofia aplicada a la toma de decisiones</div>
+                </div>
+                <div class="header-nav">
+                    <a href="#" id="nav-borrador" style="display:none;color:var(--orange)">borrador <span id="draft-badge" style="font-size:0.7em"></span></a>
+                    <a href="#" id="nav-cfg">cfg</a>
+                    <a href="#" id="nav-lang" style="color:var(--comment);text-decoration:none;font-size:18px">🇪🇸</a>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="tool">
+                    <span class="tab-symbol">🛠️</span>
+                    <span class="tab-name">tool</span>
+                    <span class="tab-teaser en-only">write an idea, see where it leads</span>
+                    <span class="tab-teaser es-only">escribe una idea, ve a donde lleva</span>
+                </button>
+                <button class="tab" data-tab="knowledge">
+                    <span class="tab-symbol">📖</span>
+                    <span class="tab-name">teoría</span>
+                    <span class="tab-teaser en-only">23 centuries of instruments for thinking</span>
+                    <span class="tab-teaser es-only">23 siglos de instrumentos para pensar</span>
+                </button>
+            </div>
+
+            <div id="tab-tool" class="tab-content">
+                <div id="output"></div>
+                <div id="input-bar">
+                    <div class="input-row">
+                        <span class="input-ctx" id="input-ctx"></span>
+                        <textarea id="input" rows="1" placeholder="pregunta a Nicómaco..."></textarea>
+                        <button class="btn-send" id="btn-send">enviar</button>
+                        <button class="btn btn-sm" id="btn-new-chat" title="New conversation" style="padding:8px;font-size:16px">&#8634;</button>
+                    </div>
+                    <div class="input-hints">enter para enviar &middot; shift+enter nueva línea &middot; pega URL para filtrar &middot; esc cancelar</div>
+                </div>
+            </div>
+
+<div id="tab-knowledge" class="tab-content" style="display:none">
+                <!-- sub-nav removed: all sections flow continuously -->
+
+                <!-- ═══ MOTIVES ═══ -->
+                <div id="knowledge-motives" class="knowledge-section">
+
+                    <!-- I. WHAT IS NICOMACO -->
+                    <div class="motives-section">
+                        <div class="section-title en-only">I. What Is Nicomaco</div>
+                        <div class="section-title es-only">I. Que es Nicomaco</div>
+                        <div class="en-only">
+                            <p>A system of <span class="highlight">applied philosophy for decision-making.</span></p>
+                            <p>Created by Jose Angel Deschamps Vargas.</p>
+                            <p>When you face an important decision — what to do with your money, whether to change jobs, how to respond to a conflict — most tools give you opinions. Nicomaco gives you <span class="highlight">criteria.</span></p>
+                            <p>Objective philosophical criteria to separate what is real from what only appears to be.</p>
+                            <p class="dim" style="font-style:italic">The goal is not to be right. It is to decide with more clarity.</p>
+                            <div style="margin-top:1.5rem; padding-top:1.2rem; border-top:1px solid rgba(212,175,55,0.2);">
+                                <p style="font-style:italic; color:var(--gold);">Why "Nicomaco"?</p>
+                                <p>Twenty-three centuries ago, in a world that had no word for what he was doing, a man sat down and built the first machine for thinking correctly. His name was Aristotle. He gave humanity the syllogism, the categories, the law of non-contradiction — the bones of every argument that has ever stood or fallen since. He is, in the most literal sense, the father of logic.</p>
+                                <p>He was also a father.</p>
+                                <p>His son was called Nicomachus. And when Aristotle felt the weight of his own mortality, he did not leave his son gold, or land, or political connections. He left him a book. Not a book of answers — a book of instruments. The <em>Nicomachean Ethics</em> is the attempt of the greatest mind of the ancient world to compress everything he knew about how to live into something his son could carry. How to choose. How to distinguish the apparent good from the real good. How to build a life that, at the end, you could look at and say: this was worth living.</p>
+                                <p>That book was not philosophy for philosophers. It was a father saying to his son: <em>I will not always be here. But if I can teach you to see clearly, you will not need me to be.</em></p>
+                                <p>This system carries that name because it was built from the same impulse. Not the impulse to be clever, or to win arguments, or to accumulate knowledge for its own sake. The impulse to leave something behind that helps someone think — really think — when no one is there to think for them.</p>
+                                <p>Every time you write an idea into this system and it shows you the premises you did not see, the contradiction you were carrying, the chain of consequences you had not followed — that is the same act. A gift across time. The instruments to navigate reality, left by someone who believed that the person receiving them deserved to see clearly.</p>
+                                <p class="dim" style="font-style:italic">Aristotle could not protect his son from the world. But he could sharpen his son's mind until the world became navigable. That is what this is.</p>
+                            </div>
+                        </div>
+                        <div class="es-only">
+                            <p>Un sistema de <span class="highlight">filosofia aplicada a la toma de decisiones.</span></p>
+                            <p>Creado por Jose Angel Deschamps Vargas.</p>
+                            <p>Cuando enfrentas una decision importante — que hacer con tu dinero, si cambiar de trabajo, como responder a un conflicto — la mayoria de las herramientas te dan opiniones. Nicomaco te da <span class="highlight">criterios.</span></p>
+                            <p>Criterios filosoficos objetivos para separar lo que es real de lo que solo parece serlo.</p>
+                            <p class="dim" style="font-style:italic">El objetivo no es tener razon. Es decidir con mas claridad.</p>
+                            <div style="margin-top:1.5rem; padding-top:1.2rem; border-top:1px solid rgba(212,175,55,0.2);">
+                                <p style="font-style:italic; color:var(--gold);">Por que "Nicomaco"?</p>
+                                <p>Hace veintitres siglos, en un mundo que no tenia palabra para lo que estaba haciendo, un hombre se sento y construyo la primera maquina para pensar correctamente. Se llamaba Aristoteles. Le dio a la humanidad el silogismo, las categorias, la ley de no contradiccion — los huesos de cada argumento que se ha sostenido o caido desde entonces. Es, en el sentido mas literal, el padre de la logica.</p>
+                                <p>Tambien fue padre.</p>
+                                <p>Su hijo se llamaba Nicomaco. Y cuando Aristoteles sintio el peso de su propia mortalidad, no le dejo a su hijo oro, ni tierra, ni conexiones politicas. Le dejo un libro. No un libro de respuestas — un libro de instrumentos. La <em>Etica Nicomaquea</em> es el intento de la mente mas grande del mundo antiguo de comprimir todo lo que sabia sobre como vivir en algo que su hijo pudiera cargar. Como elegir. Como distinguir el bien aparente del bien real. Como construir una vida que, al final, pudieras mirar y decir: esto valio la pena vivirlo.</p>
+                                <p>Ese libro no era filosofia para filosofos. Era un padre diciendole a su hijo: <em>No siempre voy a estar aqui. Pero si puedo ensenarte a ver con claridad, no vas a necesitar que este.</em></p>
+                                <p>Este sistema lleva ese nombre porque fue construido desde el mismo impulso. No el impulso de ser ingenioso, ni de ganar argumentos, ni de acumular conocimiento por si mismo. El impulso de dejar algo atras que ayude a alguien a pensar — realmente pensar — cuando no hay nadie ahi para pensar por el.</p>
+                                <p>Cada vez que escribes una idea en este sistema y te muestra las premisas que no veias, la contradiccion que cargabas, la cadena de consecuencias que no habias seguido — ese es el mismo acto. Un regalo a traves del tiempo. Los instrumentos para navegar la realidad, dejados por alguien que creia que la persona que los recibe merece ver con claridad.</p>
+                                <p class="dim" style="font-style:italic">Aristoteles no podia proteger a su hijo del mundo. Pero podia afilar su mente hasta que el mundo se volviera navegable. Eso es esto.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- II. WHY PHILOSOPHY -->
+                    <div class="motives-section">
+                        <div class="section-title en-only">II. Why Philosophy</div>
+                        <div class="section-title es-only">II. Por Que Filosofia</div>
+
+                        <div class="en-only">
+                            <p>Every conscious being operates with a philosophy. The question is not whether you have one, but whether you chose it or inherited it without audit.</p>
+                            <p>A human being perceives more than it can respond to automatically. Unlike an animal, whose perception and action are bound by instinct, a conscious being faces a gap: it sees the field of possibilities but has no automatic guide for choosing among them. That gap must be filled with something. Philosophy is the something.</p>
+                            <p>What is real? How do I know it? What should I do? How should I live with others? What matters? These are not academic questions. They are the operating system of every decision you make, every day, whether you answer them explicitly or absorb the answers from your culture, your family, your media, without ever examining them.</p>
+                            <p><span class="highlight">An unaudited philosophy is the most dangerous thing a conscious being can carry.</span> It is a map you navigate by that you did not draw, whose errors are invisible to you, and whose distortions compound with every decision.</p>
+                            <p>Most people believe philosophy is useless. They believe this while making decisions based on philosophical premises they have never examined. The person who says "truth is relative" has a metaphysics. The person who says "you can't know anything for sure" has an epistemology. The person who says "just do what makes you happy" has an ethics. None of them chose these positions. All of them act on them.</p>
+                            <p>Nicomaco exists because philosophy is not optional for a conscious being. It is the instrument by which consciousness navigates reality. The only choice is whether your instrument is precise or broken, chosen or inherited, audited or blind.</p>
+                            <p class="dim" style="font-style:italic">You don't need to have read Aristotle to use this. You write an idea, and the system shows you which philosophical premises are operating in it and where they lead.</p>
+                        </div>
+                        <div class="es-only">
+                            <p>Todo ser consciente opera con una filosofia. La pregunta no es si tienes una, sino si la elegiste o la heredaste sin auditarla.</p>
+                            <p>Un ser humano percibe mas de lo que puede responder automaticamente. A diferencia de un animal, cuya percepcion y accion estan atadas por el instinto, un ser consciente enfrenta una brecha: ve el campo de posibilidades pero no tiene guia automatica para elegir entre ellas. Esa brecha debe llenarse con algo. La filosofia es ese algo.</p>
+                            <p>Que es real? Como lo se? Que debo hacer? Como debo vivir con otros? Que importa? Estas no son preguntas academicas. Son el sistema operativo de cada decision que tomas, cada dia, ya sea que las respondas explicitamente o absorba las respuestas de tu cultura, tu familia, tus medios, sin examinarlas jamas.</p>
+                            <p><span class="highlight">Una filosofia no auditada es lo mas peligroso que un ser consciente puede cargar.</span> Es un mapa por el que navegas que no dibujaste, cuyos errores son invisibles para ti, y cuyas distorsiones se acumulan con cada decision.</p>
+                            <p>La mayoria de la gente cree que la filosofia es inutil. Lo creen mientras toman decisiones basadas en premisas filosoficas que nunca han examinado. La persona que dice "la verdad es relativa" tiene una metafisica. La persona que dice "no se puede saber nada con certeza" tiene una epistemologia. La persona que dice "haz lo que te haga feliz" tiene una etica. Ninguno de ellos eligio estas posiciones. Todos actuan en base a ellas.</p>
+                            <p>Nicomaco existe porque la filosofia no es opcional para un ser consciente. Es el instrumento mediante el cual la consciencia navega la realidad. La unica eleccion es si tu instrumento es preciso o esta roto, elegido o heredado, auditado o ciego.</p>
+                            <p class="dim" style="font-style:italic">No necesitas haber leido a Aristoteles para usar esto. Escribes una idea, y el sistema te muestra que premisas filosoficas estan operando en ella y a donde llevan.</p>
+                        </div>
+                    </div>
+
+                    <!-- III. FOUNDATIONS -->
+                    <div class="motives-section">
+                        <div class="section-title en-only">III. Foundations</div>
+                        <div class="section-title es-only">III. Fundamentos</div>
+
+
+                        <!-- Truth box (moved here) -->
+                        <div class="truth-box en-only">
+                            <div class="truth-box-title">Truth</div>
+                            <div class="truth-box-def">The correspondence between a proposition and the facts of reality. The fidelity of the map to the territory.</div>
+                            <div class="truth-types">
+                                <div class="truth-type"><span class="truth-type-name">Logical</span> — A proposition whose negation produces a contradiction. It holds by the structure of thought itself. <em>A is A.</em></div>
+                                <div class="truth-type"><span class="truth-type-name">Empirical</span> — A proposition verified through observation and measurement. It depends on territory and can be falsified by new evidence.</div>
+                                <div class="truth-type"><span class="truth-type-name">Existential</span> — A proposition about the subject's lived experience. Not externally verifiable, but operationally real: it determines action.</div>
+                            </div>
+                        </div>
+                        <div class="truth-box es-only">
+                            <div class="truth-box-title">Verdad</div>
+                            <div class="truth-box-def">La correspondencia entre una proposicion y los hechos de la realidad. La fidelidad del mapa al territorio.</div>
+                            <div class="truth-types">
+                                <div class="truth-type"><span class="truth-type-name">Logica</span> — Una proposicion cuya negacion produce una contradiccion. Se sostiene por la estructura del pensamiento mismo. <em>A es A.</em></div>
+                                <div class="truth-type"><span class="truth-type-name">Empirica</span> — Una proposicion verificada mediante observacion y medicion. Depende del territorio y puede ser falsificada por nueva evidencia.</div>
+                                <div class="truth-type"><span class="truth-type-name">Existencial</span> — Una proposicion sobre la experiencia vivida del sujeto. No es verificable externamente, pero es operacionalmente real: determina la accion.</div>
+                            </div>
+                        </div>
+
+                        <!-- The Axioms -->
+                        <div class="section-title en-only" style="font-size:1em;margin-top:28px">The Axioms</div>
+                        <div class="section-title es-only" style="font-size:1em;margin-top:28px">Los Axiomas</div>
+                        <div class="en-only">
+                            <p>Three propositions that cannot be denied without using them: Existence exists. What exists has identity — A is A. Consciousness is conscious of something. Every concept, every analysis, every detector in this system stands on these three. If any idea contradicts them, it dies without analysis.</p>
+                        </div>
+                        <div class="es-only">
+                            <p>Tres proposiciones que no pueden negarse sin usarlas: La existencia existe. Lo que existe tiene identidad — A es A. La consciencia es consciente de algo. Cada concepto, cada analisis, cada detector en este sistema se sostiene sobre estas tres. Si una idea las contradice, muere sin analisis.</p>
+                        </div>
+
+                        <!-- The Five Branches -->
+                        <div class="section-title en-only" style="font-size:1em;margin-top:28px">The Five Branches</div>
+                        <div class="section-title es-only" style="font-size:1em;margin-top:28px">Las Cinco Ramas</div>
+                        <div class="en-only">
+                            <p>Philosophy is one system with five branches. Each derives from the previous:</p>
+                        </div>
+                        <div class="es-only">
+                            <p>La filosofia es un sistema con cinco ramas. Cada una se deriva de la anterior:</p>
+                        </div>
+                        <div class="en-only protocol-steps">
+                            <div class="protocol-step"><span class="step-number">1.</span><span class="step-name">Metaphysics</span> — What exists? Reality exists independent of consciousness. Things have identity. A is A. The system takes this position because the alternative — that reality is subjective or constructed — makes knowledge impossible and action arbitrary.</div>
+                            <div class="protocol-step"><span class="step-number">2.</span><span class="step-name">Epistemology</span> — How do we know it? Through reason applied to the evidence of the senses. Knowledge is identification that has survived verification. The system takes this position because the alternatives — revelation, authority, consensus, feeling — produce maps that cannot be corrected.</div>
+                            <div class="protocol-step"><span class="step-number">3.</span><span class="step-name">Ethics</span> — What should we do? Act according to rational values with life as the standard. The individual is the unit of value, action, and rights. The system takes this position because any ethics that subordinates the individual to the collective destroys the subject who values.</div>
+                            <div class="protocol-step"><span class="step-number">4.</span><span class="step-name">Politics</span> — How should we live together? Under a system that bans the initiation of force. The state exists solely to protect individual rights through police, military, and courts. The system takes this position because every system that grants the state power beyond protection has historically degraded the individual and destroyed production.</div>
+                            <div class="protocol-step"><span class="step-number">5.</span><span class="step-name">Aesthetics</span> — What does it mean? Art is selective re-creation of reality according to the artist's deepest values. It makes the abstract visible. The system takes this position because art that serves no values is decoration, and art that serves imposed values is propaganda.</div>
+                            <p style="margin-top:16px">Each branch depends on the one before it. Ethics without epistemology is dogma. Politics without ethics is power. Aesthetics without metaphysics is decoration.</p>
+                        </div>
+                        <div class="es-only protocol-steps">
+                            <div class="protocol-step"><span class="step-number">1.</span><span class="step-name">Metafisica</span> — Que existe? La realidad existe independiente de la consciencia. Las cosas tienen identidad. A es A. El sistema toma esta posicion porque la alternativa — que la realidad sea subjetiva o construida — hace imposible el conocimiento y arbitraria la accion.</div>
+                            <div class="protocol-step"><span class="step-number">2.</span><span class="step-name">Epistemologia</span> — Como lo sabemos? Mediante la razon aplicada a la evidencia de los sentidos. El conocimiento es identificacion que ha sobrevivido la verificacion. El sistema toma esta posicion porque las alternativas — revelacion, autoridad, consenso, sentimiento — producen mapas que no pueden corregirse.</div>
+                            <div class="protocol-step"><span class="step-number">3.</span><span class="step-name">Etica</span> — Que debemos hacer? Actuar segun valores racionales con la vida como estandar. El individuo es la unidad de valor, accion y derechos. El sistema toma esta posicion porque toda etica que subordine al individuo al colectivo destruye al sujeto que valora.</div>
+                            <div class="protocol-step"><span class="step-number">4.</span><span class="step-name">Politica</span> — Como vivimos juntos? Bajo un sistema que prohiba la iniciacion de la fuerza. El estado existe unicamente para proteger los derechos individuales mediante policia, milicia y poder judicial. El sistema toma esta posicion porque todo sistema que otorgue al estado poder mas alla de la proteccion ha degradado historicamente al individuo y destruido la produccion.</div>
+                            <div class="protocol-step"><span class="step-number">5.</span><span class="step-name">Estetica</span> — Que significa? El arte es re-creacion selectiva de la realidad segun los valores mas profundos del artista. Hace visible lo abstracto. El sistema toma esta posicion porque arte que no sirve a valores es decoracion, y arte que sirve a valores impuestos es propaganda.</div>
+                            <p style="margin-top:16px">Cada rama depende de la anterior. Etica sin epistemologia es dogma. Politica sin etica es poder. Estetica sin metafisica es decoracion.</p>
+                        </div>
+                    </div>
+
+                    <!-- IV. OPERATIONAL DETECTORS -->
+                    <div class="motives-section">
+                        <div class="section-title en-only">IV. Operational Detectors</div>
+                        <div class="section-title es-only">IV. Detectores Operativos</div>
+
+                        <div class="en-only">
+                            <p class="dim" style="margin-bottom:16px;font-style:italic">Three filters for every decision. If it doesn't survive all three, it doesn't move forward.</p>
+                        </div>
+                        <div class="es-only">
+                            <p class="dim" style="margin-bottom:16px;font-style:italic">Tres filtros para cada decision. Si no sobrevive los tres, no avanza.</p>
+                        </div>
+                        <div class="en-only protocol-steps">
+                            <div class="protocol-step"><span class="step-number">1.</span><span class="step-name">Sovereignty</span> — Does this decision create value that belongs to me, or does it depend on someone else's permission? Dependency is fragility. Creation is autonomy. Every choice either builds something yours or rents someone else's structure.</div>
+                            <div class="protocol-step"><span class="step-number">2.</span><span class="step-name">Time</span> — Does this decision buy time or sell it? Wealth is not money — it is hours free from coercion. Every financial, professional, and personal choice either expands or contracts the time you control.</div>
+                            <div class="protocol-step"><span class="step-number">3.</span><span class="step-name">Error Protocol</span> — When something fails: identify the error, detect the expectation that was wrong, locate the cause, extract the reusable principle, implement. No blame, only correction. The principle extracted is the only profit from failure.</div>
+                        </div>
+                        <div class="es-only protocol-steps">
+                            <div class="protocol-step"><span class="step-number">1.</span><span class="step-name">Soberania</span> — Esta decision crea valor que me pertenece, o depende del permiso de otro? Dependencia es fragilidad. Creacion es autonomia. Cada eleccion construye algo tuyo o renta la estructura de otro.</div>
+                            <div class="protocol-step"><span class="step-number">2.</span><span class="step-name">Tiempo</span> — Esta decision compra tiempo o lo vende? La riqueza no es dinero — son horas libres de coercion. Cada eleccion financiera, profesional y personal expande o contrae el tiempo que controlas.</div>
+                            <div class="protocol-step"><span class="step-number">3.</span><span class="step-name">Protocolo de Error</span> — Cuando algo falla: identificar el error, detectar la expectativa equivocada, ubicar la causa, extraer el principio reutilizable, implementar. Sin culpa, solo correccion. El principio extraido es la unica ganancia del fracaso.</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ═══ HIERARCHY ═══ -->
+                <div class="motives-section" style="margin-top:40px">
+                    <div class="section-title en-only">Hierarchy</div>
+                    <div class="section-title es-only">Jerarquía</div>
+                    <div id="knowledge-hierarchy" class="knowledge-section">
+                        <div id="integrated-list"></div>
+                        <div class="actions" style="margin-top:12px">
+                            <button class="btn btn-sm" id="btn-export">export JSON</button>
+                            <label class="btn btn-sm" style="cursor:pointer">import JSON<input type="file" id="btn-import" accept=".json" style="display:none"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ GLOSSARY ═══ -->
+                <div class="motives-section" style="margin-top:40px">
+                    <div class="section-title en-only">Glossary</div>
+                    <div class="section-title es-only">Glosario</div>
+                    <div id="knowledge-glossary" class="knowledge-section" style="padding:20px">
+
+                        <div class="en-only">
+                            <p class="dim" style="font-style:italic;margin-bottom:20px">Concepts verified through elimination across 3+ contexts. Each name represents a precise definition that differs from common usage. Full definitions are available within the tool's analysis.</p>
+
+                            <div style="margin-bottom:20px">
+                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">METAPHYSICS</p>
+                                <p style="color:var(--comment);line-height:1.8">Concept (C) · The Triad · Subject (S) · Object (O) · Relation (R) · Value (v) · Attenuation · Elimination · Compression · Confusion · Clarity · Reconstruction · The Identity Thesis (M =op S) · V(M) ⊂ M · The Value Multiplier (V = K × A × T) · The Double Loss · Sedimentation · Conceptual Drift · Principle of Conceptual Identity · Legitimate Conceptual Evolution · Pathological Drift · Law of Cumulative Distortion · Fluency vs. Understanding · The Gap · Language · The First Principle · The Corruption Thesis · Disorientation · The Map · The Navigator · Self-Deception · Cartographic Corruption</p>
+                            </div>
+
+                            <div style="margin-bottom:20px">
+                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">EPISTEMOLOGY</p>
+                                <p style="color:var(--comment);line-height:1.8">Category α (Axiomatic) · Category β (Necessary Derived) · Category γ (Contingent Derived) · Decision (D = f(K,V,T)) · Convergence · Divergence · Contradiction · Friction · Fidelity · Collapse · Distortion · Correspondence · Knowledge · Opinion · Belief · Objectivity (redefined) · Verification · Fact · The Fact-Value Distinction (dissolved) · Education (redefined) · The Socratic Method · Communication · Translation (redefined) · Error (cartographic)</p>
+                            </div>
+
+                            <div style="margin-bottom:20px">
+                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">ETHICS</p>
+                                <p style="color:var(--comment);line-height:1.8">The Axiomatic Chain · The Ethical Chain · Existence · Identity · Consciousness · Knowledge · Action · Value · Truth (Logical / Empirical / Existential) · Liberty · Responsibility · Duty · Virtue · Justice · Right · Principle · Life (as Standard of Value) · Courage · Honesty · Integrity · The Foundational Virtue · Corruption (of language) · The Banality of Evil · Three Historical Erasures · Character</p>
+                            </div>
+
+                            <div style="margin-bottom:20px">
+                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">POLITICS</p>
+                                <p style="color:var(--comment);line-height:1.8">Politics · Capitalism · Property · Sovereignty · International Cooperation</p>
+                            </div>
+
+                            <div style="margin-bottom:20px">
+                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">AESTHETICS</p>
+                                <p style="color:var(--comment);line-height:1.8">Aesthetics · Art</p>
+                            </div>
+
+                            <p class="dim" style="font-style:italic;margin-top:16px;font-size:12px">© 2026 Jose Angel Deschamps Vargas. All definitions and conceptual framework are original work.</p>
+                        </div>
+
+                        <div class="es-only">
+                            <p class="dim" style="font-style:italic;margin-bottom:20px">Conceptos verificados por eliminacion en 3+ contextos. Cada nombre representa una definicion precisa que difiere del uso comun. Las definiciones completas estan disponibles dentro del analisis de la herramienta.</p>
+
+                            <div style="margin-bottom:20px">
+                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">METAFISICA</p>
+                                <p style="color:var(--comment);line-height:1.8">Concepto (C) · La Triada · Sujeto (S) · Objeto (O) · Relacion (R) · Valor (v) · Atenuacion · Eliminacion · Compresion · Confusion · Claridad · Reconstruccion · Tesis de Identidad (M =op S) · V(M) ⊂ M · Multiplicador de Valor (V = K × A × T) · La Doble Perdida · Sedimentacion · Deriva Conceptual · Principio de Identidad Conceptual · Evolucion Conceptual Legitima · Deriva Patologica · Ley de Distorsion Acumulativa · Fluidez vs. Comprension · La Brecha · Lenguaje · Primer Principio · Tesis de Corrupcion · Desorientacion · El Mapa · El Navegante · Autoenganyo · Corrupcion Cartografica</p>
+                            </div>
+
+                            <div style="margin-bottom:20px">
+                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">EPISTEMOLOGIA</p>
+                                <p style="color:var(--comment);line-height:1.8">Categoria α (Axiomatica) · Categoria β (Derivado Necesario) · Categoria γ (Derivado Contingente) · Decision (D = f(K,V,T)) · Convergencia · Divergencia · Contradiccion · Friccion · Fidelidad · Colapso · Distorsion · Correspondencia · Conocimiento · Opinion · Creencia · Objetividad (redefinida) · Verificacion · Hecho · Distincion Hecho-Valor (disuelta) · Educacion (redefinida) · Metodo Socratico · Comunicacion · Traduccion (redefinida) · Error (cartografico)</p>
+                            </div>
+
+                            <div style="margin-bottom:20px">
+                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">ETICA</p>
+                                <p style="color:var(--comment);line-height:1.8">La Cadena Axiomatica · La Cadena Etica · Existencia · Identidad · Consciencia · Conocimiento · Accion · Valor · Verdad (Logica / Empirica / Existencial) · Libertad · Responsabilidad · Deber · Virtud · Justicia · Derecho · Principio · Vida (como Estandar de Valor) · Coraje · Honestidad · Integridad · La Virtud Fundacional · Corrupcion (del lenguaje) · La Banalidad del Mal · Tres Borrados Historicos · Caracter</p>
+                            </div>
+
+                            <div style="margin-bottom:20px">
+                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">POLITICA</p>
+                                <p style="color:var(--comment);line-height:1.8">Politica · Capitalismo · Propiedad · Soberania · Cooperacion Internacional</p>
+                            </div>
+
+                            <div style="margin-bottom:20px">
+                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">ESTETICA</p>
+                                <p style="color:var(--comment);line-height:1.8">Estetica · Arte</p>
+                            </div>
+
+                            <p class="dim" style="font-style:italic;margin-top:16px;font-size:12px">© 2026 Jose Angel Deschamps Vargas. Todas las definiciones y el marco conceptual son obra original.</p>
+                        </div>
+
+                    </div>
+                    <div class="no-results" id="glossary-no-results" style="display:none">
+                        <span class="s-cmt">// no definitions match your search</span>
+                    </div>
+                </div>
+                </div>
+
+                <!-- ═══ SUPPORT ═══ -->
+                <div class="section-title knowledge-divider en-only" style="margin-top:40px">Support the Project</div>
+                <div class="section-title knowledge-divider es-only" style="margin-top:40px">Apoyar el Proyecto</div>
+                <div class="knowledge-section" style="padding:20px">
+                    <div class="en-only">
+                        <p>This project is free and open. If it expands your map, you can support its development.</p>
+                        <div class="donate-box">
+                            <p class="dim" style="font-style:italic">The project sustains itself by the value it generates, not by the persuasion of asking for it.</p>
+                            <p style="margin-top:12px"><span style="font-weight:600">BTC:</span> <span style="color:var(--comment);font-family:var(--font-mono);font-size:12px;word-break:break-all">bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5</span></p>
+                        </div>
+                    </div>
+                    <div class="es-only">
+                        <p>Este proyecto es gratuito y abierto. Si expande tu mapa, puedes apoyar su desarrollo.</p>
+                        <div class="donate-box">
+                            <p class="dim" style="font-style:italic">El proyecto se sostiene por el valor que genera, no por la persuasión de pedirlo.</p>
+                            <p style="margin-top:12px"><span style="font-weight:600">BTC:</span> <span style="color:var(--comment);font-family:var(--font-mono);font-size:12px;word-break:break-all">bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5</span></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- footer -->
+        <div class="footer">
+            <span class="footer-sig">nicómaco 2026</span>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+    'use strict';
+
+    const RULES = {
+        G1:'Persistence: something invariant under transformation',
+        G2:'Entropy: disorder grows without work',
+        G3:'Selection: variation + differential survival',
+        G4:'Feedback: output becomes input',
+        G5:'Emergence: simple rules iterated = complexity',
+        G6:'Constraint gives form',
+        G7:'Symmetry reveals structure',
+        G8:'Information has cost',
+        G9:'Self-reference has limits',
+        G10:'Gradual accumulation, sudden qualitative change',
+        U1:'Nothing comes from nothing — conservation',
+        U2:'Order costs energy',
+        U3:'Effects follow causes with delay',
+        U4:'Small constant forces dominate large sporadic ones',
+        U5:'Displaced systems generate restoring force',
+        U6:'Majority of effects come from few causes',
+        U7:'Extremes revert to the mean',
+        U8:'Connections scale faster than nodes',
+        U9:'Some transformations are irreversible',
+        H1:'Incentives govern behavior, not intentions',
+        H2:'Every choice costs what you didn\'t choose',
+        H3:'The next unit matters, not the average',
+        H4:'Without consequences, signals are noise',
+        H5:'Observe what they do, not what they say',
+        H6:'Losing hurts twice as much as gaining pleases',
+        H7:'Humans optimize relative position, not absolute',
+        H8:'Humans need narratives; reality doesn\'t provide them',
+        H9:'Whoever acts for you optimizes for themselves first',
+        H10:'Capacity to delay gratification predicts almost everything',
+        H11:'Cooperation in repeated games; defection in one-shot',
+        H12:'Information asymmetry creates power',
+        K1:'All knowledge is contextual — valid within identified facts',
+        K2:'The senses are valid — base data, not illusion',
+        K3:'Concepts form by abstraction from concretes',
+        K4:'Logic is non-contradictory identification',
+        K5:'Certainty is contextual, not absolute',
+        K6:'Burden of proof falls on the asserter',
+        K7:'Knowledge requires integration — isolated facts are not understanding',
+        K8:'Error correction is the mechanism of cognitive progress',
+        L1:'Language maps concepts to symbols — it names, it does not create',
+        L2:'Meaning requires shared referents',
+        L3:'Precision of language tracks precision of thought',
+        L4:'Ambiguity is not depth — vagueness degrades signal',
+        L5:'Context determines meaning — same symbol, different frames',
+        L6:'Translation between frameworks loses information',
+        E1:'Value presupposes a valuer — without life, nothing has value',
+        E2:'Life is the precondition of all values',
+        E3:'Rationality: commitment to identify reality as it is',
+        E4:'Production precedes distribution — you cannot give what does not exist',
+        E5:'Voluntary exchange is the only non-destructive value transfer',
+        E6:'Honesty: faking reality is self-defeating',
+        E7:'Justice: judge and be judged by the same standard',
+        E8:'Individual rights: conditions for rational coexistence',
+        Ae1:'Art is selective re-creation of reality according to values',
+        Ae2:'Beauty is the recognition of integrated form',
+        Ae3:'Style reveals metaphysics — how you create shows what you believe',
+        Ae4:'Craft without purpose is decoration; purpose without craft is propaganda',
+        Ae5:'Taste is condensed worldview, not arbitrary preference'
+    };
+
+    const RULES_ES = {
+        G1:'Persistencia: algo invariante bajo transformaci\u00f3n',
+        G2:'Entrop\u00eda: el desorden crece sin trabajo',
+        G3:'Selecci\u00f3n: variaci\u00f3n + supervivencia diferencial',
+        G4:'Retroalimentaci\u00f3n: la salida se convierte en entrada',
+        G5:'Emergencia: reglas simples iteradas = complejidad',
+        G6:'La restricci\u00f3n da forma',
+        G7:'La simetr\u00eda revela estructura',
+        G8:'La informaci\u00f3n tiene costo',
+        G9:'La autorreferencia tiene l\u00edmites',
+        G10:'Acumulaci\u00f3n gradual, cambio cualitativo s\u00fabito',
+        U1:'Nada viene de la nada — conservaci\u00f3n',
+        U2:'El orden cuesta energ\u00eda',
+        U3:'Los efectos siguen a las causas con retraso',
+        U4:'Fuerzas peque\u00f1as constantes dominan a las grandes espor\u00e1dicas',
+        U5:'Sistemas desplazados generan fuerza restauradora',
+        U6:'La mayor\u00eda de los efectos vienen de pocas causas',
+        U7:'Los extremos revierten a la media',
+        U8:'Las conexiones escalan m\u00e1s r\u00e1pido que los nodos',
+        U9:'Algunas transformaciones son irreversibles',
+        H1:'Los incentivos gobiernan la conducta, no las intenciones',
+        H2:'Cada elecci\u00f3n cuesta lo que no elegiste',
+        H3:'La siguiente unidad importa, no el promedio',
+        H4:'Sin consecuencias, las se\u00f1ales son ruido',
+        H5:'Observa lo que hacen, no lo que dicen',
+        H6:'Perder duele el doble de lo que ganar agrada',
+        H7:'Los humanos optimizan posici\u00f3n relativa, no absoluta',
+        H8:'Los humanos necesitan narrativas; la realidad no las provee',
+        H9:'Quien act\u00faa por ti optimiza para s\u00ed mismo primero',
+        H10:'La capacidad de retrasar la gratificaci\u00f3n predice casi todo',
+        H11:'Cooperaci\u00f3n en juegos repetidos; deserci\u00f3n en juegos \u00fanicos',
+        H12:'La asimetr\u00eda de informaci\u00f3n crea poder',
+        K1:'Todo conocimiento es contextual — v\u00e1lido dentro de hechos identificados',
+        K2:'Los sentidos son v\u00e1lidos — datos base, no ilusi\u00f3n',
+        K3:'Los conceptos se forman por abstracci\u00f3n de lo concreto',
+        K4:'La l\u00f3gica es identificaci\u00f3n no contradictoria',
+        K5:'La certeza es contextual, no absoluta',
+        K6:'La carga de la prueba recae en quien afirma',
+        K7:'El conocimiento requiere integraci\u00f3n — hechos aislados no son comprensi\u00f3n',
+        K8:'La correcci\u00f3n de errores es el mecanismo del progreso cognitivo',
+        L1:'El lenguaje mapea conceptos a s\u00edmbolos — nombra, no crea',
+        L2:'El significado requiere referentes compartidos',
+        L3:'La precisi\u00f3n del lenguaje rastrea la precisi\u00f3n del pensamiento',
+        L4:'La ambig\u00fcedad no es profundidad — la vaguedad degrada la se\u00f1al',
+        L5:'El contexto determina el significado — mismo s\u00edmbolo, marcos distintos',
+        L6:'La traducci\u00f3n entre marcos pierde informaci\u00f3n',
+        E1:'El valor presupone un valorador — sin vida, nada tiene valor',
+        E2:'La vida es la precondici\u00f3n de todos los valores',
+        E3:'Racionalidad: compromiso de identificar la realidad tal como es',
+        E4:'La producci\u00f3n precede a la distribuci\u00f3n — no puedes dar lo que no existe',
+        E5:'El intercambio voluntario es la \u00fanica transferencia no destructiva de valor',
+        E6:'Honestidad: fingir la realidad es autodestructivo',
+        E7:'Justicia: juzga y s\u00e9 juzgado por el mismo est\u00e1ndar',
+        E8:'Derechos individuales: condiciones para la coexistencia racional',
+        Ae1:'El arte es re-creaci\u00f3n selectiva de la realidad seg\u00fan valores',
+        Ae2:'La belleza es el reconocimiento de forma integrada',
+        Ae3:'El estilo revela metaf\u00edsica — c\u00f3mo creas muestra lo que crees',
+        Ae4:'Oficio sin prop\u00f3sito es decoraci\u00f3n; prop\u00f3sito sin oficio es propaganda',
+        Ae5:'El gusto es cosmovisi\u00f3n condensada, no preferencia arbitraria'
+    };
+
+    // SYSTEM_PROMPT moved to Cloudflare Worker (server-side only)
+    const SYSTEM_PROMPT = null;
+
+    const URL_ANALYSIS_PROMPT = `The user has submitted a URL for analysis. The page content has been extracted below.
+
+Analyze this content using the full protocol. Apply T3 first: content = behavior data about the producer.
+
+PAGE CONTENT:
+---
+{content}
+---
+
+URL: {url}
+
+Follow the WEB PAGE ANALYSIS output structure from the system prompt:
+1. PRODUCTOR
+2. LO QUE IMPORTA PARA TU VB
+3. MENTIRAS, CONCEPTOS ROBADOS, INCENTIVOS PERVERSOS
+4. RAMAS EN JUEGO
+5. VEREDICTO`;
+
+    const CHALLENGE_PROMPT = `The user challenges the previous analysis with territory evidence:
+
+"{evidence}"
+
+Re-evaluate considering this evidence. If the analysis changes, explain why. If not, explain why the evidence is insufficient.`;
+
+    const WORKER_URL = 'https://nicomaco-api.joseandv.workers.dev';
+
+    const I18N = {
+        en: {
+            subtitle: 'applied philosophy for decision-making',
+            tool: 'tool',
+            knowledge: 'theory',
+            motives: 'motives',
+            hierarchy: 'hierarchy',
+            glossary: 'glossary',
+            placeholder: 'ask Nicómaco...',
+            hints: 'enter to send \u00b7 shift+enter new line \u00b7 paste URL to filter \u00b7 esc cancel',
+            challenge: 'challenge',
+            copy: 'copy',
+            copied: 'copied',
+            save: 'save',
+            configTitle: '// configuration',
+            configHint: '// stored in your browser. never transmitted to third parties.',
+            welcome1: '// A is A',
+            challengePrompt: 'provide territory evidence...',
+            share: 'share',
+            shared: 'shared',
+            exportJSON: 'export JSON',
+            importJSON: 'import JSON',
+            btcCopied: 'btc address copied',
+            newChat: 'New conversation',
+            send: 'send',
+            searchGlossary: '> search definitions...',
+            noResults: 'no definitions match your search',
+        },
+        es: {
+            subtitle: 'filosofia aplicada a la toma de decisiones',
+            tool: 'herramienta',
+            knowledge: 'teoría',
+            motives: 'motivos',
+            hierarchy: 'jerarqu\u00eda',
+            glossary: 'glosario',
+            placeholder: 'pregunta a Nicómaco...',
+            hints: 'enter para enviar \u00b7 shift+enter nueva linea \u00b7 pega URL para filtrar \u00b7 esc cancelar',
+            challenge: 'desafiar',
+            copy: 'copiar',
+            copied: 'copiado',
+            save: 'guardar',
+            configTitle: '// configuraci\u00f3n',
+            configHint: '// guardado en tu navegador. nunca se transmite a terceros.',
+            welcome1: '// A es A',
+            challengePrompt: 'proporciona evidencia de territorio...',
+            share: 'compartir',
+            shared: 'compartido',
+            exportJSON: 'exportar JSON',
+            importJSON: 'importar JSON',
+            btcCopied: 'direccion btc copiada',
+            send: 'enviar',
+            newChat: 'Nueva conversaci\u00f3n',
+            searchGlossary: '> buscar definiciones...',
+            noResults: 'sin resultados',
+        }
+    };
+
+    const state = {
+        lang: localStorage.getItem('vu_lang') || (navigator.language?.startsWith('es') ? 'es' : 'en'),
+        apiKey: localStorage.getItem('vu_key') || '',
+        model: localStorage.getItem('vu_model') || 'claude-sonnet-4-20250514',
+        history: JSON.parse(localStorage.getItem('vu_history') || '[]'),
+        drafts: JSON.parse(localStorage.getItem('vu_drafts') || '[]').filter(d => d.t && d.d),
+        currentTab: 'tool',
+        processing: false,
+        challengeTarget: null,
+        controller: null,
+        analysisCount: JSON.parse(localStorage.getItem('vu_history') || '[]').length,
+        conversationHistory: [],
+    };
+
+    const $ = s => document.querySelector(s);
+    const $$ = s => document.querySelectorAll(s);
+    function t(key) { return (I18N[state.lang] || I18N.en)[key] || key; }
+
+    function setLang(lang) {
+        state.lang = lang;
+        localStorage.setItem('vu_lang', lang);
+        const toggle = $('#nav-lang');
+        if (toggle) toggle.textContent = lang === 'es' ? '🇪🇸' : '🇬🇧';
+        const mainTitle = $('#main-title');
+        if (mainTitle) mainTitle.textContent = 'NICÓMACO';
+        $('#main-subtitle').textContent = t('subtitle');
+        $$('[data-tab="tool"] .tab-name').forEach(el => el.textContent = t('tool'));
+        $$('[data-tab="knowledge"] .tab-name').forEach(el => el.textContent = t('knowledge'));
+        // Update knowledge sub-nav
+        $$('.knowledge-btn[data-section="motives"]').forEach(el => el.textContent = t('motives'));
+        $$('.knowledge-btn[data-section="hierarchy"]').forEach(el => el.textContent = t('hierarchy'));
+        $$('.knowledge-btn[data-section="glossary"]').forEach(el => el.textContent = t('glossary'));
+        $('#input').placeholder = t('placeholder');
+        $('.input-hints').innerHTML = t('hints');
+        $('#cfg-save').textContent = t('save');
+        const btnExp = $('#btn-export');
+        if (btnExp) btnExp.textContent = t('exportJSON');
+        const lblImp = $('label[style*="cursor:pointer"]');
+        if (lblImp) { const inp = lblImp.querySelector('input'); lblImp.textContent = t('importJSON'); if (inp) lblImp.appendChild(inp); }
+        // Bilingual toggle for knowledge content
+        $$('.en-only').forEach(el => el.style.display = lang === 'en' ? '' : 'none');
+        $$('.es-only').forEach(el => el.style.display = lang === 'es' ? '' : 'none');
+        // Glossary language toggle
+        const gEn = $('#glossary-en');
+        const gEs = $('#glossary-es');
+        if (gEn) gEn.style.display = lang === 'en' ? '' : 'none';
+        if (gEs) gEs.style.display = lang === 'es' ? '' : 'none';
+        // Glossary search placeholder
+        const gSearch = $('#glossary-search');
+        if (gSearch) gSearch.placeholder = t('searchGlossary');
+        // New chat button title
+        const newChatBtn = $('#btn-new-chat');
+        if (newChatBtn) newChatBtn.title = t('newChat');
+        const sendBtn = $('#btn-send');
+        if (sendBtn) sendBtn.textContent = t('send');
+        if ($('#output').children.length <= 1) renderWelcome();
+    }
+
+    function init() {
+        // Restore analysis count from persisted history
+        if (state.history.length) state.analysisCount = Math.max(...state.history.map(h => h.num || 0));
+
+        // Always show main
+        showScreen('main');
+        renderWelcome();
+
+        // Config controls
+        $('#cfg-key').value = state.apiKey;
+        $('#cfg-model').value = state.model;
+        $('#cfg-save').addEventListener('click', saveConfig);
+
+        // Navigation
+        $('#nav-cfg').addEventListener('click', e => { e.preventDefault(); showScreen('config'); });
+        $('#nav-borrador').addEventListener('click', e => { e.preventDefault(); showScreen('main'); switchTab('tool'); renderDrafts(); });
+        updateDraftBadge();
+
+        // Main content tabs
+        $$('[data-tab]').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+
+        // Export/Import
+        $('#btn-export').addEventListener('click', exportHierarchy);
+        $('#btn-import').addEventListener('change', e => { if (e.target.files[0]) importHierarchy(e.target.files[0]); e.target.value = ''; });
+
+        // Input
+        const input = $('#input');
+        input.addEventListener('keydown', handleKey);
+        input.addEventListener('input', autoResize);
+        $('#btn-send').addEventListener('click', handleSubmit);
+
+        // Model selector
+        $('#cfg-model').addEventListener('change', e => {
+            state.model = e.target.value;
+            localStorage.setItem('vu_model', state.model);
+        });
+
+        // Language toggle
+        $('#nav-lang').addEventListener('click', e => {
+            e.preventDefault();
+            setLang(state.lang === 'en' ? 'es' : 'en');
+        });
+        // Language is applied at the end of init() via setLang(state.lang)
+
+        // BTC donation copy
+        $('#footer-btc').addEventListener('click', () => {
+            navigator.clipboard.writeText('bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5');
+            const el = $('#footer-btc');
+            el.textContent = t('btcCopied');
+            setTimeout(() => { el.innerHTML = 'btc &#9671;'; }, 2000);
+        });
+
+        // Knowledge sections all visible (continuous scroll)
+        $$('.knowledge-section').forEach(s => s.style.display = '');
+
+        // Glossary section toggle (delegated)
+        const glossarySections = $('#glossary-sections');
+        if (glossarySections) {
+            glossarySections.addEventListener('click', e => {
+                const h = e.target.closest('.section-header');
+                if (h) h.parentElement.classList.toggle('open');
+            });
+        }
+
+        // Glossary search
+        const glossarySearch = $('#glossary-search');
+        if (glossarySearch) {
+            glossarySearch.addEventListener('input', () => {
+                const q = glossarySearch.value.trim().toLowerCase();
+                const activeContainer = state.lang === 'es' ? $('#glossary-es') : $('#glossary-en');
+                if (!activeContainer) return;
+                const sections = activeContainer.querySelectorAll('.section');
+                const noResults = $('#glossary-no-results');
+                if (!q) {
+                    sections.forEach(s => {
+                        s.classList.remove('hidden');
+                        s.querySelectorAll('.def').forEach(d => d.style.display = '');
+                    });
+                    if (noResults) noResults.style.display = 'none';
+                    return;
+                }
+                let anyVisible = false;
+                sections.forEach(s => {
+                    const defs = s.querySelectorAll('.section-body > .def');
+                    let sectionHasMatch = false;
+                    defs.forEach(d => {
+                        if (d.textContent.toLowerCase().includes(q)) {
+                            d.style.display = '';
+                            sectionHasMatch = true;
+                        } else {
+                            d.style.display = 'none';
+                        }
+                    });
+                    if (sectionHasMatch) {
+                        s.classList.remove('hidden');
+                        s.classList.add('open');
+                        anyVisible = true;
+                    } else {
+                        s.classList.add('hidden');
+                    }
+                });
+                if (noResults) noResults.style.display = anyVisible ? 'none' : 'block';
+            });
+        }
+
+        // New chat button
+        $('#btn-new-chat').addEventListener('click', () => {
+            state.conversationHistory = [];
+            renderWelcome();
+        });
+
+        // Handle hash navigation
+        if (window.location.hash === '#integrated') switchTab('knowledge');
+
+        // Apply initial language for bilingual content
+        setLang(state.lang);
+    }
+
+    function showScreen(name) {
+        $$('.screen').forEach(s => s.classList.remove('active'));
+        $(`#screen-${name}`).classList.add('active');
+        if (name === 'main') setTimeout(() => $('#input')?.focus(), 50);
+    }
+
+    function saveConfig() {
+        const key = $('#cfg-key').value.trim().replace(/[^\x20-\x7E]/g, '');
+        const model = $('#cfg-model').value;
+        state.apiKey = key;
+        state.model = model;
+        localStorage.setItem('vu_key', key);
+        localStorage.setItem('vu_model', model);
+        showScreen('main');
+        if ($('#output').children.length === 0) renderWelcome();
+    }
+
+    function switchTab(name) {
+        state.currentTab = name;
+        $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+        $$('.tab-content').forEach(tc => tc.style.display = 'none');
+        $(`#tab-${name}`).style.display = name === 'tool' ? 'flex' : '';
+        if (name === 'knowledge') renderIntegrated();
+    }
+
+    function renderWelcome() {
+        const output = $('#output');
+        output.innerHTML = '';
+        const es = state.lang === 'es';
+        const intro = document.createElement('div');
+        intro.className = 'block welcome-block';
+        intro.innerHTML = es
+            ? `<div class="welcome-title">A es A</div>
+               <div class="welcome-body">
+                   <p>Filosofia aplicada a la toma de decisiones.</p>
+               </div>`
+            : `<div class="welcome-title">A is A</div>
+               <div class="welcome-body">
+                   <p>Applied philosophy for decision-making.</p>
+               </div>`;
+        output.appendChild(intro);
+    }
+
+    function handleKey(e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(); }
+        if (e.key === 'Escape') cancelChallenge();
+    }
+
+    function autoResize(e) {
+        const t = e.target;
+        t.style.height = 'auto';
+        t.style.height = t.scrollHeight + 'px';
+    }
+
+    function isURL(text) {
+        return /^https?:\/\//i.test(text) || /^www\./i.test(text);
+    }
+
+    function handleSubmit() {
+        const input = $('#input');
+        const text = input.value.trim();
+        if (!text || state.processing) return;
+        input.value = '';
+        input.style.height = 'auto';
+        if (state.challengeTarget) submitChallenge(text);
+        else if (isURL(text)) submitURL(text);
+        else submitCandidate(text);
+    }
+
+    async function fetchURL(url) {
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        const res = await fetch(`${WORKER_URL}/api/fetch-url`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url }),
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || `Failed to fetch URL (${res.status})`);
+        }
+        const data = await res.json();
+        const html = data.content || '';
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        doc.querySelectorAll('script, style, nav, footer, header, aside, iframe, .ad, .ads, .sidebar').forEach(el => el.remove());
+        let text = doc.body?.innerText || doc.body?.textContent || '';
+        text = text.replace(/\n{3,}/g, '\n\n').trim();
+        if (text.length > 6000) text = text.substring(0, 6000) + '\n\n[... content truncated ...]';
+        return text;
+    }
+
+    async function submitURL(url) {
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        state.processing = true;
+        state.analysisCount++;
+        const id = Date.now();
+        const num = state.analysisCount;
+        const block = createBlock(num, id);
+        const bubbleEl = block.querySelector('.user-bubble');
+        const codeEl = block.querySelector('.code');
+        const gutterEl = block.querySelector('.gutter');
+        $('#output').appendChild(block);
+        scrollToBottom();
+        bubbleEl.innerHTML = `<a href="${esc(url)}" target="_blank" style="color:var(--cyan);text-decoration:none">${esc(url)}</a>`;
+        codeEl.innerHTML = `<span class="s-cmt">// fetching page content</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
+        gutterEl.textContent = gutterLines(1);
+        try {
+            const pageContent = await fetchURL(url);
+            codeEl.innerHTML = `<span class="s-cmt">// content extracted. analyzing</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
+            const prompt = URL_ANALYSIS_PROMPT.replace('{content}', pageContent).replace('{url}', url);
+            const messages = [{ role: 'user', content: prompt }];
+            let fullText = '';
+            await callStreamingAPI(messages, chunk => {
+                fullText += chunk;
+                const highlighted = highlightURL(fullText);
+                codeEl.innerHTML = highlighted;
+                gutterEl.textContent = gutterLines(highlighted.split('\n').length);
+                scrollToBottom();
+            });
+            fullText = parseDrafts(fullText);
+            const highlighted = highlightURL(fullText);
+            codeEl.innerHTML = highlighted;
+            gutterEl.textContent = gutterLines(highlighted.split('\n').length);
+            state.history.unshift({ id, num, candidate: `[URL] ${url}`, analysis: fullText, date: new Date().toISOString(), messages, isURL: true });
+            localStorage.setItem('vu_history', JSON.stringify(state.history));
+
+            const acts = document.createElement('div');
+            acts.className = 'actions';
+            const btnCp = document.createElement('button');
+            btnCp.className = 'btn btn-sm'; btnCp.textContent = t('copy');
+            btnCp.addEventListener('click', () => {
+                navigator.clipboard.writeText(fullText);
+                btnCp.textContent = t('copied'); setTimeout(() => btnCp.textContent = t('copy'), 1500);
+            });
+            acts.appendChild(btnCp);
+            const btnSh = document.createElement('button');
+            btnSh.className = 'btn btn-sm'; btnSh.textContent = t('share');
+            btnSh.addEventListener('click', () => {
+                shareAnalysis({ candidate: `[URL] ${url}`, analysis: fullText });
+                btnSh.textContent = t('shared'); setTimeout(() => btnSh.textContent = t('share'), 1500);
+            });
+            acts.appendChild(btnSh);
+            block.appendChild(acts);
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                codeEl.innerHTML += `\n\n<span class="s-cmt">// analysis cancelled</span>`;
+            } else {
+                let errorMsg = esc(err.message);
+                let hint = '<span class="s-cmt">// check api_key in configuration</span>';
+                if (err.message.includes('credit balance') || err.message.includes('balance is too low')) {
+                    hint = `<span class="s-warn">// try switching to a different model in cfg</span>\n<span class="s-cmt">// current model: ${esc(state.model)}</span>`;
+                } else if (err.message.includes('Failed to fetch URL')) {
+                    hint = '<span class="s-cmt">// the URL may be unreachable or blocked</span>';
+                }
+                codeEl.innerHTML = `<span class="s-cmt">// url analysis #${num}</span>\n<span class="s-cyan">  ${esc(url)}</span>\n\n<span class="s-err">// error: ${errorMsg}</span>\n${hint}`;
+            }
+            gutterEl.textContent = gutterLines(codeEl.innerHTML.split('\n').length);
+        }
+        state.processing = false;
+        scrollToBottom();
+    }
+
+    async function submitCandidate(text) {
+        state.processing = true;
+        state.analysisCount++;
+        const id = Date.now();
+        const num = state.analysisCount;
+        const block = createBlock(num, id);
+        const bubbleEl = block.querySelector('.user-bubble');
+        const codeEl = block.querySelector('.code');
+        const gutterEl = block.querySelector('.gutter');
+        $('#output').appendChild(block);
+        scrollToBottom();
+        bubbleEl.textContent = text;
+        codeEl.innerHTML = `<span class="s-cmt">// analyzing</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
+        gutterEl.textContent = gutterLines(1);
+        state.conversationHistory.push({ role: 'user', content: text });
+        // Keep only last 20 messages to avoid context overflow
+        const messages = state.conversationHistory.slice(-20);
+        try {
+            let fullText = '';
+            await callStreamingAPI(messages, chunk => {
+                fullText += chunk;
+                const highlighted = highlightText(fullText);
+                codeEl.innerHTML = highlighted;
+                gutterEl.textContent = gutterLines(highlighted.split('\n').length);
+                scrollToBottom();
+            });
+            fullText = parseDrafts(fullText);
+            state.conversationHistory.push({ role: 'assistant', content: fullText });
+            const highlighted = highlightText(fullText);
+            codeEl.innerHTML = highlighted;
+            gutterEl.textContent = gutterLines(highlighted.split('\n').length);
+            addActions(block, id, text, fullText, messages);
+            state.history.unshift({ id, num, candidate: text, analysis: fullText, date: new Date().toISOString(), messages: [...state.conversationHistory] });
+            localStorage.setItem('vu_history', JSON.stringify(state.history));
+
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                codeEl.innerHTML += `\n\n<span class="s-cmt">// analysis cancelled</span>`;
+            } else {
+                let errorMsg = esc(err.message);
+                let hint = '<span class="s-cmt">// check api_key in configuration</span>';
+                if (err.message.includes('consultas') || err.message.includes('Daily limit')) {
+                    hint = `<span class="s-cmt">// agrega tu API key en cfg para uso ilimitado</span>`;
+                } else if (err.message.includes('credit balance') || err.message.includes('balance is too low')) {
+                    hint = `<span class="s-warn">// try switching to a different model in cfg</span>\n<span class="s-cmt">// current: ${esc(state.model)}</span>`;
+                } else if (err.message.includes('Could not resolve') || err.message.includes('not found')) {
+                    hint = `<span class="s-warn">// model "${esc(state.model)}" may not be available</span>\n<span class="s-cmt">// try switching model in cfg</span>`;
+                }
+                codeEl.innerHTML = `<span class="s-cmt">// candidate #${num}</span>\n<span class="s-bright">  "${esc(text)}"</span>\n\n<span class="s-err">// error: ${errorMsg}</span>\n${hint}`;
+            }
+            gutterEl.textContent = gutterLines(codeEl.innerHTML.split('\n').length);
+        }
+        state.processing = false;
+        scrollToBottom();
+    }
+
+    function startChallenge(id) {
+        const item = state.history.find(h => h.id === id);
+        if (!item) return;
+        state.challengeTarget = item;
+        $('#input-ctx').textContent = `challenge #${item.num}: `;
+        $('#input').placeholder = t('challengePrompt');
+        $('#input').focus();
+    }
+
+    function cancelChallenge() {
+        state.challengeTarget = null;
+        $('#input-ctx').textContent = '';
+        $('#input').placeholder = t('placeholder');
+    }
+
+    async function submitChallenge(evidence) {
+        const item = state.challengeTarget;
+        if (!item) return;
+        cancelChallenge();
+        state.processing = true;
+        state.analysisCount++;
+        const num = state.analysisCount;
+        const block = createBlock(num, item.id);
+        const bubbleEl = block.querySelector('.user-bubble');
+        const codeEl = block.querySelector('.code');
+        const gutterEl = block.querySelector('.gutter');
+        $('#output').appendChild(block);
+        scrollToBottom();
+        bubbleEl.textContent = evidence;
+        codeEl.innerHTML = `<span class="s-cmt">// re-evaluating</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
+        gutterEl.textContent = gutterLines(1);
+        const messages = [...item.messages, { role: 'user', content: CHALLENGE_PROMPT.replace('{evidence}', evidence) }];
+        try {
+            let fullText = '';
+            await callStreamingAPI(messages, chunk => {
+                fullText += chunk;
+                const highlighted = highlightText(fullText);
+                codeEl.innerHTML = highlighted;
+                gutterEl.textContent = gutterLines(highlighted.split('\n').length);
+                scrollToBottom();
+            });
+            fullText = parseDrafts(fullText);
+            const highlighted = highlightText(fullText);
+            codeEl.innerHTML = highlighted;
+            gutterEl.textContent = gutterLines(highlighted.split('\n').length);
+            item.messages = messages;
+            item.messages.push({ role: 'assistant', content: fullText });
+
+            addActions(block, item.id, item.candidate, fullText, item.messages);
+        } catch (err) {
+            if (err.name !== 'AbortError') codeEl.innerHTML += `\n\n<span class="s-err">// error: ${esc(err.message)}</span>`;
+        }
+        state.processing = false;
+        scrollToBottom();
+    }
+
+    async function callStreamingAPI(messages, onChunk) {
+        state.controller = new AbortController();
+        let res;
+
+        // All traffic goes through Worker (system prompt is server-side)
+        const payload = { model: state.model, messages, max_tokens: 4096, stream: true };
+        if (state.apiKey) payload.userApiKey = state.apiKey.replace(/[^\x20-\x7E]/g, '');
+        res = await fetch(`${WORKER_URL}/api/analyze`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: state.controller.signal
+        });
+
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            const msg = err.error?.message || err.error || err.message || `HTTP ${res.status}`;
+            throw new Error(msg);
+        }
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = '';
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buf += decoder.decode(value, { stream: true });
+            const lines = buf.split('\n');
+            buf = lines.pop() || '';
+            for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const json = line.slice(6).trim();
+                if (!json || json === '[DONE]') continue;
+                try {
+                    const evt = JSON.parse(json);
+                    if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') onChunk(evt.delta.text);
+                } catch {}
+            }
+        }
+        state.controller = null;
+    }
+
+    function createBlock(num, id) {
+        const block = document.createElement('div');
+        block.className = 'block';
+        block.dataset.id = id;
+        block.innerHTML = `<div class="user-bubble"></div><div class="code-block"><div class="gutter"></div><div class="code"></div></div>`;
+        return block;
+    }
+
+    function addActions(block, id, candidate, fullText, messages) {
+        const acts = document.createElement('div');
+        acts.className = 'actions';
+        const btnC = document.createElement('button');
+        btnC.className = 'btn btn-sm'; btnC.textContent = t('challenge');
+        btnC.addEventListener('click', () => startChallenge(id));
+        acts.appendChild(btnC);
+        const btnCp = document.createElement('button');
+        btnCp.className = 'btn btn-sm'; btnCp.textContent = t('copy');
+        btnCp.addEventListener('click', () => {
+            navigator.clipboard.writeText(fullText);
+            btnCp.textContent = t('copied'); setTimeout(() => btnCp.textContent = t('copy'), 1500);
+        });
+        acts.appendChild(btnCp);
+        const btnSh = document.createElement('button');
+        btnSh.className = 'btn btn-sm'; btnSh.textContent = t('share');
+        btnSh.addEventListener('click', () => {
+            const item = state.history.find(h => h.id === id);
+            if (item) {
+                shareAnalysis(item);
+                btnSh.textContent = t('shared'); setTimeout(() => btnSh.textContent = t('share'), 1500);
+            }
+        });
+        acts.appendChild(btnSh);
+        block.appendChild(acts);
+    }
+
+    function gutterLines(n) { return Array.from({length: n}, (_, i) => String(i+1).padStart(3)).join('\n'); }
+    function scrollToBottom() { const o = $('#output'); if (o) o.scrollTop = o.scrollHeight; }
+
+    function highlightText(text) { return text.split('\n').map(l => highlightLine(l)).join('\n'); }
+
+    function highlightURL(text) { return text.split('\n').map(l => highlightURLLine(l)).join('\n'); }
+
+    function highlightURLLine(raw) {
+        let line = esc(raw.replace(/\*{1,3}/g, ''));
+        if (/^(PRODUCTOR|LO QUE IMPORTA|MENTIRAS|CONCEPTOS ROBADOS|INCENTIVOS PERVERSOS|RAMAS EN JUEGO|VEREDICTO|SOURCE AUDIT|CLAIMS DETECTED|TERRITORY CHECK|INHERITANCE ANALYSIS|INFORMATION QUALITY|EXTRACTED TRUTHS)\b/i.test(line))
+            return `<span class="s-section">${line}</span>`;
+        if (/^\*\*\d+\.\s/.test(line))
+            return `<span class="s-section">${line}</span>`;
+        if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
+        let mainPart = line, commentPart = '';
+        const ci = line.indexOf('//');
+        if (ci > 0) { mainPart = line.substring(0, ci); commentPart = `<span class="s-cmt">${line.substring(ci)}</span>`; }
+        mainPart = mainPart.replace(/\b(Conceptos robados|Incentivos perversos|Omisiones)\b/gi, '<span class="s-warn">$1</span>');
+        mainPart = mainPart.replace(/\b(G\d{1,2}|U\d|H\d{1,2}|K\d|L\d|E\d|Ae\d)\b/g, m => {
+            const tip = RULES[m] || m;
+            return `<span class="rule-ref" data-tip="${esc(tip)}">${m}</span>`;
+        });
+        mainPart = mainPart.replace(/"([^"]*)"/g, '"<span class="s-str">$1</span>"');
+        mainPart = mainPart.replace(/-&gt;/g, '<span class="s-op">-&gt;</span>');
+        return mainPart + commentPart;
+    }
+
+    function highlightLine(raw) {
+        let line = esc(raw);
+        if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|RESCUE|MAP VALUE|PRODUCTOR|RAMAS EN JUEGO|VEREDICTO)\b/.test(line))
+            return `<span class="s-section">${line}</span>`;
+        if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
+        let mainPart = line, commentPart = '';
+        const ci = line.indexOf('//');
+        if (ci > 0) { mainPart = line.substring(0, ci); commentPart = `<span class="s-cmt">${line.substring(ci)}</span>`; }
+        mainPart = mainPart.replace(/\b(G\d{1,2}|U\d|H\d{1,2}|K\d|L\d|E\d|Ae\d)\b/g, m => {
+            const tip = RULES[m] || m;
+            return `<span class="rule-ref" data-tip="${esc(tip)}">${m}</span>`;
+        });
+        mainPart = mainPart.replace(/"([^"]*)"/g, '"<span class="s-str">$1</span>"');
+        mainPart = mainPart.replace(/-&gt;/g, '<span class="s-op">-&gt;</span>');
+        return mainPart + commentPart;
+    }
+
+    function renderIntegrated() {
+        const c = $('#integrated-list');
+        c.innerHTML = '';
+
+        const rulesBlock = document.createElement('div');
+        rulesBlock.className = 'code-block';
+        rulesBlock.style.marginBottom = '20px';
+
+        const es = state.lang === 'es';
+        const r = code => es ? (RULES_ES[code] || RULES[code]) : RULES[code];
+        const hierarchy = [
+            { level: 0, section: true, text: es ? 'AXIOMAS \u2014 autoevidentes. negarlos requiere usarlos.' : 'AXIOMS \u2014 self-evident. to deny them is to use them.' },
+            { level: 0, code: 'A0', text: es ? 'La existencia existe' : 'Existence exists', color: 's-bright' },
+            { level: 0, code: 'A1', text: es ? 'Consciencia: la percepci\u00f3n de la existencia existe' : 'Consciousness: awareness of existence exists', color: 's-bright' },
+            { level: 0, code: 'A2', text: es ? 'Identidad: una cosa es lo que es (A = A)' : 'Identity: a thing is what it is (A = A)', color: 's-bright' },
+            { level: 0, code: 'A3', text: es ? 'Causalidad: las entidades act\u00faan seg\u00fan su naturaleza' : 'Causality: entities act according to their nature', color: 's-bright' },
+            { level: 0, section: true, text: es ? 'GENERAL \u2014 patrones que aplican en cualquier sistema' : 'GENERAL \u2014 patterns that hold in any system' },
+            { level: 1, code: 'G1', text: r('G1') },
+            { level: 1, code: 'G2', text: r('G2') },
+            { level: 1, code: 'G3', text: r('G3') },
+            { level: 1, code: 'G4', text: r('G4') },
+            { level: 1, code: 'G5', text: r('G5') },
+            { level: 1, code: 'G6', text: r('G6') },
+            { level: 1, code: 'G7', text: r('G7') },
+            { level: 1, code: 'G8', text: r('G8') },
+            { level: 1, code: 'G9', text: r('G9') },
+            { level: 1, code: 'G10', text: r('G10') },
+            { level: 0, section: true, text: es ? 'UNIVERSAL \u2014 reglas generales aplicadas al universo observable' : 'UNIVERSAL \u2014 general rules applied to the observable universe' },
+            { level: 2, code: 'U1', text: r('U1') },
+            { level: 2, code: 'U2', text: r('U2') },
+            { level: 2, code: 'U3', text: r('U3') },
+            { level: 2, code: 'U4', text: r('U4') },
+            { level: 2, code: 'U5', text: r('U5') },
+            { level: 2, code: 'U6', text: r('U6') },
+            { level: 2, code: 'U7', text: r('U7') },
+            { level: 2, code: 'U8', text: r('U8') },
+            { level: 2, code: 'U9', text: r('U9') },
+            { level: 0, section: true, text: es ? 'HUMANO \u2014 reglas universales filtradas por valoraci\u00f3n e incentivos' : 'HUMAN \u2014 universal rules filtered through valuation and incentives' },
+            { level: 3, code: 'H1', text: r('H1') },
+            { level: 3, code: 'H2', text: r('H2') },
+            { level: 3, code: 'H3', text: r('H3') },
+            { level: 3, code: 'H4', text: r('H4') },
+            { level: 3, code: 'H5', text: r('H5') },
+            { level: 3, code: 'H6', text: r('H6') },
+            { level: 3, code: 'H7', text: r('H7') },
+            { level: 3, code: 'H8', text: r('H8') },
+            { level: 3, code: 'H9', text: r('H9') },
+            { level: 3, code: 'H10', text: r('H10') },
+            { level: 3, code: 'H11', text: r('H11') },
+            { level: 3, code: 'H12', text: r('H12') },
+            { level: 0, section: true, text: es ? 'CONOCIMIENTO \u2014 c\u00f3mo sabemos lo que sabemos' : 'KNOWLEDGE \u2014 how we know what we know' },
+            { level: 4, code: 'K1', text: r('K1') },
+            { level: 4, code: 'K2', text: r('K2') },
+            { level: 4, code: 'K3', text: r('K3') },
+            { level: 4, code: 'K4', text: r('K4') },
+            { level: 4, code: 'K5', text: r('K5') },
+            { level: 4, code: 'K6', text: r('K6') },
+            { level: 4, code: 'K7', text: r('K7') },
+            { level: 4, code: 'K8', text: r('K8') },
+            { level: 0, section: true, text: es ? 'LENGUAJE \u2014 c\u00f3mo el significado se comunica' : 'LANGUAGE \u2014 how meaning is communicated' },
+            { level: 4, code: 'L1', text: r('L1') },
+            { level: 4, code: 'L2', text: r('L2') },
+            { level: 4, code: 'L3', text: r('L3') },
+            { level: 4, code: 'L4', text: r('L4') },
+            { level: 4, code: 'L5', text: r('L5') },
+            { level: 4, code: 'L6', text: r('L6') },
+            { level: 0, section: true, text: es ? '\u00c9TICA \u2014 principios de acci\u00f3n derivados de lo anterior' : 'ETHICS \u2014 principles of action derived from the above' },
+            { level: 4, code: 'E1', text: r('E1') },
+            { level: 4, code: 'E2', text: r('E2') },
+            { level: 4, code: 'E3', text: r('E3') },
+            { level: 4, code: 'E4', text: r('E4') },
+            { level: 4, code: 'E5', text: r('E5') },
+            { level: 4, code: 'E6', text: r('E6') },
+            { level: 4, code: 'E7', text: r('E7') },
+            { level: 4, code: 'E8', text: r('E8') },
+            { level: 0, section: true, text: es ? 'EST\u00c9TICA \u2014 la naturaleza del valor en la creaci\u00f3n' : 'AESTHETICS \u2014 the nature of value in creation' },
+            { level: 4, code: 'Ae1', text: r('Ae1') },
+            { level: 4, code: 'Ae2', text: r('Ae2') },
+            { level: 4, code: 'Ae3', text: r('Ae3') },
+            { level: 4, code: 'Ae4', text: r('Ae4') },
+            { level: 4, code: 'Ae5', text: r('Ae5') },
+        ];
+
+        let html = '';
+        hierarchy.forEach(r => {
+            if (r.section) {
+                html += `\n<span class="s-section">${esc(r.text)}</span>\n`;
+            } else if (r.level === 0 && r.code && r.code.startsWith('A')) {
+                html += `<span class="s-cyan">${r.code}</span> <span class="${r.color}">${esc(r.text)}</span>\n`;
+            } else {
+                const indent = '  '.repeat(r.level);
+                const codeSpan = `<span class="rule-ref" data-tip="${esc(r.text)}">${r.code}</span>`;
+                html += `${indent}${codeSpan} <span class="s-cmt">${esc(r.text)}</span>\n`;
+            }
+        });
+
+        rulesBlock.innerHTML = `<div class="gutter">${gutterLines(html.split('\n').length)}</div><div class="code">${html}</div>`;
+        c.appendChild(rulesBlock);
+    }
+
+    function esc(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    function parseDrafts(text) {
+        const drafts = [];
+        const clean = text.replace(/<!--BORRADOR:(.*?)-->/g, (_, json) => {
+            try {
+                const d = JSON.parse(json);
+                if (!d.t || !d.d) return '';  // skip malformed drafts
+                d.id = Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+                d.date = new Date().toISOString();
+                drafts.push(d);
+            } catch(e) {}
+            return '';
+        }).replace(/\n{3,}$/g, '\n\n').trimEnd();
+        if (drafts.length) {
+            state.drafts = [...drafts, ...state.drafts];
+            localStorage.setItem('vu_drafts', JSON.stringify(state.drafts));
+            updateDraftBadge();
+        }
+        return clean;
+    }
+
+    function updateDraftBadge() {
+        const badge = $('#draft-badge');
+        if (badge) badge.textContent = state.drafts.length || '';
+        const link = $('#nav-borrador');
+        if (link) link.style.display = state.drafts.length ? '' : 'none';
+    }
+
+    function renderDrafts() {
+        const output = $('#output');
+        output.innerHTML = '';
+        const es = state.lang === 'es';
+        if (!state.drafts.length) {
+            output.innerHTML = `<div class="s-cmt" style="padding:12px 0">${es ? '// sin borradores' : '// no drafts'}</div>`;
+            return;
+        }
+        state.drafts.forEach((d, i) => {
+            const block = document.createElement('div');
+            block.className = 'code-block';
+            block.style.marginBottom = '12px';
+            const lines = [
+                `<span class="s-section">${esc(d.t)}</span>`,
+                `<span class="s-cmt">${es ? 'uso com\u00fan' : 'common usage'}:</span> <span class="s-orange">${esc(d.u)}</span>`,
+                `<span class="s-cmt">${es ? 'definici\u00f3n propuesta' : 'proposed definition'}:</span> <span class="s-bright">${esc(d.d)}</span>`,
+                `<span class="s-cmt">${es ? 'contextos' : 'contexts'}:</span> <span class="s-cyan">${(d.c||[]).map(c => esc(c)).join(', ')}</span>`,
+                `<span class="s-cmt">${es ? 'cruce' : 'cross-ref'}:</span> <span class="s-purple">${(d.x||[]).map(x => esc(x)).join(', ')}</span>`,
+                `<span class="s-cmt">// ${new Date(d.date).toLocaleDateString()}</span>`,
+            ];
+            const html = lines.join('\n');
+            block.innerHTML = `<div class="gutter">${gutterLines(lines.length)}</div><div class="code">${html}</div>`;
+            const acts = document.createElement('div');
+            acts.className = 'actions';
+            const btnCp = document.createElement('button');
+            btnCp.className = 'btn btn-sm'; btnCp.textContent = es ? 'copiar' : 'copy';
+            btnCp.addEventListener('click', () => {
+                const txt = `${d.t}\nUso com\u00fan: ${d.u}\nDefinici\u00f3n: ${d.d}\nContextos: ${(d.c||[]).join(', ')}\nCruce: ${(d.x||[]).join(', ')}`;
+                navigator.clipboard.writeText(txt);
+                btnCp.textContent = es ? 'copiado' : 'copied';
+                setTimeout(() => btnCp.textContent = es ? 'copiar' : 'copy', 1500);
+            });
+            acts.appendChild(btnCp);
+            const btnDel = document.createElement('button');
+            btnDel.className = 'btn btn-sm'; btnDel.textContent = es ? 'eliminar' : 'delete';
+            btnDel.addEventListener('click', () => {
+                state.drafts.splice(i, 1);
+                localStorage.setItem('vu_drafts', JSON.stringify(state.drafts));
+                updateDraftBadge();
+                renderDrafts();
+            });
+            acts.appendChild(btnDel);
+            block.appendChild(acts);
+            output.appendChild(block);
+        });
+    }
+
+    function exportHierarchy() {
+        const data = {
+            version: 1,
+            exported: new Date().toISOString(),
+            axioms: ['A0','A1','A2','A3'].map(k => ({ code: k, text: { A0:'Existence exists', A1:'Consciousness: awareness of existence exists', A2:'Identity: a thing is what it is (A = A)', A3:'Causality: entities act according to their nature' }[k] })),
+            rules: Object.entries(RULES).map(([code, text]) => ({ code, text })),
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `lc-export-${today()}.json`;
+        a.click(); URL.revokeObjectURL(url);
+    }
+
+    function importHierarchy(file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const data = JSON.parse(e.target.result);
+                alert(state.lang === 'es' ? 'Importado correctamente' : 'Imported successfully');
+                if (state.currentTab === 'knowledge') renderIntegrated();
+            } catch { alert('Invalid file'); }
+        };
+        reader.readAsText(file);
+    }
+
+    function today() { return new Date().toISOString().split('T')[0]; }
+
+    function shareAnalysis(item) {
+        const text = `${item.candidate}\n\n${item.analysis}\n\n\u2014 nicomaco.org`;
+        if (navigator.share) {
+            navigator.share({ title: 'Nicómaco', text }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(text);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+    })();
+
+    // Service Worker registration
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "verdades-universales",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sw.js",
+  "scripts": {
+    "build": "rm -rf dist && mkdir dist && cp index.html pro.html manifest.json sw.js icon-192.png icon-512.png apple-touch-icon.png dist/",
+    "sync": "npm run build && npx cap sync ios",
+    "open": "npx cap open ios",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joseandv-creator/nicomaco.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/joseandv-creator/nicomaco/issues"
+  },
+  "homepage": "https://github.com/joseandv-creator/nicomaco#readme",
+  "dependencies": {
+    "@capacitor/cli": "^8.2.0",
+    "@capacitor/core": "^8.2.0",
+    "@capacitor/ios": "^8.2.0"
+  }
+}
