@@ -1,7 +1,7 @@
 {
   "name": "Nicómaco",
   "short_name": "Nicómaco",
-  "description": "Analyze ideas with objective philosophical criteria. A is A.",
+  "description": "Applied philosophy for real life decisions.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0a",
