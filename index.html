@@ -489,6 +489,35 @@
             color: var(--cyan);
             font-weight: 700;
         }
+        .protocol-steps { margin-top: 8px; }
+        .protocol-step {
+            padding: 10px 0 10px 28px;
+            border-bottom: 1px solid var(--border);
+            line-height: 1.7;
+            position: relative;
+        }
+        .protocol-step:last-of-type { border-bottom: none; }
+        .step-number {
+            position: absolute;
+            left: 0;
+            color: var(--comment);
+            font-weight: 600;
+        }
+        .step-name {
+            color: var(--cyan);
+            font-weight: 700;
+        }
+        .verdict-list {
+            padding-left: 28px;
+            margin-top: 4px;
+        }
+        .verdict-item {
+            padding: 4px 0;
+            line-height: 1.6;
+        }
+        .verdict-label {
+            font-weight: 700;
+        }
 
         /* -- welcome -- */
         .welcome-block { text-align: center; padding: 60px 20px 40px; }
@@ -576,7 +605,7 @@
 
             <div class="tabs">
                 <button class="tab active" data-tab="tool">tool</button>
-                <button class="tab" data-tab="knowledge">knowledge</button>
+                <button class="tab" data-tab="knowledge">teoría</button>
             </div>
 
             <div id="tab-tool" class="tab-content">
@@ -593,11 +622,7 @@
             </div>
 
 <div id="tab-knowledge" class="tab-content" style="display:none">
-                <div class="knowledge-nav">
-                    <button class="knowledge-btn active" data-section="motives">motives</button>
-                    <button class="knowledge-btn" data-section="hierarchy">hierarchy</button>
-                    <button class="knowledge-btn" data-section="glossary">glossary</button>
-                </div>
+                <!-- sub-nav removed: all sections flow continuously -->
 
                 <!-- ═══ MOTIVES ═══ -->
                 <div id="knowledge-motives" class="knowledge-section">
@@ -666,68 +691,40 @@
                     <div class="motives-section">
                         <div class="section-title en-only">III. How It Works</div>
                         <div class="section-title es-only">III. Cómo Funciona</div>
-                        <div class="code-section en-only">
-<span class="s-cmt">The protocol operates in 6 steps:</span>
-
-<span class="s-kw">1. DECOMPOSITION</span>
-   your candidate is separated into: subject, object, relation, value sought
-
-<span class="s-kw">2. SCORING</span>
-   each component is scored from 0.0 to 1.0
-   the total score is the product — if anything is zero, everything collapses
-
-<span class="s-kw">3. UNIVERSALITY</span>
-   tested across 4+ unrelated domains
-   if it doesn't survive in biology, economics, physics AND psychology
-   it's not universal — it's local
-
-<span class="s-kw">4. INHERITANCE</span>
-   where does this idea come from? did you derive it or inherit it?
-   a belief repeated a thousand times is not a truth
-
-<span class="s-kw">5. REDUNDANCY</span>
-   does this truth already exist in another form?
-   if so, does your formulation add something new?
-
-<span class="s-kw">6. VERDICT</span>
-   <span style="color:var(--red)">COLLAPSE</span>     = rejected
-   <span style="color:var(--yellow)">PARTIAL</span>      = dangerous, looks true but fails under pressure
-   <span style="color:var(--yellow)">PROVISIONAL</span>  = viable, needs more territory
-   <span style="color:var(--green)">NAVIGABLE</span>    = solid, ready to use
-   <span style="color:var(--green)">CLOSED</span>       = its negation destroys itself
+                        <div class="en-only protocol-steps">
+                            <p class="dim" style="margin-bottom:16px;font-style:italic">The protocol operates in 6 steps:</p>
+                            <div class="protocol-step"><span class="step-number">1.</span><span class="step-name">Decomposition</span> — Your candidate is separated into its components: subject, object, relation, and value sought.</div>
+                            <div class="protocol-step"><span class="step-number">2.</span><span class="step-name">Scoring</span> — Each component is scored from 0.0 to 1.0. The total score is the product — if anything is zero, everything collapses.</div>
+                            <div class="protocol-step"><span class="step-number">3.</span><span class="step-name">Universality</span> — Tested across 4+ unrelated domains. If it doesn't survive in biology, economics, physics and psychology, it's not universal — it's local.</div>
+                            <div class="protocol-step"><span class="step-number">4.</span><span class="step-name">Inheritance</span> — Where does this idea come from? Did you derive it or inherit it? A belief repeated a thousand times is not a truth.</div>
+                            <div class="protocol-step"><span class="step-number">5.</span><span class="step-name">Redundancy</span> — Does this truth already exist in another form? If so, does your formulation add something new?</div>
+                            <div class="protocol-step"><span class="step-number">6.</span><span class="step-name">Verdict</span> — The final classification of the candidate:</div>
+                            <div class="verdict-list">
+                                <div class="verdict-item"><span class="verdict-label" style="color:#b44">Collapse</span> — Rejected.</div>
+                                <div class="verdict-item"><span class="verdict-label" style="color:#b87">Partial</span> — Dangerous: looks true but fails under pressure.</div>
+                                <div class="verdict-item"><span class="verdict-label" style="color:#b87">Provisional</span> — Viable, needs more territory.</div>
+                                <div class="verdict-item"><span class="verdict-label" style="color:#5a7">Navigable</span> — Solid, ready to use.</div>
+                                <div class="verdict-item"><span class="verdict-label" style="color:#5a7">Closed</span> — Its negation destroys itself.</div>
+                            </div>
+                            <p class="dim" style="margin-top:16px;font-style:italic">You can challenge any verdict with territory evidence. Territory always wins.</p>
                         </div>
-                        <div class="code-section es-only">
-<span class="s-cmt">El protocolo opera en 6 pasos:</span>
-
-<span class="s-kw">1. DESCOMPOSICION</span>
-   tu candidata se separa en: sujeto, objeto, relacion, valor buscado
-
-<span class="s-kw">2. PUNTUACION</span>
-   cada componente se puntua de 0.0 a 1.0
-   la puntuacion total es el producto — si algo es cero, todo colapsa
-
-<span class="s-kw">3. UNIVERSALIDAD</span>
-   se prueba en 4+ dominios no relacionados
-   si no sobrevive en biologia, economia, fisica Y psicologia
-   no es universal — es local
-
-<span class="s-kw">4. HERENCIA</span>
-   de donde viene esta idea? la derivaste o la heredaste?
-   una creencia repetida mil veces no es una verdad
-
-<span class="s-kw">5. REDUNDANCIA</span>
-   esta verdad ya existe en otra forma?
-   si es asi, tu formulacion agrega algo nuevo?
-
-<span class="s-kw">6. VEREDICTO</span>
-   <span style="color:var(--red)">COLAPSO</span>      = rechazada
-   <span style="color:var(--yellow)">PARCIAL</span>      = peligrosa, parece verdad pero falla bajo presion
-   <span style="color:var(--yellow)">PROVISIONAL</span>  = viable, necesita mas territorio
-   <span style="color:var(--green)">NAVEGABLE</span>    = solida, lista para usar
-   <span style="color:var(--green)">CERRADA</span>      = su negacion se destruye a si misma
+                        <div class="es-only protocol-steps">
+                            <p class="dim" style="margin-bottom:16px;font-style:italic">El protocolo opera en 6 pasos:</p>
+                            <div class="protocol-step"><span class="step-number">1.</span><span class="step-name">Descomposición</span> — Tu candidata se separa en sus componentes: sujeto, objeto, relación y valor buscado.</div>
+                            <div class="protocol-step"><span class="step-number">2.</span><span class="step-name">Puntuación</span> — Cada componente se puntúa de 0.0 a 1.0. La puntuación total es el producto — si algo es cero, todo colapsa.</div>
+                            <div class="protocol-step"><span class="step-number">3.</span><span class="step-name">Universalidad</span> — Se prueba en 4+ dominios no relacionados. Si no sobrevive en biología, economía, física y psicología, no es universal — es local.</div>
+                            <div class="protocol-step"><span class="step-number">4.</span><span class="step-name">Herencia</span> — ¿De dónde viene esta idea? ¿La derivaste o la heredaste? Una creencia repetida mil veces no es una verdad.</div>
+                            <div class="protocol-step"><span class="step-number">5.</span><span class="step-name">Redundancia</span> — ¿Esta verdad ya existe en otra forma? Si es así, ¿tu formulación agrega algo nuevo?</div>
+                            <div class="protocol-step"><span class="step-number">6.</span><span class="step-name">Veredicto</span> — La clasificación final de la candidata:</div>
+                            <div class="verdict-list">
+                                <div class="verdict-item"><span class="verdict-label" style="color:#b44">Colapso</span> — Rechazada.</div>
+                                <div class="verdict-item"><span class="verdict-label" style="color:#b87">Parcial</span> — Peligrosa: parece verdad pero falla bajo presión.</div>
+                                <div class="verdict-item"><span class="verdict-label" style="color:#b87">Provisional</span> — Viable, necesita más territorio.</div>
+                                <div class="verdict-item"><span class="verdict-label" style="color:#5a7">Navegable</span> — Sólida, lista para usar.</div>
+                                <div class="verdict-item"><span class="verdict-label" style="color:#5a7">Cerrada</span> — Su negación se destruye a sí misma.</div>
+                            </div>
+                            <p class="dim" style="margin-top:16px;font-style:italic">Puedes desafiar cualquier veredicto con evidencia de territorio. El territorio siempre gana.</p>
                         </div>
-                        <p class="dim en-only" style="font-style:italic">You can challenge any verdict with territory evidence. Territory always wins.</p>
-                        <p class="dim es-only" style="font-style:italic">Puedes desafiar cualquier veredicto con evidencia de territorio. El territorio siempre gana.</p>
                     </div>
 
                     <!-- PRINCIPLES -->
@@ -750,30 +747,12 @@
                         </div>
                     </div>
 
-                    <!-- SUPPORT -->
-                    <div class="motives-section">
-                        <div class="section-title en-only">V. Support the Project</div>
-                        <div class="section-title es-only">V. Apoyar el Proyecto</div>
-                        <div class="en-only">
-                            <p>This project is free and open. If it expands your map, you can support its development.</p>
-                            <div class="donate-box">
-                                <p class="dim" style="font-style:italic">The project sustains itself by the value it generates, not by the persuasion of asking for it.</p>
-                                <p style="margin-top:12px"><span style="font-weight:600">BTC:</span> <span style="color:var(--comment);font-family:var(--font-mono);font-size:12px;word-break:break-all">bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5</span></p>
-                            </div>
-                        </div>
-                        <div class="es-only">
-                            <p>Este proyecto es gratuito y abierto. Si expande tu mapa, puedes apoyar su desarrollo.</p>
-                            <div class="donate-box">
-                                <p class="dim" style="font-style:italic">El proyecto se sostiene por el valor que genera, no por la persuasión de pedirlo.</p>
-                                <p style="margin-top:12px"><span style="font-weight:600">BTC:</span> <span style="color:var(--comment);font-family:var(--font-mono);font-size:12px;word-break:break-all">bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5</span></p>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
                 <!-- ═══ HIERARCHY ═══ -->
-                <div id="knowledge-hierarchy" class="knowledge-section" style="display:none">
+                <div class="section-title knowledge-divider en-only" style="margin-top:40px">Hierarchy</div>
+                <div class="section-title knowledge-divider es-only" style="margin-top:40px">Jerarquía</div>
+                <div id="knowledge-hierarchy" class="knowledge-section">
                     <div id="integrated-list"></div>
                     <div class="actions" style="margin-top:12px">
                         <button class="btn btn-sm" id="btn-export">export JSON</button>
@@ -782,7 +761,9 @@
                 </div>
 
                 <!-- ═══ GLOSSARY ═══ -->
-                <div id="knowledge-glossary" class="knowledge-section" style="display:none">
+                <div class="section-title knowledge-divider en-only" style="margin-top:40px">Glossary</div>
+                <div class="section-title knowledge-divider es-only" style="margin-top:40px">Glosario</div>
+                <div id="knowledge-glossary" class="knowledge-section">
                     <div class="search-bar">
                         <input type="text" id="glossary-search" placeholder="> search definitions..." />
                     </div>
@@ -1627,6 +1608,26 @@
                     </div>
                 </div>
 
+                <!-- ═══ SUPPORT ═══ -->
+                <div class="section-title knowledge-divider en-only" style="margin-top:40px">Support the Project</div>
+                <div class="section-title knowledge-divider es-only" style="margin-top:40px">Apoyar el Proyecto</div>
+                <div class="knowledge-section" style="padding:20px">
+                    <div class="en-only">
+                        <p>This project is free and open. If it expands your map, you can support its development.</p>
+                        <div class="donate-box">
+                            <p class="dim" style="font-style:italic">The project sustains itself by the value it generates, not by the persuasion of asking for it.</p>
+                            <p style="margin-top:12px"><span style="font-weight:600">BTC:</span> <span style="color:var(--comment);font-family:var(--font-mono);font-size:12px;word-break:break-all">bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5</span></p>
+                        </div>
+                    </div>
+                    <div class="es-only">
+                        <p>Este proyecto es gratuito y abierto. Si expande tu mapa, puedes apoyar su desarrollo.</p>
+                        <div class="donate-box">
+                            <p class="dim" style="font-style:italic">El proyecto se sostiene por el valor que genera, no por la persuasión de pedirlo.</p>
+                            <p style="margin-top:12px"><span style="font-weight:600">BTC:</span> <span style="color:var(--comment);font-family:var(--font-mono);font-size:12px;word-break:break-all">bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5</span></p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -2236,7 +2237,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         en: {
             subtitle: 'analyze ideas and texts with objective criteria from language, epistemology, and ethics',
             tool: 'tool',
-            knowledge: 'knowledge',
+            knowledge: 'theory',
             motives: 'motives',
             hierarchy: 'hierarchy',
             glossary: 'glossary',
@@ -2262,7 +2263,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         es: {
             subtitle: 'analiza ideas y textos con criterios objetivos del lenguaje, epistemología y ética',
             tool: 'herramienta',
-            knowledge: 'conocimiento',
+            knowledge: 'teoría',
             motives: 'motivos',
             hierarchy: 'jerarqu\u00eda',
             glossary: 'glosario',
@@ -2394,16 +2395,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             setTimeout(() => { el.innerHTML = 'btc &#9671;'; }, 2000);
         });
 
-        // Knowledge sub-navigation
-        $$('.knowledge-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const section = btn.dataset.section;
-                $$('.knowledge-btn').forEach(b => b.classList.toggle('active', b.dataset.section === section));
-                $$('.knowledge-section').forEach(s => s.style.display = 'none');
-                $(`#knowledge-${section}`).style.display = '';
-                if (section === 'hierarchy') renderIntegrated();
-            });
-        });
+        // Knowledge sections all visible (continuous scroll)
+        $$('.knowledge-section').forEach(s => s.style.display = '');
 
         // Glossary section toggle (delegated)
         const glossarySections = $('#glossary-sections');
