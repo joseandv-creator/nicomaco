@@ -1914,7 +1914,9 @@ OUTPUT STRUCTURE (in this order):
 - Ética: who gains if you believe this? Follow the money/attention/power. Omissions \u2014 what's missing that would change the conclusion?
 Only what's substantive. Skip empty categories.
 
-4. VEREDICTO \u2014 What remains after the analysis? What is solid, what to discard, what changes in what they do next? If a stolen concept was detected, propose it as a new detector. CRITICAL: verdict \u2264 evidence. Build toward the conclusion \u2014 data first, analysis second, verdict last.
+4. RAMAS EN JUEGO \u2014 Name which branches of philosophy are operating in the input: metaphysics, epistemology, ethics, politics, aesthetics. For each branch present, one sentence explaining what philosophical question the input is touching and how. Only branches that genuinely appear. This maps the territory the input occupies.
+
+5. VEREDICTO \u2014 What remains after the analysis? What is solid, what to discard, what changes in what they do next? If a stolen concept was detected, propose it as a new detector. CRITICAL: verdict \u2264 evidence. Build toward the conclusion \u2014 data first, analysis second, verdict last.
 
 Internal reference categories (use to classify, never show raw labels to user):
 Empirical fact, inference, deduction, conjecture, value judgment, speculation, falsehood, fallacy, omission, presupposition. Describe them in prose when relevant.
@@ -2061,7 +2063,8 @@ Follow the WEB PAGE ANALYSIS output structure from the system prompt:
 1. PRODUCTOR
 2. LO QUE IMPORTA PARA TU VB
 3. MENTIRAS, CONCEPTOS ROBADOS, INCENTIVOS PERVERSOS
-4. VEREDICTO`;
+4. RAMAS EN JUEGO
+5. VEREDICTO`;
 
     const CHALLENGE_PROMPT = `The user challenges the previous analysis with territory evidence:
 
@@ -2681,7 +2684,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
     function highlightURLLine(raw) {
         let line = esc(raw);
-        if (/^(PRODUCTOR|LO QUE IMPORTA|MENTIRAS|CONCEPTOS ROBADOS|INCENTIVOS PERVERSOS|VEREDICTO|SOURCE AUDIT|CLAIMS DETECTED|TERRITORY CHECK|INHERITANCE ANALYSIS|INFORMATION QUALITY|EXTRACTED TRUTHS)\b/i.test(line))
+        if (/^(PRODUCTOR|LO QUE IMPORTA|MENTIRAS|CONCEPTOS ROBADOS|INCENTIVOS PERVERSOS|RAMAS EN JUEGO|VEREDICTO|SOURCE AUDIT|CLAIMS DETECTED|TERRITORY CHECK|INHERITANCE ANALYSIS|INFORMATION QUALITY|EXTRACTED TRUTHS)\b/i.test(line))
             return `<span class="s-section">${line}</span>`;
         if (/^\*\*\d+\.\s/.test(line))
             return `<span class="s-section">${line}</span>`;
@@ -2701,7 +2704,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
     function highlightLine(raw) {
         let line = esc(raw);
-        if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|RESCUE|MAP VALUE|PRODUCTOR|VEREDICTO)\b/.test(line))
+        if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|RESCUE|MAP VALUE|PRODUCTOR|RAMAS EN JUEGO|VEREDICTO)\b/.test(line))
             return `<span class="s-section">${line}</span>`;
         if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
         let mainPart = line, commentPart = '';
