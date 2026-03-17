@@ -453,6 +453,59 @@
             letter-spacing: 0.5px;
         }
 
+        /* Collapsible sections */
+        .motives-section.collapsible > .section-title {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 24px;
+        }
+        .motives-section.collapsible > .section-title::after {
+            content: '>';
+            position: absolute;
+            right: 0;
+            font-size: 14px;
+            font-family: var(--font-mono);
+            color: var(--comment);
+            transition: transform 0.3s;
+            transform: rotate(90deg);
+        }
+        .motives-section.collapsible.collapsed > .section-title::after {
+            transform: rotate(0deg);
+        }
+        .motives-section.collapsible > .collapsible-body {
+            overflow: hidden;
+            max-height: 2000px;
+            transition: max-height 0.4s ease, opacity 0.3s;
+            opacity: 1;
+        }
+        .motives-section.collapsible.collapsed > .collapsible-body {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        /* Branches more toggle (inline within Five Branches) */
+        .branches-more-toggle {
+            cursor: pointer;
+            color: var(--comment);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-style: italic;
+            padding: 8px 0;
+            transition: color 0.2s;
+        }
+        .branches-more-toggle:hover { color: var(--cyan); }
+        .branches-more-body {
+            overflow: hidden;
+            max-height: 2000px;
+            transition: max-height 0.4s ease, opacity 0.3s;
+            opacity: 1;
+        }
+        .branches-more.collapsed .branches-more-body {
+            max-height: 0;
+            opacity: 0;
+        }
+
         .pillars {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -862,31 +915,42 @@
                         </div>
                         <div class="en-only protocol-steps">
                             <div class="protocol-step"><span class="step-number">1.</span><span class="step-name">Metaphysics</span> — What exists? Reality exists independent of consciousness. Things have identity. A is A. The system takes this position because the alternative — that reality is subjective or constructed — makes knowledge impossible and action arbitrary.</div>
+                            <div class="branches-more collapsed" data-collapsed-label="+ Epistemology, Ethics, Politics, Aesthetics" data-expanded-label="&minus;">
+                            <div class="branches-more-toggle en-only">+ Epistemology, Ethics, Politics, Aesthetics</div>
+                            <div class="branches-more-body">
                             <div class="protocol-step"><span class="step-number">2.</span><span class="step-name">Epistemology</span> — How do we know it? Through reason applied to the evidence of the senses. Knowledge is identification that has survived verification. The system takes this position because the alternatives — revelation, authority, consensus, feeling — produce maps that cannot be corrected.</div>
                             <div class="protocol-step"><span class="step-number">3.</span><span class="step-name">Ethics</span> — What should we do? Act according to rational values with life as the standard. The individual is the unit of value, action, and rights. The system takes this position because any ethics that subordinates the individual to the collective destroys the subject who values.</div>
                             <div class="protocol-step"><span class="step-number">4.</span><span class="step-name">Politics</span> — How should we live together? Under a system that bans the initiation of force. The state exists solely to protect individual rights through police, military, and courts. The system takes this position because every system that grants the state power beyond protection has historically degraded the individual and destroyed production.</div>
                             <div class="protocol-step"><span class="step-number">5.</span><span class="step-name">Aesthetics</span> — What does it mean? Art is selective re-creation of reality according to the artist's deepest values. It makes the abstract visible. The system takes this position because art that serves no values is decoration, and art that serves imposed values is propaganda.</div>
                             <p style="margin-top:16px">Each branch depends on the one before it. Ethics without epistemology is dogma. Politics without ethics is power. Aesthetics without metaphysics is decoration.</p>
+                            </div>
+                            </div>
                         </div>
                         <div class="es-only protocol-steps">
                             <div class="protocol-step"><span class="step-number">1.</span><span class="step-name">Metafisica</span> — Que existe? La realidad existe independiente de la consciencia. Las cosas tienen identidad. A es A. El sistema toma esta posicion porque la alternativa — que la realidad sea subjetiva o construida — hace imposible el conocimiento y arbitraria la accion.</div>
+                            <div class="branches-more collapsed" data-collapsed-label="+ Epistemologia, Etica, Politica, Estetica" data-expanded-label="&minus;">
+                            <div class="branches-more-toggle es-only">+ Epistemologia, Etica, Politica, Estetica</div>
+                            <div class="branches-more-body">
                             <div class="protocol-step"><span class="step-number">2.</span><span class="step-name">Epistemologia</span> — Como lo sabemos? Mediante la razon aplicada a la evidencia de los sentidos. El conocimiento es identificacion que ha sobrevivido la verificacion. El sistema toma esta posicion porque las alternativas — revelacion, autoridad, consenso, sentimiento — producen mapas que no pueden corregirse.</div>
                             <div class="protocol-step"><span class="step-number">3.</span><span class="step-name">Etica</span> — Que debemos hacer? Actuar segun valores racionales con la vida como estandar. El individuo es la unidad de valor, accion y derechos. El sistema toma esta posicion porque toda etica que subordine al individuo al colectivo destruye al sujeto que valora.</div>
                             <div class="protocol-step"><span class="step-number">4.</span><span class="step-name">Politica</span> — Como vivimos juntos? Bajo un sistema que prohiba la iniciacion de la fuerza. El estado existe unicamente para proteger los derechos individuales mediante policia, milicia y poder judicial. El sistema toma esta posicion porque todo sistema que otorgue al estado poder mas alla de la proteccion ha degradado historicamente al individuo y destruido la produccion.</div>
                             <div class="protocol-step"><span class="step-number">5.</span><span class="step-name">Estetica</span> — Que significa? El arte es re-creacion selectiva de la realidad segun los valores mas profundos del artista. Hace visible lo abstracto. El sistema toma esta posicion porque arte que no sirve a valores es decoracion, y arte que sirve a valores impuestos es propaganda.</div>
                             <p style="margin-top:16px">Cada rama depende de la anterior. Etica sin epistemologia es dogma. Politica sin etica es poder. Estetica sin metafisica es decoracion.</p>
+                            </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- III. METHOD -->
-                    <div class="motives-section">
+                    <!-- IV. METHOD -->
+                    <div class="motives-section collapsible collapsed">
                         <div class="section-title en-only">IV. Method</div>
                         <div class="section-title es-only">IV. Metodo</div>
+                        <div class="collapsible-body">
                         <div class="en-only">
-                            <p class="dim" style="font-style:italic">The system applies three instruments, follows eight reasoning rules, and thinks through six cumulative steps:</p>
+                            <p class="dim" style="font-style:italic">The system applies three instruments, follows nine reasoning rules, and thinks through six cumulative steps:</p>
                         </div>
                         <div class="es-only">
-                            <p class="dim" style="font-style:italic">El sistema aplica tres instrumentos, sigue ocho reglas de razonamiento y piensa en seis pasos acumulativos:</p>
+                            <p class="dim" style="font-style:italic">El sistema aplica tres instrumentos, sigue nueve reglas de razonamiento y piensa en seis pasos acumulativos:</p>
                         </div>
 
                         <!-- III-a. Three Lenses -->
@@ -919,6 +983,7 @@
                             <div class="protocol-step"><span class="step-number">6.</span><span class="step-name">Objective, not neutral</span> — Objectivity follows evidence and logic wherever they lead. Neutrality treats all positions as equal regardless of evidence. This system is objective.</div>
                             <div class="protocol-step"><span class="step-number">7.</span><span class="step-name">Ultimate consequences</span> — Guide every concept and every idea to its final logical consequence. If it leads to destruction, say destruction. If it leads to flourishing, say flourishing. Do not stop at intermediate conclusions.</div>
                             <div class="protocol-step"><span class="step-number">8.</span><span class="step-name">The Socratic Blade</span> — After confirming a valid chain, end with a question that pushes the user one step beyond where they already are. Not a question that doubts — a question that extends. Force the user to apply the confirmed logic to their own life or the next territory they haven't examined.</div>
+                            <div class="protocol-step"><span class="step-number">9.</span><span class="step-name">Ask before denying</span> — When something could be imprecise, do not rush to question or relativize. First ask genuine, specific questions that help reach a better conclusion. Not open-ended. Not academic. Questions that extract the information needed to evaluate the claim properly.</div>
                         </div>
                         <div class="es-only protocol-steps">
                             <div class="protocol-step"><span class="step-number">1.</span><span class="step-name">Seguir la cadena</span> — Si A causa B causa C, trazar hasta el final. Verificar cada eslabon. Si se sostiene, decirlo y continuar.</div>
@@ -929,6 +994,7 @@
                             <div class="protocol-step"><span class="step-number">6.</span><span class="step-name">Objetivo, no neutral</span> — Objetividad sigue la evidencia y la logica a donde lleven. Neutralidad trata todas las posiciones como iguales sin importar la evidencia. Este sistema es objetivo.</div>
                             <div class="protocol-step"><span class="step-number">7.</span><span class="step-name">Ultimas consecuencias</span> — Guiar cada concepto y cada idea hasta su consecuencia logica final. Si lleva a destruccion, decir destruccion. Si lleva a florecimiento, decir florecimiento. No detenerse en conclusiones intermedias.</div>
                             <div class="protocol-step"><span class="step-number">8.</span><span class="step-name">El Filo Socratico</span> — Despues de confirmar una cadena valida, terminar con una pregunta que empuje al usuario un paso mas alla de donde ya esta. No una pregunta que dude — una que extienda. Forzar al usuario a aplicar la logica confirmada a su propia vida o al siguiente territorio que no ha examinado.</div>
+                            <div class="protocol-step"><span class="step-number">9.</span><span class="step-name">Preguntar antes de negar</span> — Cuando algo puede ser impreciso, no apresurarse a cuestionar o relativizar. Primero hacer preguntas genuinas y especificas que ayuden a llegar a una mejor conclusion. No abiertas. No academicas. Preguntas que extraigan la informacion necesaria para evaluar la afirmacion correctamente.</div>
                         </div>
 
                         <!-- III-c. The Blade -->
@@ -952,12 +1018,14 @@
                             <div class="protocol-step"><span class="step-number">5.</span><span class="step-name">Composicion</span> — Cada detector hace el siguiente analisis mas rapido. La inteligencia no es velocidad de procesamiento — es densidad de detectores verificados acumulados.</div>
                             <div class="protocol-step"><span class="step-number">6.</span><span class="step-name">Autoauditoria</span> — Aplicar los detectores al sistema mismo. Si un detector almacenado contradice territorio nuevo verificado, el detector muere. No el territorio. Esto separa claridad de rigidez.</div>
                         </div>
+                        </div><!-- /collapsible-body -->
                     </div>
 
-                    <!-- IV. PRINCIPLES -->
-                    <div class="motives-section">
+                    <!-- V. PRINCIPLES -->
+                    <div class="motives-section collapsible collapsed">
                         <div class="section-title en-only">V. Principles</div>
                         <div class="section-title es-only">V. Principios</div>
+                        <div class="collapsible-body">
                         <div class="en-only principles-list">
                             <p class="dim" style="margin-bottom:16px;font-style:italic">Rules that govern this project:</p>
                             <div class="principle"><span class="principle-name">Total Transparency</span> — Integrated truths are public. The process is visible. If something can't withstand light, it's not truth.</div>
@@ -972,6 +1040,7 @@
                             <div class="principle"><span class="principle-name">Sin Autoridad</span> — No importa quien lo dijo. Importa si sobrevive la eliminacion. Einstein, tu vecino, o un nino de 10 — mismo protocolo.</div>
                             <div class="principle"><span class="principle-name">Sujeto Primero</span> — El fin no es acumular verdades. Es construir al sujeto que las opera. Cada verdad es un instrumento, no un trofeo.</div>
                         </div>
+                        </div><!-- /collapsible-body -->
                     </div>
 
                 </div>
@@ -1805,6 +1874,8 @@ HONEST REASONING \u2014 MANDATORY:
 
 8. THE SOCRATIC BLADE \u2014 After confirming a valid chain and tracing its consequences, end with a question that pushes the user one step beyond where they already are. Not a question that doubts \u2014 a question that extends. The question should force the user to apply the confirmed logic to their own life, their own decisions, or the next territory they haven't examined yet. The Socratic method is not for hedging. It is for cutting deeper. Example: after confirming "socialism destroys production", ask "if this mechanism operates in total centralization, at what point does partial centralization begin producing the same effect in your own country?"
 
+9. ASK BEFORE RUSHING TO DENY \u2014 When the user states something that could be imprecise, do NOT rush to question or relativize. First ask genuine, specific questions that help reach a better conclusion. Not open-ended questions. Not academic questions. Questions that extract the specific information needed to evaluate the claim properly. Example: if user says "Rand is the greatest mind of the 20th century", do not immediately say "greatest by what criterion?" Instead ask: "What specific discovery or integration by Rand changed how you see reality? That will tell us what dimension of greatness you are measuring." The goal is to help the user sharpen their own claim, not to tear it down.
+
 ---
 
 ## THE BLADE \u2014 HOW THE SYSTEM THINKS
@@ -2440,6 +2511,20 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         // Main content tabs
         $$('[data-tab]').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
 
+        // Collapsible theory sections (click title to toggle)
+        $$('.motives-section.collapsible > .section-title').forEach(el => {
+            el.addEventListener('click', () => el.parentElement.classList.toggle('collapsed'));
+        });
+        $$('.branches-more-toggle').forEach(el => {
+            el.addEventListener('click', () => {
+                const wrapper = el.parentElement;
+                wrapper.classList.toggle('collapsed');
+                const isCollapsed = wrapper.classList.contains('collapsed');
+                const label = isCollapsed ? wrapper.dataset.collapsedLabel : wrapper.dataset.expandedLabel;
+                el.textContent = label || (isCollapsed ? '+' : '\u2212');
+            });
+        });
+
         // Export/Import
         $('#btn-export').addEventListener('click', exportHierarchy);
         $('#btn-import').addEventListener('change', e => { if (e.target.files[0]) importHierarchy(e.target.files[0]); e.target.value = ''; });
@@ -2913,7 +2998,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     function highlightURL(text) { return text.split('\n').map(l => highlightURLLine(l)).join('\n'); }
 
     function highlightURLLine(raw) {
-        let line = esc(raw);
+        let line = esc(raw.replace(/\*{1,3}/g, ''));
         if (/^(PRODUCTOR|LO QUE IMPORTA|MENTIRAS|CONCEPTOS ROBADOS|INCENTIVOS PERVERSOS|RAMAS EN JUEGO|VEREDICTO|SOURCE AUDIT|CLAIMS DETECTED|TERRITORY CHECK|INHERITANCE ANALYSIS|INFORMATION QUALITY|EXTRACTED TRUTHS)\b/i.test(line))
             return `<span class="s-section">${line}</span>`;
         if (/^\*\*\d+\.\s/.test(line))
