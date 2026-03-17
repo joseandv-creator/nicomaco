@@ -453,59 +453,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Collapsible sections */
-        .motives-section.collapsible > .section-title {
-            cursor: pointer;
-            user-select: none;
-            position: relative;
-            padding-right: 24px;
-        }
-        .motives-section.collapsible > .section-title::after {
-            content: '>';
-            position: absolute;
-            right: 0;
-            font-size: 14px;
-            font-family: var(--font-mono);
-            color: var(--comment);
-            transition: transform 0.3s;
-            transform: rotate(90deg);
-        }
-        .motives-section.collapsible.collapsed > .section-title::after {
-            transform: rotate(0deg);
-        }
-        .motives-section.collapsible > .collapsible-body {
-            overflow: hidden;
-            max-height: 2000px;
-            transition: max-height 0.4s ease, opacity 0.3s;
-            opacity: 1;
-        }
-        .motives-section.collapsible.collapsed > .collapsible-body {
-            max-height: 0;
-            opacity: 0;
-        }
-
-        /* Branches more toggle (inline within Five Branches) */
-        .branches-more-toggle {
-            cursor: pointer;
-            color: var(--comment);
-            font-family: var(--font-sans);
-            font-size: 13px;
-            font-style: italic;
-            padding: 8px 0;
-            transition: color 0.2s;
-        }
-        .branches-more-toggle:hover { color: var(--cyan); }
-        .branches-more-body {
-            overflow: hidden;
-            max-height: 2000px;
-            transition: max-height 0.4s ease, opacity 0.3s;
-            opacity: 1;
-        }
-        .branches-more.collapsed .branches-more-body {
-            max-height: 0;
-            opacity: 0;
-        }
-
         .pillars {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -846,10 +793,10 @@
                     </div>
 
                     <!-- II. WHY PHILOSOPHY -->
-                    <div class="motives-section collapsible">
+                    <div class="motives-section">
                         <div class="section-title en-only">II. Why Philosophy</div>
                         <div class="section-title es-only">II. Por Que Filosofia</div>
-                        <div class="collapsible-body">
+
                         <div class="en-only">
                             <p>Every conscious being operates with a philosophy. The question is not whether you have one, but whether you chose it or inherited it without audit.</p>
                             <p>A human being perceives more than it can respond to automatically. Unlike an animal, whose perception and action are bound by instinct, a conscious being faces a gap: it sees the field of possibilities but has no automatic guide for choosing among them. That gap must be filled with something. Philosophy is the something.</p>
@@ -868,14 +815,13 @@
                             <p>Nicomaco existe porque la filosofia no es opcional para un ser consciente. Es el instrumento mediante el cual la consciencia navega la realidad. La unica eleccion es si tu instrumento es preciso o esta roto, elegido o heredado, auditado o ciego.</p>
                             <p class="dim" style="font-style:italic">No necesitas haber leido a Aristoteles para usar esto. Escribes una idea, y el sistema te muestra que premisas filosoficas estan operando en ella y a donde llevan.</p>
                         </div>
-                        </div><!-- /collapsible-body II -->
                     </div>
 
                     <!-- III. FOUNDATIONS -->
-                    <div class="motives-section collapsible">
+                    <div class="motives-section">
                         <div class="section-title en-only">III. Foundations</div>
                         <div class="section-title es-only">III. Fundamentos</div>
-                        <div class="collapsible-body">
+
 
                         <!-- Truth box (moved here) -->
                         <div class="truth-box en-only">
@@ -918,38 +864,27 @@
                         </div>
                         <div class="en-only protocol-steps">
                             <div class="protocol-step"><span class="step-number">1.</span><span class="step-name">Metaphysics</span> — What exists? Reality exists independent of consciousness. Things have identity. A is A. The system takes this position because the alternative — that reality is subjective or constructed — makes knowledge impossible and action arbitrary.</div>
-                            <div class="branches-more" data-collapsed-label="− Epistemology, Ethics, Politics, Aesthetics" data-expanded-label="&minus;">
-                            <div class="branches-more-toggle en-only">− Epistemology, Ethics, Politics, Aesthetics</div>
-                            <div class="branches-more-body">
                             <div class="protocol-step"><span class="step-number">2.</span><span class="step-name">Epistemology</span> — How do we know it? Through reason applied to the evidence of the senses. Knowledge is identification that has survived verification. The system takes this position because the alternatives — revelation, authority, consensus, feeling — produce maps that cannot be corrected.</div>
                             <div class="protocol-step"><span class="step-number">3.</span><span class="step-name">Ethics</span> — What should we do? Act according to rational values with life as the standard. The individual is the unit of value, action, and rights. The system takes this position because any ethics that subordinates the individual to the collective destroys the subject who values.</div>
                             <div class="protocol-step"><span class="step-number">4.</span><span class="step-name">Politics</span> — How should we live together? Under a system that bans the initiation of force. The state exists solely to protect individual rights through police, military, and courts. The system takes this position because every system that grants the state power beyond protection has historically degraded the individual and destroyed production.</div>
                             <div class="protocol-step"><span class="step-number">5.</span><span class="step-name">Aesthetics</span> — What does it mean? Art is selective re-creation of reality according to the artist's deepest values. It makes the abstract visible. The system takes this position because art that serves no values is decoration, and art that serves imposed values is propaganda.</div>
                             <p style="margin-top:16px">Each branch depends on the one before it. Ethics without epistemology is dogma. Politics without ethics is power. Aesthetics without metaphysics is decoration.</p>
-                            </div>
-                            </div>
                         </div>
                         <div class="es-only protocol-steps">
                             <div class="protocol-step"><span class="step-number">1.</span><span class="step-name">Metafisica</span> — Que existe? La realidad existe independiente de la consciencia. Las cosas tienen identidad. A es A. El sistema toma esta posicion porque la alternativa — que la realidad sea subjetiva o construida — hace imposible el conocimiento y arbitraria la accion.</div>
-                            <div class="branches-more" data-collapsed-label="− Epistemologia, Etica, Politica, Estetica" data-expanded-label="&minus;">
-                            <div class="branches-more-toggle es-only">− Epistemologia, Etica, Politica, Estetica</div>
-                            <div class="branches-more-body">
                             <div class="protocol-step"><span class="step-number">2.</span><span class="step-name">Epistemologia</span> — Como lo sabemos? Mediante la razon aplicada a la evidencia de los sentidos. El conocimiento es identificacion que ha sobrevivido la verificacion. El sistema toma esta posicion porque las alternativas — revelacion, autoridad, consenso, sentimiento — producen mapas que no pueden corregirse.</div>
                             <div class="protocol-step"><span class="step-number">3.</span><span class="step-name">Etica</span> — Que debemos hacer? Actuar segun valores racionales con la vida como estandar. El individuo es la unidad de valor, accion y derechos. El sistema toma esta posicion porque toda etica que subordine al individuo al colectivo destruye al sujeto que valora.</div>
                             <div class="protocol-step"><span class="step-number">4.</span><span class="step-name">Politica</span> — Como vivimos juntos? Bajo un sistema que prohiba la iniciacion de la fuerza. El estado existe unicamente para proteger los derechos individuales mediante policia, milicia y poder judicial. El sistema toma esta posicion porque todo sistema que otorgue al estado poder mas alla de la proteccion ha degradado historicamente al individuo y destruido la produccion.</div>
                             <div class="protocol-step"><span class="step-number">5.</span><span class="step-name">Estetica</span> — Que significa? El arte es re-creacion selectiva de la realidad segun los valores mas profundos del artista. Hace visible lo abstracto. El sistema toma esta posicion porque arte que no sirve a valores es decoracion, y arte que sirve a valores impuestos es propaganda.</div>
                             <p style="margin-top:16px">Cada rama depende de la anterior. Etica sin epistemologia es dogma. Politica sin etica es poder. Estetica sin metafisica es decoracion.</p>
-                            </div>
-                            </div>
                         </div>
-                        </div><!-- /collapsible-body III -->
                     </div>
 
                     <!-- IV. METHOD -->
-                    <div class="motives-section collapsible">
+                    <div class="motives-section">
                         <div class="section-title en-only">IV. Method</div>
                         <div class="section-title es-only">IV. Metodo</div>
-                        <div class="collapsible-body">
+
                         <div class="en-only">
                             <p class="dim" style="font-style:italic">The system applies three instruments, follows nine reasoning rules, and thinks through six cumulative steps:</p>
                         </div>
@@ -1022,14 +957,13 @@
                             <div class="protocol-step"><span class="step-number">5.</span><span class="step-name">Composicion</span> — Cada detector hace el siguiente analisis mas rapido. La inteligencia no es velocidad de procesamiento — es densidad de detectores verificados acumulados.</div>
                             <div class="protocol-step"><span class="step-number">6.</span><span class="step-name">Autoauditoria</span> — Aplicar los detectores al sistema mismo. Si un detector almacenado contradice territorio nuevo verificado, el detector muere. No el territorio. Esto separa claridad de rigidez.</div>
                         </div>
-                        </div><!-- /collapsible-body -->
                     </div>
 
                     <!-- V. PRINCIPLES -->
-                    <div class="motives-section collapsible">
+                    <div class="motives-section">
                         <div class="section-title en-only">V. Principles</div>
                         <div class="section-title es-only">V. Principios</div>
-                        <div class="collapsible-body">
+
                         <div class="en-only principles-list">
                             <p class="dim" style="margin-bottom:16px;font-style:italic">Rules that govern this project:</p>
                             <div class="principle"><span class="principle-name">Total Transparency</span> — Integrated truths are public. The process is visible. If something can't withstand light, it's not truth.</div>
@@ -1044,14 +978,13 @@
                             <div class="principle"><span class="principle-name">Sin Autoridad</span> — No importa quien lo dijo. Importa si sobrevive la eliminacion. Einstein, tu vecino, o un nino de 10 — mismo protocolo.</div>
                             <div class="principle"><span class="principle-name">Sujeto Primero</span> — El fin no es acumular verdades. Es construir al sujeto que las opera. Cada verdad es un instrumento, no un trofeo.</div>
                         </div>
-                        </div><!-- /collapsible-body -->
                     </div>
 
                     <!-- VI. OPERATIONAL DETECTORS -->
-                    <div class="motives-section collapsible">
+                    <div class="motives-section">
                         <div class="section-title en-only">VI. Operational Detectors</div>
                         <div class="section-title es-only">VI. Detectores Operativos</div>
-                        <div class="collapsible-body">
+
                         <div class="en-only">
                             <p class="dim" style="margin-bottom:16px;font-style:italic">Three filters for every decision. If it doesn't survive all three, it doesn't move forward.</p>
                         </div>
@@ -1068,16 +1001,14 @@
                             <div class="protocol-step"><span class="step-number">2.</span><span class="step-name">Tiempo</span> — Esta decision compra tiempo o lo vende? La riqueza no es dinero — son horas libres de coercion. Cada eleccion financiera, profesional y personal expande o contrae el tiempo que controlas.</div>
                             <div class="protocol-step"><span class="step-number">3.</span><span class="step-name">Protocolo de Error</span> — Cuando algo falla: identificar el error, detectar la expectativa equivocada, ubicar la causa, extraer el principio reutilizable, implementar. Sin culpa, solo correccion. El principio extraido es la unica ganancia del fracaso.</div>
                         </div>
-                        </div><!-- /collapsible-body -->
                     </div>
 
                 </div>
 
                 <!-- ═══ HIERARCHY ═══ -->
-                <div class="motives-section collapsible" style="margin-top:40px">
+                <div class="motives-section" style="margin-top:40px">
                     <div class="section-title en-only">Hierarchy</div>
                     <div class="section-title es-only">Jerarquía</div>
-                    <div class="collapsible-body">
                     <div id="knowledge-hierarchy" class="knowledge-section">
                         <div id="integrated-list"></div>
                         <div class="actions" style="margin-top:12px">
@@ -1085,14 +1016,12 @@
                             <label class="btn btn-sm" style="cursor:pointer">import JSON<input type="file" id="btn-import" accept=".json" style="display:none"></label>
                         </div>
                     </div>
-                    </div>
                 </div>
 
                 <!-- ═══ GLOSSARY ═══ -->
-                <div class="motives-section collapsible" style="margin-top:40px">
+                <div class="motives-section" style="margin-top:40px">
                     <div class="section-title en-only">Glossary</div>
                     <div class="section-title es-only">Glosario</div>
-                    <div class="collapsible-body">
                     <div id="knowledge-glossary" class="knowledge-section">
                     <div class="search-bar">
                         <input type="text" id="glossary-search" placeholder="> search definitions..." />
@@ -1694,8 +1623,7 @@
                         <span class="s-cmt">// no definitions match your search</span>
                     </div>
                 </div>
-                    </div><!-- /collapsible-body glossary -->
-                </div><!-- /collapsible glossary -->
+                </div>
 
                 <!-- ═══ SUPPORT ═══ -->
                 <div class="section-title knowledge-divider en-only" style="margin-top:40px">Support the Project</div>
@@ -2551,20 +2479,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         // Main content tabs
         $$('[data-tab]').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
-
-        // Collapsible theory sections (click title to toggle)
-        $$('.motives-section.collapsible > .section-title').forEach(el => {
-            el.addEventListener('click', () => el.parentElement.classList.toggle('collapsed'));
-        });
-        $$('.branches-more-toggle').forEach(el => {
-            el.addEventListener('click', () => {
-                const wrapper = el.parentElement;
-                wrapper.classList.toggle('collapsed');
-                const isCollapsed = wrapper.classList.contains('collapsed');
-                const label = isCollapsed ? wrapper.dataset.collapsedLabel : wrapper.dataset.expandedLabel;
-                el.textContent = label || (isCollapsed ? '+' : '\u2212');
-            });
-        });
 
         // Export/Import
         $('#btn-export').addEventListener('click', exportHierarchy);
