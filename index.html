@@ -206,6 +206,17 @@
         .s-cyan { color: var(--cyan); }
         .s-orange { color: var(--orange); }
         .s-bright { color: var(--text-bright); }
+        .user-bubble {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            font-family: var(--font-sans);
+            font-size: 15px;
+            color: var(--text-bright);
+            line-height: 1.5;
+        }
         .s-blue { color: var(--blue); }
         .s-yellow { color: var(--yellow); }
         .s-green { color: var(--green); }
@@ -2408,31 +2419,31 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const id = Date.now();
         const num = state.analysisCount;
         const block = createBlock(num, id);
+        const bubbleEl = block.querySelector('.user-bubble');
         const codeEl = block.querySelector('.code');
         const gutterEl = block.querySelector('.gutter');
         $('#output').appendChild(block);
         scrollToBottom();
-        codeEl.innerHTML = `<span class="s-cmt">// url analysis #${num}</span>\n<span class="s-cyan">  ${esc(url)}</span>\n\n<span class="s-cmt">// fetching page content</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
-        gutterEl.textContent = gutterLines(4);
+        bubbleEl.innerHTML = `<a href="${esc(url)}" target="_blank" style="color:var(--cyan);text-decoration:none">${esc(url)}</a>`;
+        codeEl.innerHTML = `<span class="s-cmt">// fetching page content</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
+        gutterEl.textContent = gutterLines(1);
         try {
             const pageContent = await fetchURL(url);
-            codeEl.innerHTML = `<span class="s-cmt">// url analysis #${num}</span>\n<span class="s-cyan">  ${esc(url)}</span>\n\n<span class="s-cmt">// content extracted. analyzing</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
+            codeEl.innerHTML = `<span class="s-cmt">// content extracted. analyzing</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
             const prompt = URL_ANALYSIS_PROMPT.replace('{content}', pageContent).replace('{url}', url);
             const messages = [{ role: 'user', content: prompt }];
             let fullText = '';
             await callStreamingAPI(messages, chunk => {
                 fullText += chunk;
                 const highlighted = highlightURL(fullText);
-                const allLines = `<span class="s-cmt">// url analysis #${num}</span>\n<span class="s-cyan">  ${esc(url)}</span>\n\n` + highlighted;
-                codeEl.innerHTML = allLines;
-                gutterEl.textContent = gutterLines(allLines.split('\n').length);
+                codeEl.innerHTML = highlighted;
+                gutterEl.textContent = gutterLines(highlighted.split('\n').length);
                 scrollToBottom();
             });
             fullText = parseDrafts(fullText);
             const highlighted = highlightURL(fullText);
-            const allLines = `<span class="s-cmt">// url analysis #${num}</span>\n<span class="s-cyan">  ${esc(url)}</span>\n\n` + highlighted;
-            codeEl.innerHTML = allLines;
-            gutterEl.textContent = gutterLines(allLines.split('\n').length);
+            codeEl.innerHTML = highlighted;
+            gutterEl.textContent = gutterLines(highlighted.split('\n').length);
             state.history.unshift({ id, num, candidate: `[URL] ${url}`, analysis: fullText, date: new Date().toISOString(), messages, isURL: true });
             localStorage.setItem('vu_history', JSON.stringify(state.history));
 
@@ -2478,12 +2489,14 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const id = Date.now();
         const num = state.analysisCount;
         const block = createBlock(num, id);
+        const bubbleEl = block.querySelector('.user-bubble');
         const codeEl = block.querySelector('.code');
         const gutterEl = block.querySelector('.gutter');
         $('#output').appendChild(block);
         scrollToBottom();
-        codeEl.innerHTML = `<span class="s-cmt">// candidate #${num}</span>\n<span class="s-bright">  "${esc(text)}"</span>\n\n<span class="s-cmt">// analyzing</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
-        gutterEl.textContent = gutterLines(4);
+        bubbleEl.textContent = text;
+        codeEl.innerHTML = `<span class="s-cmt">// analyzing</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
+        gutterEl.textContent = gutterLines(1);
         state.conversationHistory.push({ role: 'user', content: text });
         // Keep only last 20 messages to avoid context overflow
         const messages = state.conversationHistory.slice(-20);
@@ -2492,17 +2505,15 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             await callStreamingAPI(messages, chunk => {
                 fullText += chunk;
                 const highlighted = highlightText(fullText);
-                const allLines = `<span class="s-cmt">// candidate #${num}</span>\n<span class="s-bright">  "${esc(text)}"</span>\n\n` + highlighted;
-                codeEl.innerHTML = allLines;
-                gutterEl.textContent = gutterLines(allLines.split('\n').length);
+                codeEl.innerHTML = highlighted;
+                gutterEl.textContent = gutterLines(highlighted.split('\n').length);
                 scrollToBottom();
             });
             fullText = parseDrafts(fullText);
             state.conversationHistory.push({ role: 'assistant', content: fullText });
             const highlighted = highlightText(fullText);
-            const allLines = `<span class="s-cmt">// candidate #${num}</span>\n<span class="s-bright">  "${esc(text)}"</span>\n\n` + highlighted;
-            codeEl.innerHTML = allLines;
-            gutterEl.textContent = gutterLines(allLines.split('\n').length);
+            codeEl.innerHTML = highlighted;
+            gutterEl.textContent = gutterLines(highlighted.split('\n').length);
             addActions(block, id, text, fullText, messages);
             state.history.unshift({ id, num, candidate: text, analysis: fullText, date: new Date().toISOString(), messages: [...state.conversationHistory] });
             localStorage.setItem('vu_history', JSON.stringify(state.history));
@@ -2551,28 +2562,28 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         state.analysisCount++;
         const num = state.analysisCount;
         const block = createBlock(num, item.id);
+        const bubbleEl = block.querySelector('.user-bubble');
         const codeEl = block.querySelector('.code');
         const gutterEl = block.querySelector('.gutter');
         $('#output').appendChild(block);
         scrollToBottom();
-        codeEl.innerHTML = `<span class="s-cmt">// challenge to candidate #${item.num}</span>\n<span class="s-orange">  evidence: "${esc(evidence)}"</span>\n\n<span class="s-cmt">// re-evaluating</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
-        gutterEl.textContent = gutterLines(4);
+        bubbleEl.textContent = evidence;
+        codeEl.innerHTML = `<span class="s-cmt">// re-evaluating</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
+        gutterEl.textContent = gutterLines(1);
         const messages = [...item.messages, { role: 'user', content: CHALLENGE_PROMPT.replace('{evidence}', evidence) }];
         try {
             let fullText = '';
             await callStreamingAPI(messages, chunk => {
                 fullText += chunk;
                 const highlighted = highlightText(fullText);
-                const prefix = `<span class="s-cmt">// challenge to candidate #${item.num}</span>\n<span class="s-orange">  evidence: "${esc(evidence)}"</span>\n\n`;
-                codeEl.innerHTML = prefix + highlighted;
-                gutterEl.textContent = gutterLines(codeEl.innerHTML.split('\n').length);
+                codeEl.innerHTML = highlighted;
+                gutterEl.textContent = gutterLines(highlighted.split('\n').length);
                 scrollToBottom();
             });
             fullText = parseDrafts(fullText);
             const highlighted = highlightText(fullText);
-            const prefix = `<span class="s-cmt">// challenge to candidate #${item.num}</span>\n<span class="s-orange">  evidence: "${esc(evidence)}"</span>\n\n`;
-            codeEl.innerHTML = prefix + highlighted;
-            gutterEl.textContent = gutterLines(codeEl.innerHTML.split('\n').length);
+            codeEl.innerHTML = highlighted;
+            gutterEl.textContent = gutterLines(highlighted.split('\n').length);
             item.messages = messages;
             item.messages.push({ role: 'assistant', content: fullText });
 
@@ -2644,7 +2655,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const block = document.createElement('div');
         block.className = 'block';
         block.dataset.id = id;
-        block.innerHTML = `<div class="code-block"><div class="gutter"></div><div class="code"></div></div>`;
+        block.innerHTML = `<div class="user-bubble"></div><div class="code-block"><div class="gutter"></div><div class="code"></div></div>`;
         return block;
     }
 
