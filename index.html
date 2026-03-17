@@ -729,7 +729,7 @@
                 <div class="header-nav">
                     <a href="#" id="nav-borrador" style="display:none;color:var(--orange)">borrador <span id="draft-badge" style="font-size:0.7em"></span></a>
                     <a href="#" id="nav-cfg">cfg</a>
-                    <a href="#" id="nav-lang" style="color:var(--comment)">ES</a>
+                    <a href="#" id="nav-lang" style="color:var(--comment);text-decoration:none;font-size:18px">🇪🇸</a>
                 </div>
             </div>
 
@@ -2437,7 +2437,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         state.lang = lang;
         localStorage.setItem('vu_lang', lang);
         const toggle = $('#nav-lang');
-        if (toggle) toggle.textContent = lang === 'en' ? 'ES' : 'EN';
+        if (toggle) toggle.textContent = lang === 'es' ? '🇪🇸' : '🇬🇧';
         const mainTitle = $('#main-title');
         if (mainTitle) mainTitle.textContent = 'NICÓMACO';
         $('#main-subtitle').textContent = t('subtitle');
