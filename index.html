@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lenguaje Cartográfico</title>
+    <title>Nicómaco</title>
     <meta name="description" content="Analiza ideas y textos con criterios objetivos del lenguaje, epistemología y ética. A es A.">
-    <meta property="og:title" content="Lenguaje Cartográfico">
+    <meta property="og:title" content="Nicómaco">
     <meta property="og:description" content="Analiza ideas y textos con criterios objetivos del lenguaje, epistemología y ética. A es A.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://nicomaco.org/icon-512.png">
     <meta name="theme-color" content="#faf7f2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Lenguaje Cartográfico">
+    <meta name="apple-mobile-web-app-title" content="Nicómaco">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,8 92,50 50,92 8,50' fill='none' stroke='%238b4513' stroke-width='7'/><text x='50' y='62' text-anchor='middle' font-family='serif' font-size='42' fill='%238b4513'>A</text></svg>">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
@@ -594,7 +594,7 @@
         <div id="screen-main" class="screen">
             <div class="header">
                 <div class="header-left">
-                    <div class="header-title" id="main-title">LENGUAJE CARTOGRÁFICO</div>
+                    <div class="header-title" id="main-title">NICÓMACO</div>
                     <div class="header-sub" id="main-subtitle">analiza ideas y textos con criterios objetivos del lenguaje, epistemología y ética</div>
                 </div>
                 <div class="header-nav">
@@ -2295,7 +2295,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const toggle = $('#nav-lang');
         if (toggle) toggle.textContent = lang === 'en' ? 'ES' : 'EN';
         const mainTitle = $('#main-title');
-        if (mainTitle) mainTitle.textContent = lang === 'en' ? 'CARTOGRAPHIC LANGUAGE' : 'LENGUAJE CARTOGRÁFICO';
+        if (mainTitle) mainTitle.textContent = 'NICÓMACO';
         $('#main-subtitle').textContent = t('subtitle');
         $$('[data-tab="tool"]').forEach(el => el.textContent = t('tool'));
         $$('[data-tab="knowledge"]').forEach(el => el.textContent = t('knowledge'));
@@ -3061,7 +3061,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     function shareAnalysis(item) {
         const text = `${item.candidate}\n\n${item.analysis}\n\n\u2014 nicomaco.org`;
         if (navigator.share) {
-            navigator.share({ title: 'Lenguaje Cartográfico', text }).catch(() => {});
+            navigator.share({ title: 'Nicómaco', text }).catch(() => {});
         } else {
             navigator.clipboard.writeText(text);
         }
