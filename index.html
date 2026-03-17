@@ -846,9 +846,10 @@
                     </div>
 
                     <!-- II. WHY PHILOSOPHY -->
-                    <div class="motives-section">
+                    <div class="motives-section collapsible collapsed">
                         <div class="section-title en-only">II. Why Philosophy</div>
                         <div class="section-title es-only">II. Por Que Filosofia</div>
+                        <div class="collapsible-body">
                         <div class="en-only">
                             <p>Every conscious being operates with a philosophy. The question is not whether you have one, but whether you chose it or inherited it without audit.</p>
                             <p>A human being perceives more than it can respond to automatically. Unlike an animal, whose perception and action are bound by instinct, a conscious being faces a gap: it sees the field of possibilities but has no automatic guide for choosing among them. That gap must be filled with something. Philosophy is the something.</p>
@@ -867,12 +868,14 @@
                             <p>Nicomaco existe porque la filosofia no es opcional para un ser consciente. Es el instrumento mediante el cual la consciencia navega la realidad. La unica eleccion es si tu instrumento es preciso o esta roto, elegido o heredado, auditado o ciego.</p>
                             <p class="dim" style="font-style:italic">No necesitas haber leido a Aristoteles para usar esto. Escribes una idea, y el sistema te muestra que premisas filosoficas estan operando en ella y a donde llevan.</p>
                         </div>
+                        </div><!-- /collapsible-body II -->
                     </div>
 
                     <!-- III. FOUNDATIONS -->
-                    <div class="motives-section">
+                    <div class="motives-section collapsible collapsed">
                         <div class="section-title en-only">III. Foundations</div>
                         <div class="section-title es-only">III. Fundamentos</div>
+                        <div class="collapsible-body">
 
                         <!-- Truth box (moved here) -->
                         <div class="truth-box en-only">
@@ -939,6 +942,7 @@
                             </div>
                             </div>
                         </div>
+                        </div><!-- /collapsible-body III -->
                     </div>
 
                     <!-- IV. METHOD -->
@@ -1070,20 +1074,26 @@
                 </div>
 
                 <!-- ═══ HIERARCHY ═══ -->
-                <div class="section-title knowledge-divider en-only" style="margin-top:40px">Hierarchy</div>
-                <div class="section-title knowledge-divider es-only" style="margin-top:40px">Jerarquía</div>
-                <div id="knowledge-hierarchy" class="knowledge-section">
-                    <div id="integrated-list"></div>
-                    <div class="actions" style="margin-top:12px">
-                        <button class="btn btn-sm" id="btn-export">export JSON</button>
-                        <label class="btn btn-sm" style="cursor:pointer">import JSON<input type="file" id="btn-import" accept=".json" style="display:none"></label>
+                <div class="motives-section collapsible collapsed" style="margin-top:40px">
+                    <div class="section-title en-only">Hierarchy</div>
+                    <div class="section-title es-only">Jerarquía</div>
+                    <div class="collapsible-body">
+                    <div id="knowledge-hierarchy" class="knowledge-section">
+                        <div id="integrated-list"></div>
+                        <div class="actions" style="margin-top:12px">
+                            <button class="btn btn-sm" id="btn-export">export JSON</button>
+                            <label class="btn btn-sm" style="cursor:pointer">import JSON<input type="file" id="btn-import" accept=".json" style="display:none"></label>
+                        </div>
+                    </div>
                     </div>
                 </div>
 
                 <!-- ═══ GLOSSARY ═══ -->
-                <div class="section-title knowledge-divider en-only" style="margin-top:40px">Glossary</div>
-                <div class="section-title knowledge-divider es-only" style="margin-top:40px">Glosario</div>
-                <div id="knowledge-glossary" class="knowledge-section">
+                <div class="motives-section collapsible collapsed" style="margin-top:40px">
+                    <div class="section-title en-only">Glossary</div>
+                    <div class="section-title es-only">Glosario</div>
+                    <div class="collapsible-body">
+                    <div id="knowledge-glossary" class="knowledge-section">
                     <div class="search-bar">
                         <input type="text" id="glossary-search" placeholder="> search definitions..." />
                     </div>
@@ -1684,6 +1694,8 @@
                         <span class="s-cmt">// no definitions match your search</span>
                     </div>
                 </div>
+                    </div><!-- /collapsible-body glossary -->
+                </div><!-- /collapsible glossary -->
 
                 <!-- ═══ SUPPORT ═══ -->
                 <div class="section-title knowledge-divider en-only" style="margin-top:40px">Support the Project</div>
