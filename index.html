@@ -294,10 +294,19 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
+        /* -- tab-tool layout -- */
+        #tab-tool {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        #tab-tool #output {
+            flex: 1;
+        }
+
         /* -- input -- */
         #input-bar {
             padding: 16px 0 16px;
-            margin-top: auto;
             flex-shrink: 0;
         }
         .input-row {
