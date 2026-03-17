@@ -239,21 +239,24 @@
 
         /* -- input -- */
         #input-bar {
-            border-top: 1px solid var(--border);
-            padding: 12px 0 16px;
+            padding: 16px 0 16px;
             margin-top: auto;
             flex-shrink: 0;
         }
         .input-row {
             display: flex;
-            align-items: flex-start;
-            gap: 6px;
+            align-items: flex-end;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 12px 12px 16px;
+        }
+        .input-row:focus-within {
+            border-color: var(--cyan);
         }
         .input-chevron {
-            color: var(--cyan);
-            line-height: 1.8;
-            user-select: none;
-            font-weight: 600;
+            display: none;
         }
         .input-ctx {
             color: var(--orange);
@@ -267,14 +270,29 @@
             color: var(--text-bright);
             font-family: var(--font-serif);
             font-size: 17px;
-            line-height: 1.8;
+            line-height: 1.7;
             flex: 1;
             outline: none;
             resize: none;
-            min-height: 26px;
+            min-height: 28px;
             overflow: hidden;
         }
-        #input::placeholder { color: var(--border); }
+        #input::placeholder { color: var(--comment); }
+        .btn-send {
+            background: var(--cyan);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: opacity 0.2s;
+        }
+        .btn-send:hover { opacity: 0.85; }
         .input-hints {
             color: var(--border);
             font-size: 11px;
@@ -613,12 +631,12 @@
                 <div id="output"></div>
                 <div id="input-bar">
                     <div class="input-row">
-                        <span class="input-chevron">&#9671;</span>
                         <span class="input-ctx" id="input-ctx"></span>
                         <textarea id="input" rows="1" placeholder="comparte una idea o pega un artículo..."></textarea>
-                    <button class="btn btn-sm" id="btn-new-chat" style="margin-left:8px" title="New conversation">&#8634;</button>
+                        <button class="btn-send" id="btn-send">enviar</button>
+                        <button class="btn btn-sm" id="btn-new-chat" title="New conversation" style="padding:8px;font-size:16px">&#8634;</button>
                     </div>
-                    <div class="input-hints">enter to send &middot; shift+enter new line &middot; paste URL to filter &middot; esc cancel</div>
+                    <div class="input-hints">enter para enviar &middot; shift+enter nueva línea &middot; pega URL para filtrar &middot; esc cancelar</div>
                 </div>
             </div>
 
@@ -2240,6 +2258,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             importJSON: 'import JSON',
             btcCopied: 'btc address copied',
             newChat: 'New conversation',
+            send: 'send',
             searchGlossary: '> search definitions...',
             noResults: 'no definitions match your search',
         },
@@ -2265,6 +2284,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             exportJSON: 'exportar JSON',
             importJSON: 'importar JSON',
             btcCopied: 'direccion btc copiada',
+            send: 'enviar',
             newChat: 'Nueva conversaci\u00f3n',
             searchGlossary: '> buscar definiciones...',
             noResults: 'sin resultados',
@@ -2324,6 +2344,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         // New chat button title
         const newChatBtn = $('#btn-new-chat');
         if (newChatBtn) newChatBtn.title = t('newChat');
+        const sendBtn = $('#btn-send');
+        if (sendBtn) sendBtn.textContent = t('send');
         if ($('#output').children.length <= 1) renderWelcome();
     }
 
@@ -2356,6 +2378,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const input = $('#input');
         input.addEventListener('keydown', handleKey);
         input.addEventListener('input', autoResize);
+        $('#btn-send').addEventListener('click', handleSubmit);
 
         // Model selector
         $('#cfg-model').addEventListener('change', e => {
