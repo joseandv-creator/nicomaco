@@ -441,6 +441,47 @@
         }
         .donate-box p { margin-bottom: 10px; }
 
+        .truth-box {
+            border-left: 4px solid var(--cyan);
+            background: var(--surface);
+            border-radius: 0 8px 8px 0;
+            padding: 28px 32px;
+            margin-bottom: 40px;
+        }
+        .truth-box-title {
+            font-family: var(--font-serif);
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 8px;
+        }
+        .truth-box-def {
+            font-family: var(--font-serif);
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: var(--text);
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+        .truth-types {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .truth-type {
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: 6px;
+            line-height: 1.7;
+        }
+        .truth-type-name {
+            font-weight: 700;
+            color: var(--cyan);
+        }
+        @media (max-width: 600px) {
+            .truth-box { padding: 20px 16px; }
+        }
+
         /* -- glossary styles -- */
         .search-bar {
             margin-bottom: 16px;
@@ -642,6 +683,26 @@
 
 <div id="tab-knowledge" class="tab-content" style="display:none">
                 <!-- sub-nav removed: all sections flow continuously -->
+
+                <!-- ═══ TRUTH DEFINITION ═══ -->
+                <div class="truth-box en-only">
+                    <div class="truth-box-title">Truth</div>
+                    <div class="truth-box-def">The correspondence between a proposition and the facts of reality. The fidelity of the map to the territory.</div>
+                    <div class="truth-types">
+                        <div class="truth-type"><span class="truth-type-name">Logical</span> — A proposition whose negation produces a contradiction. It holds by the structure of thought itself. <em>A is A.</em></div>
+                        <div class="truth-type"><span class="truth-type-name">Empirical</span> — A proposition verified through observation and measurement. It depends on territory and can be falsified by new evidence.</div>
+                        <div class="truth-type"><span class="truth-type-name">Existential</span> — A proposition about the subject's lived experience. Not externally verifiable, but operationally real: it determines action.</div>
+                    </div>
+                </div>
+                <div class="truth-box es-only">
+                    <div class="truth-box-title">Verdad</div>
+                    <div class="truth-box-def">La correspondencia entre una proposición y los hechos de la realidad. La fidelidad del mapa al territorio.</div>
+                    <div class="truth-types">
+                        <div class="truth-type"><span class="truth-type-name">Lógica</span> — Una proposición cuya negación produce una contradicción. Se sostiene por la estructura del pensamiento mismo. <em>A es A.</em></div>
+                        <div class="truth-type"><span class="truth-type-name">Empírica</span> — Una proposición verificada mediante observación y medición. Depende del territorio y puede ser falsificada por nueva evidencia.</div>
+                        <div class="truth-type"><span class="truth-type-name">Existencial</span> — Una proposición sobre la experiencia vivida del sujeto. No es verificable externamente, pero es operacionalmente real: determina la acción.</div>
+                    </div>
+                </div>
 
                 <!-- ═══ MOTIVES ═══ -->
                 <div id="knowledge-motives" class="knowledge-section">
