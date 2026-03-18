@@ -63,36 +63,27 @@
             max-width: 680px;
             margin: 0 auto;
             padding: 0 28px;
-            height: 100%;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* -- fixed header zone -- */
+        /* -- sticky header zone -- */
         .header-zone {
-            flex-shrink: 0;
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
             background: var(--bg);
             padding-top: max(12px, env(safe-area-inset-top));
             padding-bottom: 4px;
             z-index: 100;
+            margin: 0 -28px;
+            padding-left: 28px;
+            padding-right: 28px;
         }
-        html, body {
-            height: 100%;
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
-        }
-        #screen-main {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            height: 100dvh;
-            overflow: hidden;
-        }
+        /* header stays at top via sticky */
         .tab-content {
             flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         /* -- header -- */
@@ -417,12 +408,7 @@
         /* -- design tab -- */
         .design-welcome {
             text-align: center;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 50vh;
+            padding: 60px 20px 40px;
             animation: blockFadeIn 0.8s ease-out;
         }
         .design-welcome-title {
@@ -459,12 +445,7 @@
         .design-start-btn:hover { opacity: 0.85; }
         .design-pro-gate {
             text-align: center;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 50vh;
+            padding: 60px 20px 40px;
         }
         .design-pro-gate p {
             font-family: var(--font-serif);
