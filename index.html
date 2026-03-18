@@ -388,6 +388,67 @@
             margin-bottom: 8px;
         }
 
+        /* -- decision journal -- */
+        .decision-prompt {
+            margin-top: 16px;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 14px;
+            color: var(--comment);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .decision-prompt:hover { color: var(--gold); }
+        .decision-input-wrap {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            animation: blockFadeIn 0.4s ease-out;
+        }
+        .decision-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-serif);
+            font-size: 14px;
+            font-style: italic;
+            color: var(--text);
+            padding: 6px 0;
+            outline: none;
+        }
+        .decision-input:focus { border-color: var(--gold); }
+        .decision-input::placeholder { color: var(--comment); opacity: 0.5; }
+        .decision-saved {
+            margin-top: 12px;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 14px;
+            color: var(--gold);
+            animation: blockFadeIn 0.4s ease-out;
+        }
+        .decision-review {
+            margin: 20px 0;
+            padding: 20px 24px;
+            border-left: 2px solid var(--gold);
+            background: rgba(184,150,12,0.03);
+            font-family: var(--font-serif);
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text);
+            animation: blockFadeIn 0.8s ease-out;
+        }
+        .decision-review-label {
+            font-family: var(--font-sans);
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        .decision-review em { color: var(--text-bright); }
+
         /* -- share feature -- */
         .btn-share-trigger {
             font-family: var(--font-serif);
@@ -1558,6 +1619,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     function init() {
         // Check auth status
         checkAuth();
+        checkDecisionReviews();
 
         // Restore analysis count from persisted history
         if (state.history.length) state.analysisCount = Math.max(...state.history.map(h => h.num || 0));
@@ -2508,6 +2570,102 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
         });
         acts.appendChild(btnSh);
         block.appendChild(acts);
+
+        // Decision journal — "¿qué decidiste?"
+        const existing = state.history.find(h => h.id === id);
+        if (existing && existing.decision) {
+            const saved = document.createElement('div');
+            saved.className = 'decision-saved';
+            saved.textContent = `${state.lang === 'es' ? 'decidiste' : 'you decided'}: "${existing.decision}"`;
+            block.appendChild(saved);
+        } else {
+            const decPrompt = document.createElement('div');
+            decPrompt.className = 'decision-prompt';
+            decPrompt.textContent = state.lang === 'es' ? '¿qué decidiste?' : 'what did you decide?';
+            decPrompt.addEventListener('click', () => {
+                decPrompt.remove();
+                const wrap = document.createElement('div');
+                wrap.className = 'decision-input-wrap';
+                const inp = document.createElement('input');
+                inp.className = 'decision-input';
+                inp.type = 'text';
+                inp.placeholder = state.lang === 'es' ? 'escribir decisión...' : 'write your decision...';
+                inp.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && inp.value.trim()) saveDecision(id, inp.value.trim(), wrap);
+                });
+                wrap.appendChild(inp);
+                block.appendChild(wrap);
+                inp.focus();
+            });
+            block.appendChild(decPrompt);
+        }
+    }
+
+    // ── Decision Journal ──
+    function saveDecision(id, decision, wrapEl) {
+        const item = state.history.find(h => h.id === id);
+        if (item) {
+            item.decision = decision;
+            item.decisionDate = new Date().toISOString();
+            localStorage.setItem('vu_history', JSON.stringify(state.history));
+        }
+        wrapEl.remove();
+        const saved = document.createElement('div');
+        saved.className = 'decision-saved';
+        saved.textContent = `${state.lang === 'es' ? 'decidiste' : 'you decided'}: "${decision}"`;
+        wrapEl.parentElement?.appendChild(saved) || document.querySelector(`[data-id="${id}"]`)?.appendChild(saved);
+    }
+
+    function checkDecisionReviews() {
+        const now = Date.now();
+        const reviewDays = [30, 60, 90];
+        const pendingReviews = [];
+
+        for (const item of state.history) {
+            if (!item.decision || item.decisionReviewed) continue;
+            const decDate = new Date(item.decisionDate).getTime();
+            const daysSince = Math.floor((now - decDate) / (1000 * 60 * 60 * 24));
+
+            for (const d of reviewDays) {
+                if (daysSince >= d) {
+                    pendingReviews.push({ item, days: daysSince });
+                    break;
+                }
+            }
+        }
+
+        if (pendingReviews.length === 0) return;
+
+        const es = state.lang === 'es';
+        const output = $('#output');
+        for (const { item, days } of pendingReviews.slice(0, 2)) {
+            const reviewEl = document.createElement('div');
+            reviewEl.className = 'decision-review';
+            reviewEl.innerHTML = `
+                <div class="decision-review-label">${es ? 'revisión pendiente' : 'pending review'}</div>
+                ${es
+                    ? `Hace <em>${days} días</em> decidiste: "<em>${esc(item.decision)}</em>"<br><br>Tu análisis original exploró: "<em>${esc(item.candidate?.substring(0, 80))}${item.candidate?.length > 80 ? '...' : ''}</em>"<br><br>¿Se cumplió lo que anticipaste?`
+                    : `<em>${days} days ago</em> you decided: "<em>${esc(item.decision)}</em>"<br><br>Your original analysis explored: "<em>${esc(item.candidate?.substring(0, 80))}${item.candidate?.length > 80 ? '...' : ''}</em>"<br><br>Did what you anticipated come true?`
+                }
+            `;
+            const reviewInput = document.createElement('div');
+            reviewInput.className = 'decision-input-wrap';
+            const inp = document.createElement('input');
+            inp.className = 'decision-input';
+            inp.placeholder = es ? 'escribir reflexión...' : 'write your reflection...';
+            inp.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && inp.value.trim()) {
+                    item.decisionReview = inp.value.trim();
+                    item.decisionReviewed = true;
+                    item.decisionReviewDate = new Date().toISOString();
+                    localStorage.setItem('vu_history', JSON.stringify(state.history));
+                    reviewEl.remove();
+                }
+            });
+            reviewInput.appendChild(inp);
+            reviewEl.appendChild(reviewInput);
+            output.insertBefore(reviewEl, output.firstChild);
+        }
     }
 
     function gutterLines(n) { return Array.from({length: n}, (_, i) => String(i+1).padStart(3)).join('\n'); }
