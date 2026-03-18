@@ -546,8 +546,8 @@
         .knowledge-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); }
 
         /* -- motives styles -- */
-        .motives-section { margin-bottom: 48px; }
-        .motives-section p { color: var(--text); margin-bottom: 16px; font-family: var(--font-serif); font-size: 16px; line-height: 2; text-align: justify; }
+        .motives-section { margin-bottom: 48px; padding: 0 24px; }
+        .motives-section p { color: var(--text); margin-bottom: 20px; font-family: var(--font-serif); font-size: 16px; line-height: 1.9; text-align: justify; }
         .motives-section p.dim { color: var(--comment); font-style: italic; }
         .highlight { color: var(--gold); }
 
@@ -727,33 +727,13 @@
         }
 
         /* -- welcome -- */
-        .welcome-block { text-align: center; padding: 40px 20px 30px; }
-        .welcome-title {
-            font-family: var(--font-serif);
-            font-size: 48px;
-            font-weight: 300;
-            color: #4A4A4C;
-            margin-bottom: 14px;
-            letter-spacing: 8px;
-            line-height: 1.2;
-        }
-        .welcome-body p {
+        .welcome-block { text-align: center; padding: 12px 20px 30px; }
+        .welcome-line {
             font-family: var(--font-sans);
-            font-size: 10px;
+            font-size: 11px;
             color: var(--comment);
-            line-height: 1.8;
-            margin-bottom: 4px;
+            letter-spacing: 3px;
             font-weight: 400;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-        .welcome-accent {
-            color: var(--gold) !important;
-            font-family: var(--font-serif) !important;
-            font-style: italic !important;
-            margin-top: 20px !important;
-            font-size: 19px !important;
-            letter-spacing: 0.2px !important;
         }
 
         /* -- bilingual toggle -- */
@@ -782,8 +762,7 @@
                 padding-bottom: 100px;
             }
             .input-hints { display: none; }
-            .welcome-title { font-size: 36px !important; letter-spacing: 6px !important; }
-            .welcome-body p { font-size: 9px !important; letter-spacing: 3px !important; }
+            .welcome-line { font-size: 9px !important; letter-spacing: 2px !important; }
         }
     </style>
 </head>
@@ -863,7 +842,7 @@
 
                 <!-- ═══ THE ESSAY ═══ -->
                 <div id="knowledge-motives" class="knowledge-section">
-                    <div class="motives-section">
+                    <div class="motives-section" style="margin-top:32px">
 
                     <div class="es-only">
                         <p>Hace veintitres siglos, en un mundo que no tenia palabra para lo que estaba haciendo, un hombre se sento y construyo la primera maquina para pensar correctamente. Se llamaba Aristoteles. Le dio a la humanidad el silogismo, las categorias, la ley de no contradiccion — los huesos de cada argumento que se ha sostenido o caido desde entonces. Lo llamo <span class="highlight">ὄργανον</span> — el instrumento. No porque la logica fuera una herramienta mas, sino porque era la unica que no podias dejar de usar ni siquiera para negarla.</p>
@@ -1005,76 +984,95 @@
                 <!-- Hierarchy hidden - internal tool only -->
 
                 <!-- ═══ GLOSSARY ═══ -->
-                <div class="motives-section" style="margin-top:40px">
-                    <div class="section-title en-only">Glossary</div>
-                    <div class="section-title es-only">Glosario</div>
-                    <div id="knowledge-glossary" class="knowledge-section" style="padding:20px">
-
-                        <div class="en-only">
-                            <p class="dim" style="font-style:italic;margin-bottom:20px">Concepts verified through elimination across 3+ contexts. Each name represents a precise definition that differs from common usage. Full definitions are available within the tool's analysis.</p>
-
-                            <div style="margin-bottom:20px">
-                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">METAPHYSICS</p>
-                                <p style="color:var(--comment);line-height:1.8">Concept (C) · The Triad · Subject (S) · Object (O) · Relation (R) · Value (v) · Attenuation · Elimination · Compression · Confusion · Clarity · Reconstruction · The Identity Thesis (M =op S) · V(M) ⊂ M · The Value Multiplier (V = K × A × T) · The Double Loss · Sedimentation · Conceptual Drift · Principle of Conceptual Identity · Legitimate Conceptual Evolution · Pathological Drift · Law of Cumulative Distortion · Fluency vs. Understanding · The Gap · Language · The First Principle · The Corruption Thesis · Disorientation · The Map · The Navigator · Self-Deception · Cartographic Corruption</p>
-                            </div>
-
-                            <div style="margin-bottom:20px">
-                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">EPISTEMOLOGY</p>
-                                <p style="color:var(--comment);line-height:1.8">Category α (Axiomatic) · Category β (Necessary Derived) · Category γ (Contingent Derived) · Decision (D = f(K,V,T)) · Convergence · Divergence · Contradiction · Friction · Fidelity · Collapse · Distortion · Correspondence · Knowledge · Opinion · Belief · Objectivity (redefined) · Verification · Fact · The Fact-Value Distinction (dissolved) · Education (redefined) · The Socratic Method · Communication · Translation (redefined) · Error (cartographic)</p>
-                            </div>
-
-                            <div style="margin-bottom:20px">
-                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">ETHICS</p>
-                                <p style="color:var(--comment);line-height:1.8">The Axiomatic Chain · The Ethical Chain · Existence · Identity · Consciousness · Knowledge · Action · Value · Truth (Logical / Empirical / Existential) · Liberty · Responsibility · Duty · Virtue · Justice · Right · Principle · Life (as Standard of Value) · Courage · Honesty · Integrity · The Foundational Virtue · Corruption (of language) · The Banality of Evil · Three Historical Erasures · Character</p>
-                            </div>
-
-                            <div style="margin-bottom:20px">
-                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">POLITICS</p>
-                                <p style="color:var(--comment);line-height:1.8">Politics · Capitalism · Property · Sovereignty · International Cooperation</p>
-                            </div>
-
-                            <div style="margin-bottom:20px">
-                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">AESTHETICS</p>
-                                <p style="color:var(--comment);line-height:1.8">Aesthetics · Art</p>
-                            </div>
-
-                            <p class="dim" style="font-style:italic;margin-top:16px;font-size:12px">© 2026 nicomaco.org</p>
-                        </div>
+                <div class="motives-section" style="margin-top:48px;padding:0 24px">
+                    <p style="text-align:center;color:var(--border);margin:32px 0">—</p>
+                    <div class="section-title" style="text-align:center;margin-bottom:8px">
+                        <span class="en-only">Conceptual Index</span>
+                        <span class="es-only">Indice Conceptual</span>
+                    </div>
+                    <p class="dim" style="text-align:center;font-style:italic;margin-bottom:32px;font-size:13px">
+                        <span class="en-only">Each term carries a precise definition that differs from common usage. The definitions emerge within the tool's analysis.</span>
+                        <span class="es-only">Cada termino tiene una definicion precisa que difiere del uso comun. Las definiciones emergen dentro del analisis de la herramienta.</span>
+                    </p>
+                    <div id="knowledge-glossary" class="knowledge-section" style="font-family:var(--font-serif);font-size:15px;line-height:2;color:var(--comment)">
 
                         <div class="es-only">
-                            <p class="dim" style="font-style:italic;margin-bottom:20px">Conceptos verificados por eliminacion en 3+ contextos. Cada nombre representa una definicion precisa que difiere del uso comun. Las definiciones completas estan disponibles dentro del analisis de la herramienta.</p>
+                            <p style="color:var(--gold);font-weight:600;margin-bottom:4px;font-size:13px;letter-spacing:2px">METAFISICA</p>
+                            <p><strong style="color:var(--text)">Concepto</strong> — unidad de pensamiento: sujeto + objeto + relacion ·
+                            <strong style="color:var(--text)">Eliminacion</strong> — quitar un concepto y ver que colapsa ·
+                            <strong style="color:var(--text)">Compresion</strong> — reducir sin perder estructura ·
+                            <strong style="color:var(--text)">El Mapa</strong> — tu modelo de la realidad, siempre incompleto ·
+                            <strong style="color:var(--text)">Deriva Conceptual</strong> — cuando un termino pierde su referente original ·
+                            <strong style="color:var(--text)">Concepto Robado</strong> — usar una premisa mientras la niegas ·
+                            <strong style="color:var(--text)">Corrupcion Cartografica</strong> — distorsion acumulada en el mapa</p>
 
-                            <div style="margin-bottom:20px">
-                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">METAFISICA</p>
-                                <p style="color:var(--comment);line-height:1.8">Concepto (C) · La Triada · Sujeto (S) · Objeto (O) · Relacion (R) · Valor (v) · Atenuacion · Eliminacion · Compresion · Confusion · Claridad · Reconstruccion · Tesis de Identidad (M =op S) · V(M) ⊂ M · Multiplicador de Valor (V = K × A × T) · La Doble Perdida · Sedimentacion · Deriva Conceptual · Principio de Identidad Conceptual · Evolucion Conceptual Legitima · Deriva Patologica · Ley de Distorsion Acumulativa · Fluidez vs. Comprension · La Brecha · Lenguaje · Primer Principio · Tesis de Corrupcion · Desorientacion · El Mapa · El Navegante · Autoenganyo · Corrupcion Cartografica</p>
-                            </div>
+                            <p style="color:var(--gold);font-weight:600;margin:24px 0 4px;font-size:13px;letter-spacing:2px">EPISTEMOLOGIA</p>
+                            <p><strong style="color:var(--text)">Conocimiento</strong> — identificacion verificada contra la realidad ·
+                            <strong style="color:var(--text)">Opinion</strong> — trazo en el mapa sin verificar ·
+                            <strong style="color:var(--text)">Creencia</strong> — trazo aceptado a pesar de fallar ·
+                            <strong style="color:var(--text)">Objetividad</strong> — fidelidad del mapa al territorio ·
+                            <strong style="color:var(--text)">Verificacion</strong> — prueba del mapa contra la realidad ·
+                            <strong style="color:var(--text)">Contradiccion</strong> — dos trazos que no pueden coexistir ·
+                            <strong style="color:var(--text)">Error</strong> — distancia entre el mapa y el territorio</p>
 
-                            <div style="margin-bottom:20px">
-                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">EPISTEMOLOGIA</p>
-                                <p style="color:var(--comment);line-height:1.8">Categoria α (Axiomatica) · Categoria β (Derivado Necesario) · Categoria γ (Derivado Contingente) · Decision (D = f(K,V,T)) · Convergencia · Divergencia · Contradiccion · Friccion · Fidelidad · Colapso · Distorsion · Correspondencia · Conocimiento · Opinion · Creencia · Objetividad (redefinida) · Verificacion · Hecho · Distincion Hecho-Valor (disuelta) · Educacion (redefinida) · Metodo Socratico · Comunicacion · Traduccion (redefinida) · Error (cartografico)</p>
-                            </div>
+                            <p style="color:var(--gold);font-weight:600;margin:24px 0 4px;font-size:13px;letter-spacing:2px">ETICA</p>
+                            <p><strong style="color:var(--text)">Vida</strong> — estandar de valor, lo que hace posible todos los demas ·
+                            <strong style="color:var(--text)">Verdad</strong> — logica, empirica o existencial ·
+                            <strong style="color:var(--text)">Libertad</strong> — ausencia de coercion sobre la accion ·
+                            <strong style="color:var(--text)">Virtud</strong> — accion consistente con valores racionales ·
+                            <strong style="color:var(--text)">Justicia</strong> — juzgar y ser juzgado por el mismo estandar ·
+                            <strong style="color:var(--text)">Integridad</strong> — no contradecir en accion lo que afirmas en palabra ·
+                            <strong style="color:var(--text)">Coraje</strong> — actuar segun tus valores cuando tiene costo</p>
 
-                            <div style="margin-bottom:20px">
-                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">ETICA</p>
-                                <p style="color:var(--comment);line-height:1.8">La Cadena Axiomatica · La Cadena Etica · Existencia · Identidad · Consciencia · Conocimiento · Accion · Valor · Verdad (Logica / Empirica / Existencial) · Libertad · Responsabilidad · Deber · Virtud · Justicia · Derecho · Principio · Vida (como Estandar de Valor) · Coraje · Honestidad · Integridad · La Virtud Fundacional · Corrupcion (del lenguaje) · La Banalidad del Mal · Tres Borrados Historicos · Caracter</p>
-                            </div>
+                            <p style="color:var(--gold);font-weight:600;margin:24px 0 4px;font-size:13px;letter-spacing:2px">POLITICA</p>
+                            <p><strong style="color:var(--text)">Soberania</strong> — capacidad de sostenerte por lo que produces ·
+                            <strong style="color:var(--text)">Propiedad</strong> — derecho sobre lo que creas ·
+                            <strong style="color:var(--text)">Capitalismo</strong> — sistema donde el intercambio es voluntario</p>
 
-                            <div style="margin-bottom:20px">
-                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">POLITICA</p>
-                                <p style="color:var(--comment);line-height:1.8">Politica · Capitalismo · Propiedad · Soberania · Cooperacion Internacional</p>
-                            </div>
-
-                            <div style="margin-bottom:20px">
-                                <p style="font-weight:600;color:var(--cyan);margin-bottom:8px">ESTETICA</p>
-                                <p style="color:var(--comment);line-height:1.8">Estetica · Arte</p>
-                            </div>
-
-                            <p class="dim" style="font-style:italic;margin-top:16px;font-size:12px">© 2026 nicomaco.org</p>
+                            <p style="color:var(--gold);font-weight:600;margin:24px 0 4px;font-size:13px;letter-spacing:2px">ESTETICA</p>
+                            <p><strong style="color:var(--text)">Arte</strong> — re-creacion selectiva de la realidad segun valores ·
+                            <strong style="color:var(--text)">Estetica</strong> — lo que vale la pena expresar</p>
                         </div>
 
-                    </div>
-                    <div class="no-results" id="glossary-no-results" style="display:none">
-                        <span class="s-cmt">// no definitions match your search</span>
+                        <div class="en-only">
+                            <p style="color:var(--gold);font-weight:600;margin-bottom:4px;font-size:13px;letter-spacing:2px">METAPHYSICS</p>
+                            <p><strong style="color:var(--text)">Concept</strong> — unit of thought: subject + object + relation ·
+                            <strong style="color:var(--text)">Elimination</strong> — remove a concept and see what collapses ·
+                            <strong style="color:var(--text)">Compression</strong> — reduce without losing structure ·
+                            <strong style="color:var(--text)">The Map</strong> — your model of reality, always incomplete ·
+                            <strong style="color:var(--text)">Conceptual Drift</strong> — when a term loses its original referent ·
+                            <strong style="color:var(--text)">Stolen Concept</strong> — using a premise while denying it ·
+                            <strong style="color:var(--text)">Cartographic Corruption</strong> — accumulated distortion in the map</p>
+
+                            <p style="color:var(--gold);font-weight:600;margin:24px 0 4px;font-size:13px;letter-spacing:2px">EPISTEMOLOGY</p>
+                            <p><strong style="color:var(--text)">Knowledge</strong> — identification verified against reality ·
+                            <strong style="color:var(--text)">Opinion</strong> — line on the map, never checked ·
+                            <strong style="color:var(--text)">Belief</strong> — line accepted despite failing verification ·
+                            <strong style="color:var(--text)">Objectivity</strong> — fidelity of the map to the territory ·
+                            <strong style="color:var(--text)">Verification</strong> — testing the map against reality ·
+                            <strong style="color:var(--text)">Contradiction</strong> — two lines that cannot coexist ·
+                            <strong style="color:var(--text)">Error</strong> — distance between the map and the territory</p>
+
+                            <p style="color:var(--gold);font-weight:600;margin:24px 0 4px;font-size:13px;letter-spacing:2px">ETHICS</p>
+                            <p><strong style="color:var(--text)">Life</strong> — standard of value, what makes all others possible ·
+                            <strong style="color:var(--text)">Truth</strong> — logical, empirical, or existential ·
+                            <strong style="color:var(--text)">Liberty</strong> — absence of coercion over action ·
+                            <strong style="color:var(--text)">Virtue</strong> — action consistent with rational values ·
+                            <strong style="color:var(--text)">Justice</strong> — judge and be judged by the same standard ·
+                            <strong style="color:var(--text)">Integrity</strong> — not contradicting in action what you affirm in word ·
+                            <strong style="color:var(--text)">Courage</strong> — acting on your values when it costs you</p>
+
+                            <p style="color:var(--gold);font-weight:600;margin:24px 0 4px;font-size:13px;letter-spacing:2px">POLITICS</p>
+                            <p><strong style="color:var(--text)">Sovereignty</strong> — ability to sustain yourself by what you produce ·
+                            <strong style="color:var(--text)">Property</strong> — right over what you create ·
+                            <strong style="color:var(--text)">Capitalism</strong> — system where exchange is voluntary</p>
+
+                            <p style="color:var(--gold);font-weight:600;margin:24px 0 4px;font-size:13px;letter-spacing:2px">AESTHETICS</p>
+                            <p><strong style="color:var(--text)">Art</strong> — selective re-creation of reality according to values ·
+                            <strong style="color:var(--text)">Aesthetics</strong> — what is worth expressing</p>
+                        </div>
+
+                        <p class="dim" style="text-align:center;font-style:italic;margin-top:32px;font-size:12px">© 2026 nicomaco.org</p>
                     </div>
                 </div>
                 </div>
@@ -1594,14 +1592,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const intro = document.createElement('div');
         intro.className = 'block welcome-block';
         intro.innerHTML = es
-            ? `<div class="welcome-title">α ἐστιν α</div>
-               <div class="welcome-body">
-                   <p>filosofia aplicada a la toma de decisiones</p>
-               </div>`
-            : `<div class="welcome-title">α ἐστιν α</div>
-               <div class="welcome-body">
-                   <p>applied philosophy for decision-making</p>
-               </div>`;
+            ? `<p class="welcome-line">α ἐστιν α · filosofia aplicada a la toma de decisiones</p>`
+            : `<p class="welcome-line">α ἐστιν α · applied philosophy for decision-making</p>`;
         output.appendChild(intro);
     }
 
