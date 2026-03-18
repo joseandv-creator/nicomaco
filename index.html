@@ -1964,25 +1964,24 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             totalTextHeight += wrapText(tempCtx, p.trim(), mx, 0, textW, 46, true) + 36;
         }
 
-        // Dynamic height canvas
-        const topPad = 100;
-        const brandHeight = 220;
-        const H = topPad + 40 + totalTextHeight + 100 + brandHeight + 80;
+        // Render on oversized canvas first, then crop
+        const topPad = 80;
+        const maxH = topPad + totalTextHeight + 600;
 
         const canvas = document.createElement('canvas');
-        canvas.width = W; canvas.height = H;
+        canvas.width = W; canvas.height = maxH;
         const ctx = canvas.getContext('2d');
 
         // Background — warm parchment
         ctx.fillStyle = '#F8F5EF';
-        ctx.fillRect(0, 0, W, H);
+        ctx.fillRect(0, 0, W, maxH);
 
         // α at top — beginning
         let y = topPad;
         ctx.fillStyle = '#B8960C';
         ctx.font = `300 28px ${serif}`;
         ctx.fillText('α', mx, y + 10);
-        y += 60;
+        y += 50;
 
         // Render each paragraph
         ctx.fillStyle = '#1D1D1F';
@@ -1993,38 +1992,42 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             y = wrapText(ctx, clean, mx, y, textW, 46) + 36;
         }
 
-        // Brand block — generous breathing space
-        y += 80;
+        // Brand block — tight spacing
+        y += 40;
 
-        // ω above signature — end
+        // ω above signature
         ctx.fillStyle = '#B8960C';
         ctx.font = `300 28px ${serif}`;
         ctx.fillText('ω', W/2 - ctx.measureText('ω').width/2, y + 10);
 
         ctx.textAlign = 'center';
 
-        // Same style as welcome page
         const sigFont = `400 20px ${sans}`;
         const sigColor = '#86868B';
         const sigSpacing = 8;
 
-        // Α  ΕΣΤΙΝ  Α — generous space below line
         ctx.fillStyle = sigColor;
         ctx.font = sigFont;
-        drawSpaced(ctx, 'Α  ΕΣΤΙΝ  Α', W/2, y + 60, sigSpacing);
+        drawSpaced(ctx, 'Α  ΕΣΤΙΝ  Α', W/2, y + 50, sigSpacing);
 
-        // NICÓMACO.ORG — generous space below
         ctx.fillStyle = sigColor;
         ctx.font = sigFont;
-        drawSpaced(ctx, 'NICÓMACO.ORG', W/2, y + 96, sigSpacing);
+        drawSpaced(ctx, 'NICÓMACO.ORG', W/2, y + 82, sigSpacing);
 
         ctx.textAlign = 'left';
+
+        // Crop canvas to actual content height
+        const finalH = y + 120;
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = W; croppedCanvas.height = finalH;
+        const croppedCtx = croppedCanvas.getContext('2d');
+        croppedCtx.drawImage(canvas, 0, 0);
 
         // Show overlay with preview
         const wrap = document.createElement('div');
         wrap.className = 'share-canvas-wrap';
         wrap.innerHTML = '<div class="share-canvas-actions"></div>';
-        wrap.insertBefore(canvas, wrap.firstChild);
+        wrap.insertBefore(croppedCanvas, wrap.firstChild);
 
         const actions = wrap.querySelector('.share-canvas-actions');
 
@@ -2034,7 +2037,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         btnSave.addEventListener('click', () => {
             const a = document.createElement('a');
             a.download = 'nicomaco.png';
-            a.href = canvas.toDataURL('image/png');
+            a.href = croppedCanvas.toDataURL('image/png');
             a.click();
             wrap.remove();
         });
