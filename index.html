@@ -87,11 +87,9 @@
         .header-by { color: var(--comment); font-family: var(--font-sans); font-size: 11px; font-weight: 400; letter-spacing: 0.5px; margin-top: 1px; }
         .header-sub { display: none; }
         .header-nav {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
+            margin-top: 6px;
             display: flex;
+            justify-content: center;
             gap: 16px;
             align-items: center;
         }
@@ -188,7 +186,17 @@
         }
         .tab:hover .tab-name { color: var(--text-bright); }
         .tab.active {
-            border-bottom-color: var(--gold);
+            border-bottom-color: transparent;
+        }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 25%;
+            right: 25%;
+            height: 2px;
+            background: var(--gold);
+            border-radius: 1px;
         }
         .tab.active .tab-name { color: var(--text-bright); font-weight: 600; }
         .tab.active .tab-teaser { opacity: 1; }
@@ -237,16 +245,16 @@
         .s-orange { color: var(--orange); }
         .s-bright { color: var(--text-bright); }
         .user-bubble {
-            background: var(--text-bright);
-            color: #FFFFFF;
-            border: none;
-            border-radius: 16px;
+            background: var(--surface);
+            color: var(--text-bright);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             padding: 14px 20px;
             margin-bottom: 24px;
             font-family: var(--font-sans);
             font-size: 15px;
             line-height: 1.5;
-            margin-left: 20%;
+            text-align: center;
         }
         .s-blue { color: var(--blue); }
         .s-yellow { color: var(--yellow); }
@@ -306,7 +314,7 @@
             background: #FFFFFF;
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 14px 14px 14px 20px;
+            padding: 14px 16px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.06);
             transition: box-shadow 0.3s ease, border-color 0.3s ease;
         }
@@ -358,8 +366,8 @@
             color: var(--border);
             font-size: 11px;
             font-family: var(--font-sans);
-            margin-top: 4px;
-            margin-left: 20px;
+            margin-top: 8px;
+            text-align: center;
         }
 
         /* -- loading -- */
@@ -761,7 +769,7 @@
                         <span class="input-ctx" id="input-ctx"></span>
                         <textarea id="input" rows="1" placeholder="pregunta a Nicómaco..."></textarea>
                         <button class="btn-send" id="btn-send">enviar</button>
-                        <button class="btn btn-sm" id="btn-new-chat" title="New conversation" style="padding:8px;font-size:16px">&#8634;</button>
+                        <button class="btn btn-sm" id="btn-new-chat" title="New conversation" style="padding:8px;font-size:14px;border:none;color:var(--comment);background:none">&#8634;</button>
                     </div>
                     <div class="input-hints">enter para enviar &middot; shift+enter nueva línea &middot; pega URL para filtrar &middot; esc cancelar</div>
                 </div>
@@ -1020,8 +1028,7 @@
 
         <!-- footer -->
         <div class="footer">
-            <span class="footer-sig">nicómaco 2026</span>
-            <a href="/pro.html" style="color:var(--gold);text-decoration:none;font-family:var(--font-sans);font-size:11px;letter-spacing:1px;margin-left:16px">pro</a>
+            <span class="footer-sig">nicómaco 2026 · <a href="/pro.html" style="color:var(--gold);text-decoration:none;letter-spacing:1px">pro</a></span>
         </div>
     </div>
 
