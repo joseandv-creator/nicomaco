@@ -1861,7 +1861,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         // Dynamic height canvas
         const topPad = 100;
-        const brandHeight = 90;
+        const brandHeight = 110;
         const H = topPad + 40 + totalTextHeight + 60 + brandHeight + 60;
 
         const canvas = document.createElement('canvas');
@@ -1894,15 +1894,15 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         ctx.textAlign = 'center';
 
-        // α ἐστιν α — gold, light, spaced
+        // α ἐστιν α — large, serif, gold, the signature
         ctx.fillStyle = '#B8960C';
-        ctx.font = `300 14px ${sans}`;
-        ctx.fillText('α  ἐστιν  α', W/2, y + 40);
+        ctx.font = `300 34px ${serif}`;
+        ctx.fillText('α   ἐστιν   α', W/2, y + 50);
 
-        // nicomaco.org — black, serif
-        ctx.fillStyle = '#1D1D1F';
-        ctx.font = `400 18px ${serif}`;
-        ctx.fillText('nicomaco.org', W/2, y + 66);
+        // nicomaco.org — smaller, beneath
+        ctx.fillStyle = '#86868B';
+        ctx.font = `300 15px ${sans}`;
+        ctx.fillText('nicomaco.org', W/2, y + 78);
 
         ctx.textAlign = 'left';
 
