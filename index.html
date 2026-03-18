@@ -894,6 +894,7 @@
             .welcome-line { font-size: 9px !important; letter-spacing: 2px !important; }
         }
     </style>
+    <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
 </head>
 <body>
     <div id="app">
@@ -1381,6 +1382,64 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
     const WORKER_URL = 'https://nicomaco-api.joseandv.workers.dev';
 
+    // ── AUTH STATE ──
+    let authToken = localStorage.getItem('vu_auth_token') || null;
+    let authUser = null;
+
+    // Check auth on load
+    async function checkAuth() {
+        if (!authToken) return;
+        try {
+            const res = await fetch(`${WORKER_URL}/api/auth/me`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            const data = await res.json();
+            if (data.authenticated) {
+                authUser = data;
+            } else {
+                authToken = null;
+                localStorage.removeItem('vu_auth_token');
+            }
+        } catch {}
+    }
+
+    // Show Apple Sign In
+    window.showAppleSignIn = async function() {
+        try {
+            AppleID.auth.init({
+                clientId: 'org.nicomaco.web',
+                scope: 'email',
+                redirectURI: `${WORKER_URL}/api/auth/apple/callback`,
+                usePopup: true,
+            });
+            const response = await AppleID.auth.signIn();
+            // Send id_token to our Worker
+            const res = await fetch(`${WORKER_URL}/api/auth/apple`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_token: response.authorization.id_token }),
+            });
+            const data = await res.json();
+            if (data.token) {
+                authToken = data.token;
+                localStorage.setItem('vu_auth_token', data.token);
+                authUser = { pro: data.pro, analysisCount: data.analysisCount };
+                // Reload to clear rate limit state
+                location.reload();
+            }
+        } catch (err) {
+            console.log('Apple Sign In cancelled or failed', err);
+        }
+    };
+
+    // Check for token in URL (from redirect flow)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('token')) {
+        authToken = urlParams.get('token');
+        localStorage.setItem('vu_auth_token', authToken);
+        window.history.replaceState({}, '', window.location.pathname);
+    }
+
     const I18N = {
         en: {
             subtitle: 'applied philosophy for decision-making',
@@ -1496,6 +1555,9 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     }
 
     function init() {
+        // Check auth status
+        checkAuth();
+
         // Restore analysis count from persisted history
         if (state.history.length) state.analysisCount = Math.max(...state.history.map(h => h.num || 0));
 
@@ -2280,7 +2342,7 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
                 let errorMsg = esc(err.message);
                 let hint = '';
                 if (err.message.includes('consultas') || err.message.includes('Daily limit')) {
-                    hint = `<span class="s-cmt">// <a href="/pro.html" style="color:var(--gold)">nicomaco pro</a> — consultas ilimitadas con el modelo mas profundo</span>`;
+                    hint = `<span class="s-cmt">// <a href="#" onclick="showAppleSignIn();return false" style="color:var(--gold)">iniciar sesión</a> para continuar — o <a href="/pro.html" style="color:var(--gold)">nicómaco pro</a> para consultas ilimitadas</span>`;
                 } else if (err.message.includes('credit balance') || err.message.includes('balance is too low')) {
                     hint = `<span class="s-warn">// try switching to a different model in cfg</span>\n<span class="s-cmt">// current: ${esc(state.model)}</span>`;
                 } else if (err.message.includes('Could not resolve') || err.message.includes('not found')) {
@@ -2356,9 +2418,11 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
 
         // All traffic goes through Worker (system prompt is server-side)
         const payload = { model: state.model, messages, max_tokens: 4096, stream: true };
+        const headers = { 'Content-Type': 'application/json' };
+        if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
         res = await fetch(`${WORKER_URL}/api/analyze`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers,
             body: JSON.stringify(payload),
             signal: state.controller.signal
         });
