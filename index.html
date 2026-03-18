@@ -2426,6 +2426,56 @@ Now respond as ${name}. From your philosophy, your era, your worldview. Maximum 
         } catch(e) {}
     }
 
+    // ── Reading Recommendations ──
+    async function generateReadingRec(block, question, analysis) {
+        try {
+            const es = state.lang === 'es';
+            const prompt = es
+                ? `Alguien preguntó: "${question}". Basándote en esta pregunta y su análisis, recomienda EXACTAMENTE un libro o capítulo específico que responda directamente lo que están buscando. No una lista. UN libro, UN capítulo o sección específica, y UNA oración explicando por qué exactamente ese pasaje responde su pregunta. Sé concreto: "Capítulo 7 de la Ética Nicomáquea" no "lee a Aristóteles". Sin asteriscos. Máximo 3 oraciones.`
+                : `Someone asked: "${question}". Based on this question and its analysis, recommend EXACTLY one book or specific chapter that directly answers what they're looking for. Not a list. ONE book, ONE specific chapter or section, and ONE sentence explaining why that exact passage answers their question. Be concrete: "Chapter 7 of the Nicomachean Ethics" not "read Aristotle". No asterisks. Maximum 3 sentences.`;
+
+            const res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: prompt }],
+                    model: 'claude-sonnet-4-20250514'
+                }),
+            });
+
+            if (!res.ok) return;
+
+            let text = '';
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buf = '';
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buf += decoder.decode(value, { stream: true });
+                const lines = buf.split('\n');
+                buf = lines.pop() || '';
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    const json = line.slice(6).trim();
+                    if (!json || json === '[DONE]') continue;
+                    try {
+                        const evt = JSON.parse(json);
+                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') text += evt.delta.text;
+                    } catch {}
+                }
+            }
+
+            if (text.trim()) {
+                const el = document.createElement('div');
+                el.className = 'lens-response';
+                el.innerHTML = `<div class="lens-response-name">${es ? 'lectura recomendada' : 'recommended reading'}</div>${text.replace(/\*{1,3}/g, '').trim()}`;
+                block.appendChild(el);
+                scrollToBottom();
+            }
+        } catch(e) {}
+    }
+
     // ── Contradiction Detector (triggered after analysis #5, checks against history) ──
     async function tryContradictionDetection(block, currentQuestion) {
         try {
@@ -3007,6 +3057,18 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
         acts.appendChild(lensWrap);
 
         block.appendChild(acts);
+
+        // Reading recommendation
+        const btnRead = document.createElement('button');
+        btnRead.className = 'lens-btn';
+        btnRead.textContent = state.lang === 'es' ? 'qué leer' : 'what to read';
+        btnRead.addEventListener('click', async () => {
+            if (btnRead.dataset.used) return;
+            btnRead.dataset.used = 'true';
+            btnRead.style.opacity = '0.4';
+            await generateReadingRec(block, candidate, fullText);
+        });
+        lensWrap.appendChild(btnRead);
 
         // Decision journal — "¿qué decidiste?"
         const existing = state.history.find(h => h.id === id);
