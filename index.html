@@ -2208,6 +2208,47 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         intro.innerHTML = html;
         output.appendChild(intro);
 
+        // Animated example for first-time users (0 analyses)
+        if (count === 0) {
+            const demoQ = es
+                ? '¿es egoísta priorizar mi bienestar?'
+                : 'is it selfish to prioritize my well-being?';
+            const demoA = es
+                ? 'La pregunta contiene una trampa: asume que priorizar tu bienestar podría ser inmoral. Pero sin tu bienestar, no puedes valorar nada más — ni a ti, ni a otros. Lo que llamas "egoísmo" es en realidad la condición mínima para que cualquier otro valor exista. La confusión viene de heredar una definición que equipara "cuidarte" con "dañar a otros". Esas dos cosas no son lo mismo — y tratarlas como si lo fueran es el concepto robado más caro que puedes cargar.'
+                : 'The question contains a trap: it assumes that prioritizing your well-being could be immoral. But without your well-being, you cannot value anything else — not yourself, not others. What you call "selfishness" is actually the minimum condition for any other value to exist. The confusion comes from inheriting a definition that equates "taking care of yourself" with "harming others." Those two things are not the same — and treating them as if they were is the most expensive stolen concept you can carry.';
+
+            const demoBlock = document.createElement('div');
+            demoBlock.className = 'block';
+            demoBlock.style.cssText = 'margin-top:24px;opacity:0;transition:opacity 0.6s';
+            demoBlock.innerHTML = `
+                <div style="font-family:var(--font-serif);font-size:14px;font-style:italic;color:var(--comment);margin-bottom:16px;text-align:center">"${demoQ}"</div>
+                <div id="demo-response" style="font-family:var(--font-serif);font-size:15px;line-height:1.7;color:var(--text);text-align:justify"></div>
+            `;
+            output.appendChild(demoBlock);
+
+            // Animate: fade in block, then typewriter the response
+            setTimeout(() => { demoBlock.style.opacity = '1'; }, 500);
+            const responseEl = demoBlock.querySelector('#demo-response');
+            const words = demoA.split(' ');
+            let wordIdx = 0;
+            const typeInterval = setInterval(() => {
+                if (wordIdx < words.length) {
+                    responseEl.textContent += (wordIdx > 0 ? ' ' : '') + words[wordIdx];
+                    wordIdx++;
+                } else {
+                    clearInterval(typeInterval);
+                    // After demo finishes, show subtle prompt
+                    setTimeout(() => {
+                        const prompt = document.createElement('p');
+                        prompt.style.cssText = 'text-align:center;font-size:13px;color:var(--gold);margin-top:20px;font-family:var(--font-sans);letter-spacing:1px;opacity:0;transition:opacity 0.6s';
+                        prompt.textContent = es ? 'ahora escribe la tuya ↓' : 'now write yours ↓';
+                        demoBlock.appendChild(prompt);
+                        setTimeout(() => { prompt.style.opacity = '1'; }, 100);
+                    }, 800);
+                }
+            }, 50);
+        }
+
         // Email registration prompt — after first analysis, if no email saved
         if (count >= 1 && !state.email) {
             const emailBanner = document.createElement('div');
