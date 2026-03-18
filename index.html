@@ -362,6 +362,29 @@
             background: var(--gold); color: #fff; border:none; border-radius:8px;
             padding: 10px 24px; font-family: var(--font-sans); font-size: 14px; cursor:pointer;
         }
+        /* -- pattern detection -- */
+        .pattern-block {
+            margin-top: 24px;
+            padding: 20px 24px;
+            border-left: 2px solid var(--gold);
+            background: rgba(184,150,12,0.03);
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text);
+            animation: blockFadeIn 0.8s ease-out;
+        }
+        .pattern-label {
+            font-family: var(--font-sans);
+            font-style: normal;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
         /* -- share feature -- */
         .btn-share-trigger {
             font-family: var(--font-serif);
@@ -1967,6 +1990,64 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         document.body.appendChild(wrap);
     }
 
+    // Pattern detection — separate layer, never touches main prompt
+    async function tryPatternDetection(block) {
+        try {
+            const last10 = state.history.slice(0, 10).map(h => h.candidate).filter(c => c && !c.startsWith('[URL]'));
+            if (last10.length < 5) return;
+
+            const patternPrompt = `You are a pattern observer. Below are the last ${last10.length} questions a person has asked a philosophical analysis tool. Your ONLY job: detect the underlying pattern — what unexamined premise, recurring theme, or blind spot do these questions reveal about how this person thinks?
+
+Answer in 2-3 sentences maximum. Be direct, personal, and specific. Do not be generic. Do not praise. Do not use asterisks. Respond in the same language as the questions.
+
+Questions (most recent first):
+${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
+
+            const res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: patternPrompt }],
+                    model: 'claude-sonnet-4-20250514'
+                }),
+            });
+
+            if (!res.ok) return;
+
+            let patternText = '';
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buf = '';
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buf += decoder.decode(value, { stream: true });
+                const lines = buf.split('\n');
+                buf = lines.pop() || '';
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    const json = line.slice(6).trim();
+                    if (!json || json === '[DONE]') continue;
+                    try {
+                        const evt = JSON.parse(json);
+                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') patternText += evt.delta.text;
+                    } catch {}
+                }
+            }
+
+            if (patternText.trim()) {
+                const es = state.lang === 'es';
+                const patternEl = document.createElement('div');
+                patternEl.className = 'pattern-block';
+                patternEl.innerHTML = `<div class="pattern-label">${es ? 'patrón detectado' : 'pattern detected'}</div>${patternText.replace(/\*{1,3}/g, '').trim()}`;
+                block.appendChild(patternEl);
+                scrollToBottom();
+            }
+        } catch(e) {
+            // Silent fail — pattern is a bonus, not critical
+        }
+    }
+
     // Draw text with extra letter-spacing, centered
     function drawSpaced(ctx, text, centerX, y, spacing) {
         let totalW = 0;
@@ -2174,6 +2255,11 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             state.history.unshift({ id, num, candidate: text, analysis: fullText, date: new Date().toISOString(), messages: [...state.conversationHistory] });
             localStorage.setItem('vu_history', JSON.stringify(state.history));
             playCompletionSound();
+
+            // Pattern detection layer — every 10 analyses, separate call
+            if (state.history.length > 0 && state.history.length % 10 === 0) {
+                tryPatternDetection(block);
+            }
 
         } catch (err) {
             if (err.name === 'AbortError') {
