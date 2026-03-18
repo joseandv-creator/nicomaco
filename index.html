@@ -1861,8 +1861,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         // Dynamic height canvas
         const topPad = 100;
-        const brandHeight = 110;
-        const H = topPad + 40 + totalTextHeight + 60 + brandHeight + 60;
+        const brandHeight = 220;
+        const H = topPad + 40 + totalTextHeight + 100 + brandHeight + 80;
 
         const canvas = document.createElement('canvas');
         canvas.width = W; canvas.height = H;
@@ -1887,27 +1887,29 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             y = wrapText(ctx, clean, mx, y, textW, 46) + 36;
         }
 
-        // Brand block
-        y += 40;
+        // Brand block — generous breathing space
+        y += 80;
+
+        // Short gold line — centered
         ctx.fillStyle = '#B8960C';
         ctx.fillRect(W/2 - 30, y, 60, 1);
 
         ctx.textAlign = 'center';
 
-        // Both lines: EXACT same style as welcome page — scaled 2x for image resolution
+        // Same style as welcome page
         const sigFont = `400 20px ${sans}`;
         const sigColor = '#86868B';
         const sigSpacing = 8;
 
-        // Α  ΕΣΤΙΝ  Α
+        // Α  ΕΣΤΙΝ  Α — generous space below line
         ctx.fillStyle = sigColor;
         ctx.font = sigFont;
-        drawSpaced(ctx, 'Α  ΕΣΤΙΝ  Α', W/2, y + 44, sigSpacing);
+        drawSpaced(ctx, 'Α  ΕΣΤΙΝ  Α', W/2, y + 60, sigSpacing);
 
-        // NICÓMACO.ORG
+        // NICÓMACO.ORG — generous space below
         ctx.fillStyle = sigColor;
         ctx.font = sigFont;
-        drawSpaced(ctx, 'NICÓMACO.ORG', W/2, y + 72, sigSpacing);
+        drawSpaced(ctx, 'NICÓMACO.ORG', W/2, y + 96, sigSpacing);
 
         ctx.textAlign = 'left';
 
