@@ -1714,6 +1714,12 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
     const WORKER_URL = 'https://nicomaco-api.joseandv.workers.dev';
 
+    // Helper: add email to every API call body
+    function apiBody(obj) {
+        if (state && state.email) obj.email = state.email;
+        return JSON.stringify(obj);
+    }
+
     // Owner mode — activate via ?owner=aristotle
     if (new URLSearchParams(window.location.search).get('owner') === 'aristotle') {
         localStorage.setItem('vu_owner', 'true');
@@ -1755,7 +1761,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             const res = await fetch(`${WORKER_URL}/api/auth/apple`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_token: response.authorization.id_token }),
+                body: apiBody({ id_token: response.authorization.id_token }),
             });
             const data = await res.json();
             if (data.token) {
@@ -1839,6 +1845,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         lang: localStorage.getItem('vu_lang') || (navigator.language?.startsWith('es') ? 'es' : 'en'),
         apiKey: localStorage.getItem('vu_key') || '',
         model: localStorage.getItem('vu_model') || 'claude-sonnet-4-20250514',
+        email: localStorage.getItem('vu_email') || '',
         history: JSON.parse(localStorage.getItem('vu_history') || '[]'),
         drafts: JSON.parse(localStorage.getItem('vu_drafts') || '[]').filter(d => d.t && d.d),
         currentTab: 'tool',
@@ -2123,6 +2130,16 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         if (name === 'design') { renderDesignTab(); }
     }
 
+    window.registerEmail = function() {
+        const input = $('#email-register');
+        if (!input) return;
+        const email = input.value.trim().toLowerCase();
+        if (!email || !email.includes('@')) return;
+        state.email = email;
+        localStorage.setItem('vu_email', email);
+        renderWelcome();
+    };
+
     function renderWelcome() {
         const output = $('#output');
         output.innerHTML = '';
@@ -2140,6 +2157,30 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         }
         intro.innerHTML = html;
         output.appendChild(intro);
+
+        // Email registration prompt — after first analysis, if no email saved
+        if (count >= 1 && !state.email) {
+            const emailBanner = document.createElement('div');
+            emailBanner.className = 'block';
+            emailBanner.style.cssText = 'text-align:center;margin-top:16px;padding:16px;border:1px solid var(--border);border-radius:8px;';
+            emailBanner.innerHTML = es
+                ? `<p style="font-size:13px;color:var(--comment);margin-bottom:10px">guarda tu historial y sincroniza entre dispositivos</p>
+                   <div style="display:flex;gap:8px;justify-content:center;align-items:center">
+                       <input type="email" id="email-register" placeholder="tu email" style="font-family:var(--font-serif);font-size:14px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);width:200px;outline:none">
+                       <button onclick="registerEmail()" style="font-family:var(--font-sans);font-size:12px;padding:8px 16px;background:var(--text);color:var(--bg);border:none;border-radius:6px;cursor:pointer;letter-spacing:1px">GUARDAR</button>
+                   </div>`
+                : `<p style="font-size:13px;color:var(--comment);margin-bottom:10px">save your history and sync across devices</p>
+                   <div style="display:flex;gap:8px;justify-content:center;align-items:center">
+                       <input type="email" id="email-register" placeholder="your email" style="font-family:var(--font-serif);font-size:14px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);width:200px;outline:none">
+                       <button onclick="registerEmail()" style="font-family:var(--font-sans);font-size:12px;padding:8px 16px;background:var(--text);color:var(--bg);border:none;border-radius:6px;cursor:pointer;letter-spacing:1px">SAVE</button>
+                   </div>`;
+            output.appendChild(emailBanner);
+        } else if (state.email) {
+            const emailShow = document.createElement('div');
+            emailShow.style.cssText = 'text-align:center;margin-top:8px;';
+            emailShow.innerHTML = `<p style="font-size:11px;color:var(--comment)">${state.email}</p>`;
+            output.appendChild(emailShow);
+        }
 
         // Morning prompt — personalized question
         if (count >= 3) {
@@ -2176,7 +2217,7 @@ ${recent.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
             const res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                body: apiBody({
                     messages: [{ role: 'user', content: prompt }],
                     model: 'claude-sonnet-4-20250514',
                     stream: false
@@ -2240,7 +2281,7 @@ ${entries}`;
             const res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                body: apiBody({
                     messages: [{ role: 'user', content: prompt }],
                     model: 'claude-sonnet-4-20250514',
                     stream: false
@@ -2580,7 +2621,7 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
             const res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                body: apiBody({
                     messages: [{ role: 'user', content: patternPrompt }],
                     model: 'claude-sonnet-4-20250514'
                 }),
@@ -2642,7 +2683,7 @@ Now respond as ${name}. From your philosophy, your era, your worldview. Maximum 
             const res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                body: apiBody({
                     messages: [{ role: 'user', content: prompt }],
                     model: 'claude-sonnet-4-20250514'
                 }),
@@ -2707,7 +2748,7 @@ In ONE sentence: does this question move them closer or further from their desig
             const res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                body: apiBody({
                     messages: [{ role: 'user', content: prompt }],
                     model: 'claude-sonnet-4-20250514',
                     stream: false
@@ -2880,7 +2921,7 @@ ${historyContext || 'No previous history'}`;
             const res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                body: apiBody({
                     messages: [{ role: 'user', content: prompt }],
                     model: 'claude-sonnet-4-20250514',
                     stream: false
@@ -3023,7 +3064,7 @@ ${all}`;
             const res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                body: apiBody({
                     messages: [{ role: 'user', content: prompt }],
                     model: 'claude-sonnet-4-20250514'
                 }),
@@ -3096,7 +3137,7 @@ ${previous}`;
             const res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                body: apiBody({
                     messages: [{ role: 'user', content: prompt }],
                     model: 'claude-sonnet-4-20250514'
                 }),
@@ -3146,7 +3187,7 @@ ${previous}`;
             const res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                body: apiBody({
                     messages: [{ role: 'user', content: prompt }],
                     model: 'claude-sonnet-4-20250514'
                 }),
@@ -3228,7 +3269,7 @@ ${entries}`;
             const res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                body: apiBody({
                     messages: [{ role: 'user', content: prompt }],
                     model: 'claude-sonnet-4-20250514'
                 }),
@@ -3318,7 +3359,7 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
             const res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                body: apiBody({
                     messages: [{ role: 'user', content: profilePrompt }],
                     model: 'claude-sonnet-4-20250514'
                 }),
@@ -3454,7 +3495,7 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
         const res = await fetch(`${WORKER_URL}/api/fetch-url`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url }),
+            body: apiBody({ url }),
         });
         if (!res.ok) {
             const err = await res.json().catch(() => ({}));
