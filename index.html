@@ -63,6 +63,7 @@
             max-width: 680px;
             margin: 0 auto;
             padding: 48px 28px 0;
+            padding-top: calc(48px + env(safe-area-inset-top));
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -663,11 +664,13 @@
         }
         .welcome-body p {
             font-family: var(--font-sans);
-            font-size: 15px;
+            font-size: 11px;
             color: var(--comment);
             line-height: 1.8;
             margin-bottom: 4px;
             font-weight: 400;
+            letter-spacing: 3px;
+            text-transform: uppercase;
         }
         .welcome-accent {
             color: var(--gold) !important;
