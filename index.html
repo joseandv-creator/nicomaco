@@ -1833,69 +1833,78 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         });
     }
 
-    window.shareAsImage = async function generateShareImage(selectedText) {
-        // Ensure Cormorant Garamond is loaded before drawing
-        try { await document.fonts.load('400 42px Cormorant Garamond'); } catch(e) {}
-        try { await document.fonts.load('300 16px Inter'); } catch(e) {}
+    window.shareAsImage = async function generateShareImage(analysisText) {
+        // Ensure fonts loaded
+        try { await document.fonts.load('400 32px Cormorant Garamond'); } catch(e) {}
+        try { await document.fonts.load('300 14px Inter'); } catch(e) {}
 
         const serif = "'Cormorant Garamond', Georgia, serif";
         const sans = "'Inter', sans-serif";
+        const W = 1080;
+        const mx = 100;
+        const textW = W - mx * 2;
+
+        // Clean text, split into paragraphs
+        const raw = analysisText.replace(/\*{1,3}/g, '').trim();
+        const paragraphs = raw.split(/\n+/).filter(p => p.trim());
+
+        // Measure total height with a temp canvas
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = W; tempCanvas.height = 100;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.font = `400 32px ${serif}`;
+
+        let totalTextHeight = 0;
+        for (const p of paragraphs) {
+            totalTextHeight += wrapText(tempCtx, p.trim(), mx, 0, textW, 46, true) + 36;
+        }
+
+        // Dynamic height canvas
+        const topPad = 100;
+        const brandHeight = 130;
+        const H = topPad + 40 + totalTextHeight + 60 + brandHeight + 60;
 
         const canvas = document.createElement('canvas');
-        const W = 1080, H = 1350;
         canvas.width = W; canvas.height = H;
         const ctx = canvas.getContext('2d');
-        const mx = 120;
 
         // Background — warm parchment
         ctx.fillStyle = '#F8F5EF';
         ctx.fillRect(0, 0, W, H);
 
-        // Clean the selected text, add comillas
-        const raw = selectedText.replace(/\*{1,3}/g, '').replace(/\n+/g, ' ').trim();
-        const quote = '\u201C' + raw + '\u201D';
-
-        // Measure quote height to center everything vertically
-        ctx.font = `400 44px ${serif}`;
-        const quoteHeight = wrapText(ctx, quote, mx, 0, W - mx*2, 62, true);
-        const brandHeight = 100;
-        const gap = 70;
-        const totalContent = quoteHeight + gap + brandHeight;
-        const startY = Math.max(160, (H - totalContent) / 2);
-
-        // Gold accent line above quote
+        // Gold accent line at top
+        let y = topPad;
         ctx.fillStyle = '#B8960C';
-        ctx.fillRect(mx, startY - 40, 40, 1.5);
+        ctx.fillRect(mx, y, 40, 1.5);
+        y += 40;
 
-        // Quote with comillas — Cormorant Garamond
+        // Render each paragraph
         ctx.fillStyle = '#1D1D1F';
-        ctx.font = `400 44px ${serif}`;
-        const lastY = wrapText(ctx, quote, mx, startY, W - mx*2, 62);
+        ctx.font = `400 32px ${serif}`;
+        for (const p of paragraphs) {
+            const clean = p.trim();
+            if (!clean) continue;
+            y = wrapText(ctx, clean, mx, y, textW, 46) + 36;
+        }
 
-        // Brand — close below quote
-        const brandY = lastY + gap;
-
-        // Thin gold line
+        // Brand block
+        y += 40;
         ctx.fillStyle = '#B8960C';
-        ctx.fillRect(mx, brandY, W - mx*2, 0.5);
+        ctx.fillRect(mx, y, textW, 0.5);
 
         ctx.textAlign = 'center';
 
-        // α ἐστιν α — same as welcome: sans, letter-spacing, uppercase feel
         ctx.fillStyle = '#86868B';
         ctx.font = `400 14px ${sans}`;
-        ctx.letterSpacing = '4px';
-        ctx.fillText('Α  ΕΣΤΙΝ  Α', W/2, brandY + 34);
+        ctx.fillText('Α  ΕΣΤΙΝ  Α', W/2, y + 34);
 
-        // filosofía aplicada a la toma de decisiones — same as welcome
         ctx.fillStyle = '#86868B';
         ctx.font = `400 14px ${sans}`;
-        ctx.fillText('FILOSOFÍA APLICADA A LA TOMA DE DECISIONES', W/2, brandY + 56);
+        ctx.fillText('FILOSOFÍA APLICADA A LA TOMA DE DECISIONES', W/2, y + 56);
 
-        // nicomaco.org — serif, black, slightly larger
         ctx.fillStyle = '#1D1D1F';
         ctx.font = `500 20px ${serif}`;
-        ctx.fillText('nicomaco.org', W/2, brandY + 86);
+        ctx.fillText('nicomaco.org', W/2, y + 86);
 
         ctx.textAlign = 'left';
 
@@ -1907,7 +1916,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         const actions = wrap.querySelector('.share-canvas-actions');
 
-        // Native share button (works on iOS/Android)
+        // Share button — native share with image file
         const btnShare = document.createElement('button');
         btnShare.textContent = state.lang === 'es' ? 'compartir' : 'share';
         btnShare.addEventListener('click', async () => {
@@ -1919,7 +1928,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
                     } else if (navigator.share) {
                         await navigator.share({ title: 'nicómaco', text: raw, url: 'https://nicomaco.org' });
                     } else {
-                        // Fallback: download
                         const a = document.createElement('a');
                         a.download = 'nicomaco.png';
                         a.href = canvas.toDataURL('image/png');
@@ -1930,21 +1938,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             } catch(e) { if (e.name !== 'AbortError') wrap.remove(); }
         });
         actions.appendChild(btnShare);
-
-        // Save button
-        const btnSave = document.createElement('button');
-        btnSave.textContent = state.lang === 'es' ? 'guardar' : 'save';
-        btnSave.style.background = 'transparent';
-        btnSave.style.color = '#1D1D1F';
-        btnSave.style.border = '1px solid #E0DCD4';
-        btnSave.addEventListener('click', () => {
-            const a = document.createElement('a');
-            a.download = 'nicomaco.png';
-            a.href = canvas.toDataURL('image/png');
-            a.click();
-            wrap.remove();
-        });
-        actions.appendChild(btnSave);
 
         // Close
         const btnClose = document.createElement('button');
@@ -2278,8 +2271,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         btnSh.className = 'btn-share-trigger';
         btnSh.textContent = state.lang === 'es' ? 'compartir' : 'share';
         btnSh.addEventListener('click', () => {
-            const codeEl = block.querySelector('.code');
-            if (codeEl) enterShareMode(codeEl);
+            const item = state.history.find(h => h.id === id);
+            if (item) generateShareImage(item.analysis);
         });
         acts.appendChild(btnSh);
         block.appendChild(acts);
