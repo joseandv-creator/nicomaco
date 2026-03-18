@@ -1894,15 +1894,15 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         ctx.textAlign = 'center';
 
-        // α ἐστιν α — large, serif, gold, the signature
+        // Α ΕΣΤΙΝ Α — same style as welcome: uppercase, sans, spaced, gold
         ctx.fillStyle = '#B8960C';
-        ctx.font = `300 34px ${serif}`;
-        ctx.fillText('α   ἐστιν   α', W/2, y + 50);
+        ctx.font = `400 16px ${sans}`;
+        ctx.fillText('Α   Ε Σ Τ Ι Ν   Α', W/2, y + 44);
 
-        // nicomaco.org — smaller, beneath
+        // nicomaco.org — beneath, same sans
         ctx.fillStyle = '#86868B';
-        ctx.font = `300 15px ${sans}`;
-        ctx.fillText('nicomaco.org', W/2, y + 78);
+        ctx.font = `400 13px ${sans}`;
+        ctx.fillText('nicomaco.org', W/2, y + 70);
 
         ctx.textAlign = 'left';
 
