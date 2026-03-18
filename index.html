@@ -2018,7 +2018,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         ctx.textAlign = 'left';
 
         // Crop canvas to actual content height
-        const finalH = y + 120;
+        const finalH = y + 95;
         const croppedCanvas = document.createElement('canvas');
         croppedCanvas.width = W; croppedCanvas.height = finalH;
         const croppedCtx = croppedCanvas.getContext('2d');
@@ -2499,9 +2499,7 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
     function highlightURL(text) { return text.split('\n').map(l => highlightURLLine(l)).join('\n'); }
 
     function highlightURLLine(raw) {
-        let line = esc(raw);
-        line = line.replace(/\*\*([^*]+)\*\*/g, '<span class="s-emphasis">$1</span>');
-        line = line.replace(/\*{1,3}/g, '');
+        let line = esc(raw.replace(/\*{1,3}/g, ''));
         if (/^(PRODUCTOR|LO QUE IMPORTA|MENTIRAS|CONCEPTOS ROBADOS|INCENTIVOS PERVERSOS|RAMAS EN JUEGO|VEREDICTO|SOURCE AUDIT|CLAIMS DETECTED|TERRITORY CHECK|INHERITANCE ANALYSIS|INFORMATION QUALITY|EXTRACTED TRUTHS)\b/i.test(line))
             return `<span class="s-section">${line}</span>`;
         if (/^\*\*\d+\.\s/.test(line))
@@ -2521,11 +2519,7 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
     }
 
     function highlightLine(raw) {
-        let line = esc(raw);
-        // Convert **text** to styled emphasis
-        line = line.replace(/\*\*([^*]+)\*\*/g, '<span class="s-emphasis">$1</span>');
-        // Strip any remaining stray asterisks
-        line = line.replace(/\*{1,3}/g, '');
+        let line = esc(raw.replace(/\*{1,3}/g, ''));
         if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|RESCUE|MAP VALUE|PRODUCTOR|RAMAS EN JUEGO|VEREDICTO)\b/.test(line))
             return `<span class="s-section">${line}</span>`;
         if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
