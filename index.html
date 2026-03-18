@@ -1938,7 +1938,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         });
     }
 
-    window.shareAsImage = async function generateShareImage(analysisText) {
+    async function generateShareImage(analysisText) {
         // Ensure fonts loaded
         try { await document.fonts.load('400 32px Cormorant Garamond'); } catch(e) {}
         try { await document.fonts.load('300 14px Inter'); } catch(e) {}
