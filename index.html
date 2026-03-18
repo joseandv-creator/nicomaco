@@ -85,8 +85,21 @@
             letter-spacing: 0.5px;
             line-height: 1;
         }
-        .header-by { display: none; }
-        .header-sub { display: none; }
+        .header-by {
+            font-family: var(--font-sans);
+            font-size: 11px;
+            color: var(--comment);
+            margin-top: 2px;
+        }
+        .header-by a { text-decoration: none; font-size: 14px; }
+        .header-sub {
+            font-family: var(--font-serif);
+            font-size: 13px;
+            font-style: italic;
+            color: var(--comment);
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
         .header-nav {
             margin-top: 6px;
             display: flex;
@@ -760,11 +773,10 @@
         .welcome-block { text-align: center; padding: 40px 20px 30px; }
         .welcome-line {
             font-family: var(--font-sans);
-            font-size: 10px;
+            font-size: 11px;
             color: var(--comment);
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             font-weight: 400;
-            text-transform: uppercase;
         }
 
         /* -- bilingual toggle -- */
@@ -832,7 +844,7 @@
             <div class="header">
                 <div class="header-left">
                     <div class="header-title" id="main-title">nicómaco</div>
-                    <div class="header-by"><a href="#" id="nav-lang">🇪🇸</a></div>
+                    <div class="header-by">by josean · <a href="#" id="nav-lang" style="color:var(--comment)">🇪🇸</a></div>
                     <div class="header-sub" id="main-subtitle">filosofia aplicada a la toma de decisiones</div>
                 </div>
                 <div class="header-nav" style="display:none">
@@ -1364,7 +1376,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const toggle = $('#nav-lang');
         if (toggle) toggle.textContent = lang === 'es' ? '🇪🇸' : '🇬🇧';
         const mainTitle = $('#main-title');
-        if (mainTitle) mainTitle.textContent = 'NICÓMACO';
+        if (mainTitle) mainTitle.textContent = 'nicómaco';
         $('#main-subtitle').textContent = t('subtitle');
         $$('[data-tab="tool"] .tab-name').forEach(el => el.textContent = t('tool'));
         $$('[data-tab="knowledge"] .tab-name').forEach(el => el.textContent = t('knowledge'));
