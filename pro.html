@@ -13,7 +13,6 @@
             --text-bright: #1D1D1F;
             --comment: #86868B;
             --gold: #B8960C;
-            --border: rgba(184,150,12,0.15);
             --font-serif: 'Cormorant Garamond', Georgia, serif;
             --font-sans: 'Inter', system-ui, sans-serif;
         }
@@ -34,8 +33,6 @@
             width: 100%;
             text-align: center;
         }
-
-        /* header */
         .header-name {
             font-family: var(--font-serif);
             font-size: 22px;
@@ -44,8 +41,6 @@
             letter-spacing: -0.3px;
             margin-bottom: 48px;
         }
-
-        /* main message */
         .message {
             font-size: 22px;
             line-height: 1.6;
@@ -53,16 +48,12 @@
             margin-bottom: 48px;
             font-style: italic;
         }
-
-        /* separator */
         .sep {
             width: 40px;
             height: 1px;
             background: var(--gold);
             margin: 0 auto 48px;
         }
-
-        /* what you get */
         .detail {
             font-family: var(--font-sans);
             font-size: 13px;
@@ -76,8 +67,6 @@
             color: var(--text);
             font-weight: 500;
         }
-
-        /* price */
         .price-block {
             margin-bottom: 32px;
         }
@@ -100,8 +89,6 @@
             text-transform: uppercase;
             margin-top: 4px;
         }
-
-        /* button */
         .btn-subscribe {
             display: block;
             width: 100%;
@@ -122,15 +109,12 @@
             text-decoration: none;
         }
         .btn-subscribe:hover { opacity: 0.85; }
-
         .note {
             font-family: var(--font-sans);
             font-size: 11px;
             color: var(--comment);
             margin-bottom: 40px;
         }
-
-        /* back */
         .back {
             font-family: var(--font-sans);
             font-size: 12px;
@@ -139,8 +123,6 @@
             letter-spacing: 1px;
         }
         .back:hover { color: var(--text); }
-
-        /* footer sig */
         .sig {
             margin-top: 60px;
             font-family: var(--font-sans);
@@ -149,8 +131,6 @@
             text-transform: uppercase;
             color: var(--comment);
         }
-
-        /* success state */
         .success-msg {
             font-size: 20px;
             line-height: 1.6;
@@ -164,68 +144,120 @@
     <div class="container" id="main-content">
         <div class="header-name">nicómaco</div>
 
-        <p class="message">
-            En tres consultas, el sistema te vio.<br>
-            Detecto el patron debajo de tus preguntas.<br>
-            Pro te deja seguir descubriendote.
-        </p>
+        <p class="message" id="msg-main"></p>
 
         <div class="sep"></div>
 
-        <div class="detail">
-            <span>razonamiento mas profundo</span>
-            el modelo mas avanzado de analisis filosofico
-            <br><br>
-            <span>sin limite de consultas</span>
-            usa nicomaco todas las veces que necesites
-            <br><br>
-            <span>tu patron evoluciona</span>
-            cada analisis alimenta el espejo — entre mas preguntas, mas te ve
-        </div>
+        <div class="detail" id="detail-block"></div>
 
         <div class="price-block">
-            <div class="price">499 <span class="price-currency">MXN</span></div>
-            <div class="price-period">al mes</div>
+            <div class="price" id="price-display">···</div>
+            <div class="price-period" id="price-period"></div>
         </div>
 
-        <a href="#" class="btn-subscribe" id="btn-checkout">continuar</a>
+        <a href="#" class="btn-subscribe" id="btn-checkout"></a>
 
-        <p class="note">cancela cuando quieras · pago seguro via stripe</p>
+        <p class="note" id="note-text"></p>
 
-        <a href="/" class="back">← nicómaco</a>
+        <a href="/" class="back" id="back-link"></a>
 
         <div class="sig">Α  ΕΣΤΙΝ  Α</div>
     </div>
 
     <script>
+    const WORKER = 'https://nicomaco-api.joseandv.workers.dev';
+    const lang = localStorage.getItem('vu_lang') || (navigator.language?.startsWith('es') ? 'es' : 'en');
+    const es = lang === 'es';
+
+    // i18n
+    const txt = es ? {
+        msg: 'En tres consultas, el sistema te vio.<br>Detecto el patron debajo de tus preguntas.<br>Pro te deja seguir descubriendote.',
+        deep: 'razonamiento mas profundo',
+        deepSub: 'el modelo mas avanzado de analisis filosofico',
+        unlimited: 'sin limite de consultas',
+        unlimitedSub: 'usa nicomaco todas las veces que necesites',
+        pattern: 'tu patron evoluciona',
+        patternSub: 'cada analisis alimenta el espejo — entre mas preguntas, mas te ve',
+        period: 'al mes',
+        btn: 'continuar',
+        note: 'cancela cuando quieras · pago seguro via stripe',
+        back: '← nicómaco',
+        successTitle: 'tu suscripcion esta activa',
+        successMsg: 'Consultas ilimitadas. Sin restricciones.<br>El espejo esta listo.',
+        successBtn: 'ir a nicómaco',
+        successNote: 'recibiras un email de confirmacion de stripe',
+        canceled: 'pago cancelado · puedes intentar de nuevo cuando quieras',
+    } : {
+        msg: 'In three queries, the system saw you.<br>It detected the pattern beneath your questions.<br>Pro lets you keep discovering yourself.',
+        deep: 'deeper reasoning',
+        deepSub: 'the most advanced philosophical analysis model',
+        unlimited: 'unlimited queries',
+        unlimitedSub: 'use nicomaco as many times as you need',
+        pattern: 'your pattern evolves',
+        patternSub: 'each analysis feeds the mirror — the more you ask, the more it sees',
+        period: 'per month',
+        btn: 'continue',
+        note: 'cancel anytime · secure payment via stripe',
+        back: '← nicómaco',
+        successTitle: 'your subscription is active',
+        successMsg: 'Unlimited queries. No restrictions.<br>The mirror is ready.',
+        successBtn: 'go to nicómaco',
+        successNote: 'you will receive a confirmation email from stripe',
+        canceled: 'payment canceled · you can try again anytime',
+    };
+
+    // Check for success/cancel
     const params = new URLSearchParams(window.location.search);
     if (params.get('success') === 'true') {
         document.getElementById('main-content').innerHTML = `
             <div class="header-name">nicómaco</div>
             <div class="sep" style="margin-top:0"></div>
-            <p class="success-msg">
-                Tu suscripcion esta activa.<br>
-                Consultas ilimitadas. Sin restricciones.<br>
-                El espejo esta listo.
-            </p>
-            <a href="/" class="btn-subscribe" style="margin-top:32px">ir a nicómaco</a>
-            <p class="note" style="margin-top:16px">recibiras un email de confirmacion de stripe</p>
+            <p class="success-msg">${txt.successTitle}<br>${txt.successMsg}</p>
+            <a href="/" class="btn-subscribe" style="margin-top:32px">${txt.successBtn}</a>
+            <p class="note" style="margin-top:16px">${txt.successNote}</p>
             <div class="sig">Α  ΕΣΤΙΝ  Α</div>
         `;
     } else if (params.get('canceled') === 'true') {
-        document.querySelector('.note').textContent = 'pago cancelado · puedes intentar de nuevo cuando quieras';
+        render();
+        document.getElementById('note-text').textContent = txt.canceled;
+    } else {
+        render();
     }
 
+    function render() {
+        document.getElementById('msg-main').innerHTML = txt.msg;
+        document.getElementById('detail-block').innerHTML = `
+            <span>${txt.deep}</span>${txt.deepSub}<br><br>
+            <span>${txt.unlimited}</span>${txt.unlimitedSub}<br><br>
+            <span>${txt.pattern}</span>${txt.patternSub}
+        `;
+        document.getElementById('price-period').textContent = txt.period;
+        document.getElementById('btn-checkout').textContent = txt.btn;
+        document.getElementById('note-text').textContent = txt.note;
+        document.getElementById('back-link').textContent = txt.back;
+
+        // Fetch geo pricing
+        fetch(`${WORKER}/api/geo`).then(r => r.json()).then(data => {
+            const sym = data.currency === 'USD' ? '$' : '$';
+            document.getElementById('price-display').innerHTML =
+                `${data.price} <span class="price-currency">${data.currency}</span>`;
+        }).catch(() => {
+            document.getElementById('price-display').innerHTML =
+                `29 <span class="price-currency">USD</span>`;
+        });
+    }
+
+    // Checkout
     document.getElementById('btn-checkout')?.addEventListener('click', async (e) => {
         e.preventDefault();
         const btn = e.target;
-        btn.textContent = 'conectando...';
+        btn.textContent = es ? 'conectando...' : 'connecting...';
         btn.style.opacity = '0.6';
         try {
             const headers = { 'Content-Type': 'application/json' };
             const token = localStorage.getItem('vu_auth_token');
             if (token) headers['Authorization'] = `Bearer ${token}`;
-            const res = await fetch('https://nicomaco-api.joseandv.workers.dev/api/create-checkout', {
+            const res = await fetch(`${WORKER}/api/create-checkout`, {
                 method: 'POST',
                 headers,
             });
@@ -233,10 +265,10 @@
             if (data.url) {
                 window.location.href = data.url;
             } else {
-                throw new Error(data.error || 'error al crear sesion de pago');
+                throw new Error(data.error || (es ? 'error al crear sesion de pago' : 'error creating payment session'));
             }
         } catch (err) {
-            btn.textContent = 'continuar';
+            btn.textContent = txt.btn;
             btn.style.opacity = '1';
             alert('Error: ' + err.message);
         }
