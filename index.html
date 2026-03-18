@@ -388,6 +388,43 @@
             margin-bottom: 8px;
         }
 
+        /* -- philosophical profile -- */
+        .profile-block {
+            margin-top: 32px;
+            padding: 28px 24px;
+            border: 1px solid var(--gold);
+            border-radius: 4px;
+            background: rgba(184,150,12,0.02);
+            font-family: var(--font-serif);
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text);
+            animation: blockFadeIn 1.2s ease-out;
+        }
+        .profile-label {
+            font-family: var(--font-sans);
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .profile-share {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .profile-share button {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 13px;
+            color: var(--gold);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .profile-share button:hover { text-decoration: underline; }
+
         /* -- decision journal -- */
         .decision-prompt {
             margin-top: 16px;
@@ -2207,6 +2244,108 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
         }
     }
 
+    // ── Philosophical Profile (triggered at analysis #20, then every 50) ──
+    async function tryPhilosophicalProfile(block) {
+        try {
+            const allQuestions = state.history.map(h => h.candidate).filter(c => c && !c.startsWith('[URL]'));
+            const allDecisions = state.history.filter(h => h.decision).map(h => `Q: "${h.candidate}" → Decision: "${h.decision}"`);
+            if (allQuestions.length < 15) return;
+
+            const es = state.lang === 'es';
+            const profilePrompt = es
+                ? `Eres un observador filosófico. Abajo están las últimas ${allQuestions.length} preguntas que una persona le hizo a un sistema de análisis filosófico${allDecisions.length ? `, y ${allDecisions.length} decisiones que tomó después` : ''}.
+
+Tu trabajo: generar su PERFIL FILOSÓFICO OPERATIVO. No lo que dicen creer — lo que sus preguntas y decisiones revelan que operan como su filosofía real.
+
+Cubre estas dimensiones (sin etiquetarlas explícitamente, como prosa fluida):
+- Su metafísica operativa: ¿tratan la realidad como objetiva o subjetiva? ¿Actúan como si las cosas fueran lo que son, o como si dependieran de la percepción?
+- Su epistemología: ¿buscan evidencia o validación? ¿Preguntan para saber o para confirmar?
+- Su ética: ¿priorizan deber o autointerés? ¿Hay brecha entre lo que dicen valorar y cómo actúan?
+- Su tensión central: la contradicción no resuelta que atraviesa la mayoría de sus preguntas.
+- Su territorio siguiente: lo que todavía no han preguntado pero sus preguntas apuntan hacia ahí.
+
+Máximo 6-8 oraciones. Escribe como quien conoce a esta persona profundamente. Sin halagar. Sin suavizar. Como un espejo que habla.
+
+No uses asteriscos. No uses encabezados. Prosa continua.
+
+Preguntas:
+${allQuestions.map((q, i) => `${i+1}. "${q}"`).join('\n')}
+${allDecisions.length ? `\nDecisiones:\n${allDecisions.join('\n')}` : ''}`
+
+                : `You are a philosophical observer. Below are the last ${allQuestions.length} questions a person asked a philosophical analysis tool${allDecisions.length ? `, and ${allDecisions.length} decisions they made afterward` : ''}.
+
+Your job: generate their OPERATIVE PHILOSOPHICAL PROFILE. Not what they claim to believe — what their questions and decisions reveal as their actual operating philosophy.
+
+Cover these dimensions (without labeling them explicitly, as flowing prose):
+- Operative metaphysics: do they treat reality as objective or subjective?
+- Epistemology: do they seek evidence or validation?
+- Ethics: do they prioritize duty or self-interest? Is there a gap between stated and acted values?
+- Central tension: the unresolved contradiction running through most of their questions.
+- Next territory: what they haven't asked yet but their questions point toward.
+
+Maximum 6-8 sentences. Write as someone who knows this person deeply. No flattery. No softening. Like a mirror that speaks.
+
+No asterisks. No headers. Flowing prose.
+
+Questions:
+${allQuestions.map((q, i) => `${i+1}. "${q}"`).join('\n')}
+${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
+
+            const res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: profilePrompt }],
+                    model: 'claude-sonnet-4-20250514'
+                }),
+            });
+
+            if (!res.ok) return;
+
+            let profileText = '';
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buf = '';
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buf += decoder.decode(value, { stream: true });
+                const lines = buf.split('\n');
+                buf = lines.pop() || '';
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    const json = line.slice(6).trim();
+                    if (!json || json === '[DONE]') continue;
+                    try {
+                        const evt = JSON.parse(json);
+                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') profileText += evt.delta.text;
+                    } catch {}
+                }
+            }
+
+            if (profileText.trim()) {
+                const profileEl = document.createElement('div');
+                profileEl.className = 'profile-block';
+                const cleanText = profileText.replace(/\*{1,3}/g, '').trim();
+                profileEl.innerHTML = `
+                    <div class="profile-label">${es ? 'tu perfil filosófico' : 'your philosophical profile'}</div>
+                    ${cleanText}
+                    <div class="profile-share">
+                        <button onclick="generateShareImage(\`${cleanText.replace(/`/g, "'").replace(/\\/g, '\\\\')}\`)">${es ? 'compartir perfil' : 'share profile'}</button>
+                    </div>
+                `;
+                block.appendChild(profileEl);
+                scrollToBottom();
+
+                // Save to state
+                state.lastProfile = { text: cleanText, date: new Date().toISOString() };
+                localStorage.setItem('vu_profile', JSON.stringify(state.lastProfile));
+            }
+        } catch(e) {
+            // Silent fail
+        }
+    }
+
     // Draw text with extra letter-spacing, centered
     function drawSpaced(ctx, text, centerX, y, spacing) {
         let totalW = 0;
@@ -2415,9 +2554,14 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
             localStorage.setItem('vu_history', JSON.stringify(state.history));
             playCompletionSound();
 
-            // Pattern detection layer — every 10 analyses, separate call
+            // Pattern detection layer — at 3rd, then every 10
             if (state.history.length === 3 || (state.history.length > 3 && state.history.length % 10 === 0)) {
                 tryPatternDetection(block);
+            }
+
+            // Philosophical profile — at 20th, then every 50
+            if (state.history.length === 20 || (state.history.length > 20 && state.history.length % 50 === 0)) {
+                tryPhilosophicalProfile(block);
             }
 
         } catch (err) {
