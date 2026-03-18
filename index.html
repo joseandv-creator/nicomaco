@@ -1695,73 +1695,66 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         } catch(e) {}
     }
 
-    // Share analysis as beautiful image
+    // Share analysis as beautiful image — a statement of taste
     function shareAsImage(item) {
         const canvas = document.createElement('canvas');
-        canvas.width = 1080; canvas.height = 1350;
+        const W = 1080, H = 1350;
+        canvas.width = W; canvas.height = H;
         const ctx = canvas.getContext('2d');
+        const mx = 120; // margin
 
-        // Background — same as app
-        ctx.fillStyle = '#FDFCFA';
-        ctx.fillRect(0, 0, 1080, 1350);
+        // Background — warm parchment
+        ctx.fillStyle = '#F8F5EF';
+        ctx.fillRect(0, 0, W, H);
 
-        // Top border — thin gold line
-        ctx.fillStyle = '#B8960C';
-        ctx.fillRect(0, 0, 1080, 2);
-
-        // User question at top
-        const question = (item.candidate || '').replace(/\[URL\]\s*/,'').slice(0, 150);
-        ctx.fillStyle = '#86868B';
-        ctx.font = 'italic 300 26px Georgia, serif';
-        wrapText(ctx, '"' + question + '"', 100, 120, 880, 38);
-
-        // Gold separator
-        const qLines = Math.ceil(ctx.measureText(question).width / 880) + 1;
-        const sepY = 120 + (qLines * 38) + 40;
-        ctx.fillStyle = '#B8960C';
-        ctx.fillRect(100, sepY, 60, 1.5);
-
-        // Analysis text — extract meaningful content, more text
-        const allLines = (item.analysis || '').split('\n').filter(l => {
-            const t = l.trim();
-            return t && !t.startsWith('//') && !t.startsWith('CANDIDATE') && !t.startsWith('candidate');
+        // Extract the most powerful sentence from the analysis
+        const sentences = (item.analysis || '').replace(/\*{1,3}/g, '').split(/[.!?]\s+/).filter(s => {
+            const t = s.trim();
+            return t.length > 30 && t.length < 200 && !t.startsWith('//') && !t.startsWith('CANDIDATE') && !t.startsWith('candidate') && !t.startsWith('"');
         });
-        // Get first ~600 chars of meaningful analysis
-        let analysisText = '';
-        for (const l of allLines) {
-            const clean = l.replace(/\*{1,3}/g, '').trim();
-            if (analysisText.length + clean.length > 600) {
-                if (!analysisText) analysisText = clean.slice(0, 600);
-                break;
-            }
-            analysisText += (analysisText ? ' ' : '') + clean;
-        }
+        // Pick the longest meaningful sentence — usually the most powerful
+        const quote = (sentences.sort((a,b) => b.length - a.length)[0] || sentences[0] || '').trim() + '.';
 
+        // Center the quote vertically in the golden ratio zone (38% from top)
         ctx.fillStyle = '#1D1D1F';
-        ctx.font = '400 30px Georgia, serif';
-        const textY = sepY + 50;
-        const lastY = wrapText(ctx, analysisText, 100, textY, 880, 44);
+        ctx.font = '400 42px Georgia, serif';
+        const quoteY = H * 0.28;
+        const lastY = wrapText(ctx, quote, mx, quoteY, W - mx*2, 58);
 
-        // nicomaco.org — right below the text, prominent
-        const brandY = lastY + 60;
+        // Gold accent — thin line above quote
         ctx.fillStyle = '#B8960C';
-        ctx.fillRect(100, brandY - 20, 60, 1.5);
+        ctx.fillRect(mx, quoteY - 50, 40, 1.5);
 
-        ctx.fillStyle = '#1D1D1F';
-        ctx.font = '500 28px Georgia, serif';
-        ctx.fillText('nicómaco', 100, brandY + 20);
-
+        // User's question — small, italic, below the quote
+        const question = (item.candidate || '').replace(/\[URL\]\s*/,'').slice(0, 120);
         ctx.fillStyle = '#86868B';
-        ctx.font = '300 20px Inter, sans-serif';
-        ctx.fillText('nicomaco.org', 100, brandY + 52);
+        ctx.font = 'italic 24px Georgia, serif';
+        ctx.fillText('"' + question + '"', mx, lastY + 70);
 
+        // Brand block — bottom area
+        const brandY = H - 180;
+
+        // Thin gold line
         ctx.fillStyle = '#B8960C';
+        ctx.fillRect(mx, brandY, W - mx*2, 0.5);
+
+        // α ἐστιν α centered
+        ctx.fillStyle = '#B8960C';
+        ctx.font = '300 18px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('α  ἐστιν  α', W/2, brandY + 40);
+
+        // nicómaco
+        ctx.fillStyle = '#1D1D1F';
+        ctx.font = '500 24px Georgia, serif';
+        ctx.fillText('nicómaco', W/2, brandY + 80);
+
+        // nicomaco.org
+        ctx.fillStyle = '#86868B';
         ctx.font = '300 16px Inter, sans-serif';
-        ctx.fillText('α ἐστιν α · filosofía aplicada a la toma de decisiones', 100, brandY + 82);
+        ctx.fillText('nicomaco.org', W/2, brandY + 110);
 
-        // Bottom border
-        ctx.fillStyle = '#B8960C';
-        ctx.fillRect(0, 1348, 1080, 2);
+        ctx.textAlign = 'left'; // reset
 
         // Show overlay
         const wrap = document.createElement('div');
@@ -1785,7 +1778,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         btnClose.textContent = '✕';
         btnClose.style.background = 'transparent';
         btnClose.style.color = '#1D1D1F';
-        btnClose.style.border = '1px solid var(--border)';
+        btnClose.style.border = '1px solid #E0DCD4';
         btnClose.addEventListener('click', () => wrap.remove());
         actions.appendChild(btnClose);
 
@@ -1796,14 +1789,12 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     function wrapText(ctx, text, x, y, maxW, lineH) {
         const words = text.split(' ');
         let line = '';
-        let lastY = y;
         for (const word of words) {
             const test = line + word + ' ';
             if (ctx.measureText(test).width > maxW && line) {
                 ctx.fillText(line.trim(), x, y);
                 line = word + ' ';
                 y += lineH;
-                lastY = y;
             } else {
                 line = test;
             }
