@@ -62,8 +62,8 @@
         #app {
             max-width: 680px;
             margin: 0 auto;
-            padding: 48px 28px 0;
-            padding-top: calc(48px + env(safe-area-inset-top));
+            padding: 28px 28px 0;
+            padding-top: max(28px, calc(16px + env(safe-area-inset-top)));
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -685,8 +685,11 @@
         .lang-hide { display: none !important; }
 
         /* -- responsive -- */
+        @media (display-mode: standalone) {
+            #app { padding-top: calc(16px + env(safe-area-inset-top)) !important; }
+        }
         @media (max-width: 600px) {
-            #app { padding: 16px 12px 0; }
+            #app { padding: 16px 12px 0; padding-top: calc(16px + env(safe-area-inset-top)); }
             .gutter { display: none; }
             .header { flex-direction: column; gap: 8px; }
             .pillars { grid-template-columns: 1fr; }
