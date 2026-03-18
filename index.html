@@ -59,6 +59,11 @@
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--comment); }
 
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
         #app {
             max-width: 680px;
             margin: 0 auto;
@@ -68,17 +73,18 @@
             flex-direction: column;
         }
 
-        /* -- header zone -- */
+        /* -- header zone: sticky at top -- */
         .header-zone {
             background: var(--bg);
-            padding-top: max(12px, env(safe-area-inset-top));
+            padding-top: max(16px, env(safe-area-inset-top));
             padding-bottom: 4px;
             z-index: 100;
             margin: 0 -28px;
             padding-left: 28px;
             padding-right: 28px;
+            position: sticky;
+            top: 0;
         }
-        html, body { overflow-x: hidden; }
         .tab-content {
             flex: 1;
         }
@@ -301,13 +307,12 @@
 
         /* -- input -- */
         #input-bar {
-            padding: 20px 0;
-            flex-shrink: 0;
+            padding: 12px 0;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
             position: sticky;
             bottom: 0;
-            background: linear-gradient(to bottom, transparent, var(--bg) 20%);
+            background: var(--bg);
             z-index: 5;
-            padding-top: 32px;
         }
         .input-row {
             display: flex;
@@ -403,9 +408,15 @@
         }
 
         /* -- design tab -- */
+        #tab-design {
+            flex: none !important;
+        }
+        #tab-knowledge {
+            flex: none !important;
+        }
         .design-welcome {
             text-align: center;
-            padding: 20px 20px 40px;
+            padding: 32px 20px 40px;
             animation: blockFadeIn 0.8s ease-out;
         }
         .design-welcome-title {
@@ -453,7 +464,7 @@
             max-width: 360px;
         }
         .design-conversation {
-            padding: 20px 0;
+            padding: 20px 8px;
         }
         .design-q {
             font-family: var(--font-serif);
@@ -1274,16 +1285,6 @@
 
             <div id="tab-tool" class="tab-content">
                 <div id="output"></div>
-                <div id="input-bar">
-                    <div class="input-row">
-                        <button class="history-toggle" id="btn-history" aria-label="history">&#9776;</button>
-                        <span class="input-ctx" id="input-ctx"></span>
-                        <textarea id="input" rows="1" placeholder="pregunta a Nicómaco..."></textarea>
-                        <button class="btn-send" id="btn-send" aria-label="send">&#8593;</button>
-                        <button id="btn-new-chat" title="New conversation" style="display:none">&#8634;</button>
-                    </div>
-                    <div class="input-hints">enter para enviar &middot; shift+enter nueva línea &middot; pega URL para filtrar &middot; esc cancelar</div>
-                </div>
             </div>
 
 <div id="tab-knowledge" class="tab-content" style="display:none">
@@ -1528,17 +1529,24 @@
 
 
             </div>
-        </div>
 
         <!-- ═══ DESIGN TAB ═══ -->
         <div id="tab-design" class="tab-content" style="display:none">
             <div id="design-container"></div>
         </div>
 
-        <!-- footer -->
-        <div class="footer">
-            <span class="footer-sig">nicómaco 2026 · <a href="/pro.html" style="color:var(--gold);text-decoration:none;letter-spacing:1px">pro</a></span>
+        <!-- input bar: outside tab-content, fixed at bottom -->
+        <div id="input-bar">
+            <div class="input-row">
+                <button class="history-toggle" id="btn-history" aria-label="history">&#9776;</button>
+                <span class="input-ctx" id="input-ctx"></span>
+                <textarea id="input" rows="1" placeholder="pregunta a Nicómaco..."></textarea>
+                <button class="btn-send" id="btn-send" aria-label="send">&#8593;</button>
+                <button id="btn-new-chat" title="New conversation" style="display:none">&#8634;</button>
+            </div>
         </div>
+
+        <!-- footer inside scroll area removed — link to pro in input bar area -->
     </div>
 
     <!-- History Panel -->
@@ -2108,7 +2116,9 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         state.currentTab = name;
         $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
         $$('.tab-content').forEach(tc => tc.style.display = 'none');
-        $(`#tab-${name}`).style.display = name === 'tool' ? 'flex' : '';
+        $(`#tab-${name}`).style.display = name === 'tool' ? 'flex' : 'block';
+        const ib = $('#input-bar');
+        if (ib) ib.style.display = name === 'tool' ? '' : 'none';
         if (name === 'knowledge') { renderIntegrated(); addTheoryShareTriggers(); }
         if (name === 'design') { renderDesignTab(); }
     }
@@ -2745,23 +2755,7 @@ In ONE sentence: does this question move them closer or further from their desig
         if (!container) return;
         const es = state.lang === 'es';
 
-        // Check if Pro
-        const isPro = !!(authUser && authUser.pro) || localStorage.getItem('vu_owner') === 'true';
-
-        if (!isPro) {
-            container.innerHTML = `
-                <div class="design-pro-gate">
-                    <div class="design-welcome-title">${es ? 'εἶδος · diseño del yo' : 'εἶδος · self-design'}</div>
-                    <p>${es
-                        ? 'Diseñar quién quieres ser es el acto más importante que puedes hacer con tu mente. Esta herramienta te guía en ese proceso.'
-                        : 'Designing who you want to be is the most important act you can do with your mind. This tool guides you through that process.'
-                    }</p>
-                    <a href="/pro.html" class="design-start-btn" style="display:inline-block;text-decoration:none;margin-top:8px">${es ? 'desbloquear con pro' : 'unlock with pro'}</a>
-                </div>
-            `;
-            return;
-        }
-
+        // All features free — no Pro gate
         // Load existing portrait
         const saved = JSON.parse(localStorage.getItem('vu_design') || 'null');
 
