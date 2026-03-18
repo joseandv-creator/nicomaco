@@ -12,9 +12,15 @@
     ]
   },
   "ios": {
-    "contentInset": "automatic",
+    "contentInset": "never",
     "allowsLinkPreview": false,
-    "backgroundColor": "#F8F5EF",
-    "scrollEnabled": true
+    "backgroundColor": "#F8F5EF"
+  },
+  "plugins": {
+    "StatusBar": {
+      "overlaysWebView": true,
+      "style": "DARK",
+      "backgroundColor": "#F8F5EF00"
+    }
   }
 }

@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motives — Cartographic Language</title>
+    <meta name="description" content="Detect lies, stolen concepts, and perverse incentives. Build the subject that operates the truth.">
+    <meta property="og:title" content="Motives — Cartographic Language">
+    <meta property="og:description" content="Detect lies, stolen concepts, and perverse incentives.">
+    <meta property="og:type" content="website">
+    <meta name="apple-mobile-web-app-title" content="Lenguaje Cartográfico">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9671;</text></svg>">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #0f0f0f;
+            --border: #1a1a1a;
+            --text: #ffffff;
+            --text-bright: #ffffff;
+            --text-dim: #00ff87;
+            --comment: #00ff87;
+            --blue: #00d4ff;
+            --green: #00ff87;
+            --purple: #bf5fff;
+            --yellow: #ffee00;
+            --red: #ff3e3e;
+            --cyan: #00ffcc;
+            --orange: #ff9500;
+            --font: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        }
+
+        html, body {
+            min-height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 13px;
+            line-height: 1.85;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 3px; }
+
+        .page {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-title {
+            color: var(--cyan);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(0,255,204,0.3);
+            text-decoration: none;
+        }
+        .nav-right { display: flex; gap: 16px; align-items: center; }
+        .nav-links { display: flex; gap: 16px; }
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.15s;
+        }
+        .nav-links a:hover { color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,204,0.3); }
+        .nav-links a.active { color: var(--text-bright); }
+
+        .lang-btn {
+            background: none;
+            border: 1px solid #1a1a1a;
+            color: var(--comment);
+            font-family: var(--font);
+            font-size: 10px;
+            padding: 2px 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .lang-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+
+        .section { margin-bottom: 48px; }
+        .section-title {
+            color: var(--cyan);
+            font-size: 13px;
+            font-weight: 500;
+            text-shadow: 0 0 10px rgba(0,255,204,0.3);
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        p { color: var(--text); margin-bottom: 14px; }
+        p.dim { color: var(--comment); }
+        .highlight { color: var(--text-bright); }
+        .kw { color: var(--blue); text-shadow: 0 0 8px rgba(0,212,255,0.2); }
+        .str { color: var(--green); text-shadow: 0 0 8px rgba(0,255,135,0.2); }
+        .cmt { color: var(--comment); }
+
+        .code-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            margin: 16px 0;
+            line-height: 1.75;
+            overflow-x: auto;
+        }
+
+        /* ── bilingual toggle ── */
+        body.es .en-only { display: none; }
+        body.en .es-only { display: none; }
+
+        /* ── data tabs ── */
+        .data-tabs {
+            display: flex;
+            gap: 16px;
+            margin: 16px 0 12px;
+        }
+        .data-tab {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-family: var(--font);
+            font-size: 12px;
+            cursor: pointer;
+            padding: 2px 0;
+            border-bottom: 1px solid transparent;
+            transition: all 0.15s;
+        }
+        .data-tab:hover { color: var(--text-bright); }
+        .data-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,204,0.3); }
+
+        .data-panel { display: none; }
+        .data-panel.active { display: block; }
+
+        /* ── truth list ── */
+        .truth-list { list-style: none; padding: 0; }
+        .truth-list li { padding: 8px 0; border-bottom: 1px solid rgba(0,255,135,0.08); }
+        .truth-text { color: var(--text); font-size: 12px; line-height: 1.6; }
+        .truth-meta { color: var(--comment); font-size: 11px; margin-top: 2px; }
+
+        /* ── history items ── */
+        .hist-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0,255,135,0.08);
+        }
+        .hist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: color 0.1s;
+        }
+        .hist-header:hover { color: var(--text-bright); }
+        .hist-candidate { font-size: 12.5px; color: var(--text); }
+        .hist-meta { color: var(--comment); font-size: 10px; }
+        .hist-toggle {
+            color: var(--text-dim);
+            font-size: 10px;
+            transition: color 0.1s;
+        }
+        .hist-header:hover .hist-toggle { color: var(--cyan); }
+        .hist-analysis {
+            display: none;
+            margin-top: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 14px 16px;
+            font-size: 12px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-x: auto;
+        }
+        .hist-analysis.open { display: block; animation: fadeUp 0.2s ease; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* syntax classes for analysis display */
+        .s-kw { color: var(--blue); text-shadow: 0 0 8px rgba(0,212,255,0.3); }
+        .s-str { color: var(--green); text-shadow: 0 0 8px rgba(0,255,135,0.25); }
+        .s-num { color: var(--purple); text-shadow: 0 0 8px rgba(191,95,255,0.3); }
+        .s-cmt { color: var(--comment); }
+        .s-err { color: var(--red); text-shadow: 0 0 8px rgba(255,62,62,0.35); }
+        .s-warn { color: var(--yellow); text-shadow: 0 0 8px rgba(255,238,0,0.25); }
+        .s-ok { color: var(--green); text-shadow: 0 0 8px rgba(0,255,135,0.25); }
+        .s-section { color: var(--cyan); font-weight: 500; text-shadow: 0 0 10px rgba(0,255,204,0.3); }
+        .s-verdict-ok { color: var(--green); font-weight: 500; text-shadow: 0 0 12px rgba(0,255,135,0.4); }
+        .s-verdict-warn { color: var(--yellow); font-weight: 500; text-shadow: 0 0 12px rgba(255,238,0,0.35); }
+        .s-verdict-fail { color: var(--red); font-weight: 500; text-shadow: 0 0 12px rgba(255,62,62,0.4); }
+        .s-orange { color: var(--orange); text-shadow: 0 0 8px rgba(255,149,0,0.3); }
+        .s-blue { color: var(--blue); }
+        .s-op { color: #00ff87; }
+
+        .rule-ref {
+            color: var(--cyan);
+            cursor: help;
+            position: relative;
+            text-shadow: 0 0 8px rgba(0,255,204,0.3);
+        }
+        .rule-ref:hover { text-shadow: 0 0 14px rgba(0,255,204,0.6); }
+        .rule-ref:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 0;
+            background: #0f0f0f;
+            color: var(--text-bright);
+            padding: 6px 12px;
+            border: 1px solid rgba(0,255,135,0.2);
+            font-size: 11px;
+            z-index: 10;
+            max-width: 400px;
+            white-space: normal;
+        }
+
+        /* ── pillars ── */
+        .pillars {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .pillar {
+            border: 1px solid var(--border);
+            padding: 14px 16px;
+            transition: border-color 0.15s;
+        }
+        .pillar:hover { border-color: rgba(0,255,135,0.2); }
+        .pillar-title {
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: 500;
+            text-shadow: 0 0 8px rgba(0,212,255,0.2);
+            margin-bottom: 6px;
+        }
+        .pillar-desc { color: var(--comment); font-size: 11px; line-height: 1.6; }
+
+        .donate-box {
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-top: 16px;
+        }
+        .donate-box p { margin-bottom: 10px; }
+
+        .sep { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+        .integrated-link {
+            display: inline-block;
+            color: var(--cyan);
+            text-decoration: none;
+            border: 1px solid var(--border);
+            padding: 10px 18px;
+            font-size: 12px;
+            transition: all 0.15s;
+            margin-top: 8px;
+        }
+        .integrated-link:hover {
+            border-color: var(--cyan);
+            text-shadow: 0 0 12px rgba(0,255,204,0.4);
+            background: rgba(0,255,204,0.03);
+        }
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 16px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+        }
+        .footer-sig {
+            color: rgba(0,255,135,0.15);
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+        .footer-sig:hover { color: var(--comment); }
+
+        @media (max-width: 600px) {
+            .page { padding: 20px 14px 40px; }
+            .pillars { grid-template-columns: 1fr; }
+            .nav { flex-direction: column; gap: 8px; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <nav class="nav">
+            <a href="index.html" class="nav-title en-only">CARTOGRAPHIC LANGUAGE</a>
+            <a href="index.html" class="nav-title es-only">LENGUAJE CARTOGRÁFICO</a>
+            <div class="nav-right">
+                <div class="nav-links">
+                    <a href="index.html" class="en-only">tool</a>
+                    <a href="index.html" class="es-only">herramienta</a>
+                    <a href="glosario.html" class="en-only">glossary</a>
+                    <a href="glosario.html" class="es-only">glosario</a>
+                    <a href="motivos.html" class="active en-only">motives</a>
+                    <a href="motivos.html" class="active es-only">motivos</a>
+                </div>
+                <button class="lang-btn" id="lang-toggle">EN</button>
+            </div>
+        </nav>
+
+        <!-- WHAT IS THIS -->
+        <div class="section">
+            <div class="section-title en-only">// WHAT IS THIS</div>
+            <div class="section-title es-only">// QUE ES ESTO</div>
+
+            <div class="en-only">
+                <p>
+                    A protocol for discovering what is true regardless of who observes it.
+                    Not a collection of opinions. Not a forum. <span class="highlight">An identity engine.</span>
+                </p>
+                <p>
+                    Anyone can propose a candidate universal truth. The system decomposes it,
+                    scores its fidelity to reality, tests it across multiple domains, and delivers a verdict.
+                    What survives gets integrated. What doesn't shows you exactly why it failed.
+                </p>
+                <p class="dim">
+                    // the goal is not to be right. it's to see more clearly.
+                </p>
+            </div>
+
+            <div class="es-only">
+                <p>
+                    Un protocolo para descubrir lo que es verdad sin importar quien lo observe.
+                    No es una coleccion de opiniones. No es un foro. <span class="highlight">Es un motor de identidad.</span>
+                </p>
+                <p>
+                    Cualquiera puede proponer una verdad universal candidata. El sistema la descompone,
+                    puntua su fidelidad a la realidad, la prueba en multiples dominios, y entrega un veredicto.
+                    Lo que sobrevive se integra. Lo que no, te muestra exactamente por que fallo.
+                </p>
+                <p class="dim">
+                    // el objetivo no es tener razon. es ver con mas claridad.
+                </p>
+            </div>
+        </div>
+
+        <!-- WHAT FOR -->
+        <div class="section">
+            <div class="section-title en-only">// WHAT IS IT FOR</div>
+            <div class="section-title es-only">// PARA QUE SIRVE</div>
+
+            <div class="en-only">
+                <p>
+                    Truths are not the end. They are the tool.
+                </p>
+                <p>
+                    The end is that <span class="highlight">each subject reaches their object across any time horizon</span>.
+                    The long term dominates the short — that is universal truth.
+                    But <span class="highlight">which</span> long term is yours to decide — that is will.
+                    Where those two variables cross, real navigation is born:
+                    structure tells you what to prioritize, you decide where to go.
+                </p>
+            </div>
+
+            <div class="es-only">
+                <p>
+                    Las verdades no son el fin. Son la herramienta.
+                </p>
+                <p>
+                    El fin es que <span class="highlight">cada sujeto alcance su objeto en cualquier horizonte temporal</span>.
+                    El largo plazo domina al corto — eso es verdad universal.
+                    Pero <span class="highlight">cual</span> largo plazo es tu decision — eso es voluntad.
+                    Donde esas dos variables se cruzan, nace la navegacion real:
+                    la estructura te dice que priorizar, tu decides hacia donde ir.
+                </p>
+            </div>
+
+            <div class="pillars">
+                <div class="pillar">
+                    <div class="pillar-title en-only">SOLVE PROBLEMS</div>
+                    <div class="pillar-title es-only">RESOLVER PROBLEMAS</div>
+                    <div class="pillar-desc en-only">If a principle operates in physics, biology, and economics, it operates in your problem too. Universal truths are levers that work in any domain.</div>
+                    <div class="pillar-desc es-only">Si un principio opera en fisica, biologia y economia, opera en tu problema tambien. Las verdades universales son palancas que funcionan en cualquier dominio.</div>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-title en-only">AUDIT INFORMATION</div>
+                    <div class="pillar-title es-only">AUDITAR INFORMACION</div>
+                    <div class="pillar-desc en-only">Filter what you receive from the world. Separate signal from noise. Detect inherited maps you never audited. See when someone sells you their map as if it were territory.</div>
+                    <div class="pillar-desc es-only">Filtra lo que recibes del mundo. Separa senal de ruido. Detecta mapas heredados que nunca auditaste. Ve cuando alguien te vende su mapa como si fuera territorio.</div>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-title en-only">MAKE DECISIONS</div>
+                    <div class="pillar-title es-only">TOMAR DECISIONES</div>
+                    <div class="pillar-desc en-only">Decide from principles, not from impulse. Every integrated truth is a permanent instrument that doesn't expire with circumstances.</div>
+                    <div class="pillar-desc es-only">Decide desde principios, no desde impulso. Cada verdad integrada es un instrumento permanente que no caduca con las circunstancias.</div>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-title en-only">BUILD THE SUBJECT</div>
+                    <div class="pillar-title es-only">CONSTRUIR AL SUJETO</div>
+                    <div class="pillar-desc en-only">The ultimate end. The integral construction of the self. That each person knows what they want, why they want it, and has the instruments to reach it. Not as philosophy. As engineering.</div>
+                    <div class="pillar-desc es-only">El fin ultimo. La construccion integral del ser. Que cada persona sepa lo que quiere, por que lo quiere, y tenga los instrumentos para alcanzarlo. No como filosofia. Como ingenieria.</div>
+                </div>
+            </div>
+
+            <p class="dim en-only">
+                // truths are the tool. the subject is the end.
+            </p>
+            <p class="dim es-only">
+                // las verdades son la herramienta. el sujeto es el fin.
+            </p>
+        </div>
+
+        <!-- HOW IT WORKS -->
+        <div class="section">
+            <div class="section-title en-only">// HOW IT WORKS</div>
+            <div class="section-title es-only">// COMO FUNCIONA</div>
+
+            <div class="code-section en-only">
+<span class="cmt">// the protocol operates in 6 steps</span>
+
+<span class="kw">1. DECOMPOSITION</span>
+   your candidate is separated into: subject, object, relation, value sought
+
+<span class="kw">2. SCORING</span>
+   each component is scored from 0.0 to 1.0
+   the total score is the product — if anything is zero, everything collapses
+
+<span class="kw">3. UNIVERSALITY</span>
+   tested across 4+ unrelated domains
+   if it doesn't survive in biology, economics, physics AND psychology
+   it's not universal — it's local
+
+<span class="kw">4. INHERITANCE</span>
+   where does this idea come from? did you derive it or inherit it?
+   a belief repeated a thousand times is not a truth
+
+<span class="kw">5. REDUNDANCY</span>
+   does this truth already exist in another form?
+   if so, does your formulation add something new?
+
+<span class="kw">6. VERDICT</span>
+   <span style="color:var(--red)">COLLAPSE</span>     = rejected
+   <span style="color:var(--yellow)">PARTIAL</span>      = dangerous, looks true but fails under pressure
+   <span style="color:var(--yellow)">PROVISIONAL</span>  = viable, needs more territory
+   <span style="color:var(--green)">NAVIGABLE</span>    = solid, ready to use
+   <span style="color:var(--green)">CLOSED</span>       = its negation destroys itself
+            </div>
+
+            <div class="code-section es-only">
+<span class="cmt">// el protocolo opera en 6 pasos</span>
+
+<span class="kw">1. DESCOMPOSICION</span>
+   tu candidata se separa en: sujeto, objeto, relacion, valor buscado
+
+<span class="kw">2. PUNTUACION</span>
+   cada componente se puntua de 0.0 a 1.0
+   la puntuacion total es el producto — si algo es cero, todo colapsa
+
+<span class="kw">3. UNIVERSALIDAD</span>
+   se prueba en 4+ dominios no relacionados
+   si no sobrevive en biologia, economia, fisica Y psicologia
+   no es universal — es local
+
+<span class="kw">4. HERENCIA</span>
+   de donde viene esta idea? la derivaste o la heredaste?
+   una creencia repetida mil veces no es una verdad
+
+<span class="kw">5. REDUNDANCIA</span>
+   esta verdad ya existe en otra forma?
+   si es asi, tu formulacion agrega algo nuevo?
+
+<span class="kw">6. VEREDICTO</span>
+   <span style="color:var(--red)">COLAPSO</span>      = rechazada
+   <span style="color:var(--yellow)">PARCIAL</span>      = peligrosa, parece verdad pero falla bajo presion
+   <span style="color:var(--yellow)">PROVISIONAL</span>  = viable, necesita mas territorio
+   <span style="color:var(--green)">NAVEGABLE</span>    = solida, lista para usar
+   <span style="color:var(--green)">CERRADA</span>      = su negacion se destruye a si misma
+            </div>
+
+            <p class="dim en-only">
+                // you can challenge any verdict with territory evidence.
+                // territory always wins.
+            </p>
+            <p class="dim es-only">
+                // puedes desafiar cualquier veredicto con evidencia de territorio.
+                // el territorio siempre gana.
+            </p>
+        </div>
+
+        <hr class="sep">
+
+        <!-- INTEGRATED TRUTHS — link to tool -->
+        <div class="section">
+            <div class="section-title en-only">// INTEGRATED TRUTHS</div>
+            <div class="section-title es-only">// VERDADES INTEGRADAS</div>
+
+            <div class="en-only">
+                <p>
+                    The full hierarchy — axioms, patterns, and philosophy branches — lives in the tool.
+                    Public and transparent. If you can refute any of them, <span class="highlight">do it</span>.
+                </p>
+                <a href="index.html#integrated" class="integrated-link">open integrated hierarchy &rarr;</a>
+            </div>
+            <div class="es-only">
+                <p>
+                    La jerarquia completa — axiomas, patrones y ramas filosoficas — vive en la herramienta.
+                    Publica y transparente. Si puedes refutar alguna, <span class="highlight">hazlo</span>.
+                </p>
+                <a href="index.html#integrated" class="integrated-link">abrir jerarquia integrada &rarr;</a>
+            </div>
+
+            <!-- user history (from localStorage) -->
+            <div id="history-section" style="margin-top:24px;display:none">
+                <div class="data-tabs">
+                    <button class="data-tab active en-only" data-target="tab-discovered">discovered</button>
+                    <button class="data-tab active es-only" data-target="tab-discovered">descubiertas</button>
+                    <button class="data-tab en-only" data-target="tab-history">history</button>
+                    <button class="data-tab es-only" data-target="tab-history">historial</button>
+                </div>
+
+                <!-- discovered by users -->
+                <div id="tab-discovered" class="data-panel active">
+                    <div id="discovered-list"></div>
+                </div>
+
+                <!-- full history with expandable analyses -->
+                <div id="tab-history" class="data-panel">
+                    <div id="history-view"></div>
+                </div>
+            </div>
+
+            <p class="dim en-only" style="margin-top:16px">
+                // this list grows when candidates survive the protocol.
+            </p>
+            <p class="dim es-only" style="margin-top:16px">
+                // esta lista crece cuando las candidatas sobreviven el protocolo.
+            </p>
+        </div>
+
+        <hr class="sep">
+
+        <!-- PRINCIPLES -->
+        <div class="section">
+            <div class="section-title en-only">// PRINCIPLES</div>
+            <div class="section-title es-only">// PRINCIPIOS</div>
+
+            <div class="code-section en-only">
+<span class="cmt">// rules that govern this project</span>
+
+<span class="str">total_transparency</span> = true
+<span class="cmt">// integrated truths are public. the process is visible.</span>
+<span class="cmt">// if something can't withstand light, it's not truth.</span>
+
+<span class="str">territory_wins</span> = true
+<span class="cmt">// reality always has the last word.</span>
+<span class="cmt">// no argument overcomes a fact.</span>
+
+<span class="str">no_authority</span> = true
+<span class="cmt">// it doesn't matter who said it. what matters is if it survives elimination.</span>
+<span class="cmt">// einstein, your neighbor, or a 10-year-old — same protocol.</span>
+
+<span class="str">subject_first</span> = true
+<span class="cmt">// the end is not to accumulate truths. it's to build the subject</span>
+<span class="cmt">// that operates them. every truth is an instrument, not a trophy.</span>
+            </div>
+
+            <div class="code-section es-only">
+<span class="cmt">// reglas que gobiernan este proyecto</span>
+
+<span class="str">transparencia_total</span> = true
+<span class="cmt">// las verdades integradas son publicas. el proceso es visible.</span>
+<span class="cmt">// si algo no soporta la luz, no es verdad.</span>
+
+<span class="str">territorio_gana</span> = true
+<span class="cmt">// la realidad siempre tiene la ultima palabra.</span>
+<span class="cmt">// ningun argumento supera un hecho.</span>
+
+<span class="str">sin_autoridad</span> = true
+<span class="cmt">// no importa quien lo dijo. importa si sobrevive la eliminacion.</span>
+<span class="cmt">// einstein, tu vecino, o un nino de 10 — mismo protocolo.</span>
+
+<span class="str">sujeto_primero</span> = true
+<span class="cmt">// el fin no es acumular verdades. es construir al sujeto</span>
+<span class="cmt">// que las opera. cada verdad es un instrumento, no un trofeo.</span>
+            </div>
+        </div>
+
+        <!-- SUPPORT -->
+        <div class="section">
+            <div class="section-title en-only">// SUPPORT THE PROJECT</div>
+            <div class="section-title es-only">// APOYAR EL PROYECTO</div>
+
+            <div class="en-only">
+                <p>
+                    This project is free and open.
+                    If it expands your map, you can support its development.
+                </p>
+                <div class="donate-box">
+                    <p class="dim">// the project sustains itself by the value it generates,</p>
+                    <p class="dim">// not by the persuasion of asking for it.</p>
+                    <p style="margin-top:12px"><span class="kw">BTC:</span> <span style="color:var(--green);font-size:11px;word-break:break-all;text-shadow:0 0 8px rgba(0,255,135,0.25)">bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5</span></p>
+                </div>
+            </div>
+            <div class="es-only">
+                <p>
+                    Este proyecto es gratuito y abierto.
+                    Si expande tu mapa, puedes apoyar su desarrollo.
+                </p>
+                <div class="donate-box">
+                    <p class="dim">// el proyecto se sostiene por el valor que genera,</p>
+                    <p class="dim">// no por la persuasion de pedirlo.</p>
+                    <p style="margin-top:12px"><span class="kw">BTC:</span> <span style="color:var(--green);font-size:11px;word-break:break-all;text-shadow:0 0 8px rgba(0,255,135,0.25)">bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <div class="footer">
+            <span class="footer-sig">J.A. Deschamps V. · <a href="mailto:joseandv@gmail.com" style="color:inherit;text-decoration:none">joseandv@gmail.com</a></span>
+        </div>
+
+    </div>
+
+    <script>
+    (function() {
+        // ── Language detection (synced with index.html) ──
+        let lang = localStorage.getItem('vu_lang') || (navigator.language?.startsWith('es') ? 'es' : 'en');
+
+        function setLang(l) {
+            lang = l;
+            document.body.classList.remove('en', 'es');
+            document.body.classList.add(l);
+            document.getElementById('lang-toggle').textContent = l === 'en' ? 'ES' : 'EN';
+            document.documentElement.lang = l;
+            localStorage.setItem('vu_lang', l);
+        }
+        setLang(lang);
+
+        document.getElementById('lang-toggle').addEventListener('click', () => {
+            setLang(lang === 'es' ? 'en' : 'es');
+        });
+
+        // ── Rules (full, for tooltip display) ──
+        const RULES = {
+            G1:'Persistence: something invariant under transformation',
+            G2:'Entropy: disorder grows without work',
+            G3:'Selection: variation + differential survival',
+            G4:'Feedback: output becomes input',
+            G5:'Emergence: simple rules iterated = complexity',
+            G6:'Constraint gives form',
+            G7:'Symmetry reveals structure',
+            G8:'Information has cost',
+            G9:'Self-reference has limits',
+            G10:'Gradual accumulation, sudden qualitative change',
+            U1:'Nothing comes from nothing — conservation',
+            U2:'Order costs energy',
+            U3:'Effects follow causes with delay',
+            U4:'Small constant forces dominate large sporadic ones',
+            U5:'Displaced systems generate restoring force',
+            U6:'Majority of effects come from few causes',
+            U7:'Extremes revert to the mean',
+            U8:'Connections scale faster than nodes',
+            U9:'Some transformations are irreversible',
+            H1:'Incentives govern behavior, not intentions',
+            H2:'Every choice costs what you didn\'t choose',
+            H3:'The next unit matters, not the average',
+            H4:'Without consequences, signals are noise',
+            H5:'Observe what they do, not what they say',
+            H6:'Losing hurts twice as much as gaining pleases',
+            H7:'Humans optimize relative position, not absolute',
+            H8:'Humans need narratives; reality doesn\'t provide them',
+            H9:'Whoever acts for you optimizes for themselves first',
+            H10:'Capacity to delay gratification predicts almost everything',
+            H11:'Cooperation in repeated games; defection in one-shot',
+            H12:'Information asymmetry creates power',
+            K1:'All knowledge is contextual — valid within identified facts',
+            K2:'The senses are valid — base data, not illusion',
+            K3:'Concepts are formed by abstraction from concretes',
+            K4:'Logic is non-contradictory identification',
+            K5:'Certainty is contextual, not absolute',
+            K6:'The burden of proof falls on who affirms',
+            K7:'Knowledge requires integration — isolated facts are not understanding',
+            K8:'Error correction is the mechanism of cognitive progress',
+            L1:'Language maps concepts to symbols — it names, it doesn\'t create',
+            L2:'Meaning requires shared referents',
+            L3:'Language precision tracks thought precision',
+            L4:'Ambiguity is not depth — vagueness degrades signal',
+            L5:'Context determines meaning — same symbol, different frames',
+            L6:'Translation between frames loses information',
+            E1:'Value presupposes a valuer — without life, nothing has value',
+            E2:'Life is the precondition of all values',
+            E3:'Rationality: commitment to identifying reality as it is',
+            E4:'Production precedes distribution — you can\'t give what doesn\'t exist',
+            E5:'Voluntary exchange is the only non-destructive value transfer',
+            E6:'Honesty: faking reality is self-destructive',
+            E7:'Justice: judge and be judged by the same standard',
+            E8:'Individual rights: conditions for rational coexistence',
+            Ae1:'Art is selective re-creation of reality according to values',
+            Ae2:'Beauty is recognition of integrated form',
+            Ae3:'Style reveals metaphysics — how you create shows what you believe',
+            Ae4:'Craft without purpose is decoration; purpose without craft is propaganda',
+            Ae5:'Taste is condensed worldview, not arbitrary preference'
+        };
+
+        const RULES_ES = {
+            G1:'Persistencia: algo invariante bajo transformacion',
+            G2:'Entropia: el desorden crece sin trabajo',
+            G3:'Seleccion: variacion + supervivencia diferencial',
+            G4:'Retroalimentacion: la salida se convierte en entrada',
+            G5:'Emergencia: reglas simples iteradas = complejidad',
+            G6:'La restriccion da forma',
+            G7:'La simetria revela estructura',
+            G8:'La informacion tiene costo',
+            G9:'La autorreferencia tiene limites',
+            G10:'Acumulacion gradual, cambio cualitativo subito',
+            U1:'Nada viene de la nada — conservacion',
+            U2:'El orden cuesta energia',
+            U3:'Los efectos siguen a las causas con retraso',
+            U4:'Fuerzas pequenas constantes dominan a las grandes esporadicas',
+            U5:'Sistemas desplazados generan fuerza restauradora',
+            U6:'La mayoria de los efectos vienen de pocas causas',
+            U7:'Los extremos revierten a la media',
+            U8:'Las conexiones escalan mas rapido que los nodos',
+            U9:'Algunas transformaciones son irreversibles',
+            H1:'Los incentivos gobiernan la conducta, no las intenciones',
+            H2:'Cada eleccion cuesta lo que no elegiste',
+            H3:'La siguiente unidad importa, no el promedio',
+            H4:'Sin consecuencias, las senales son ruido',
+            H5:'Observa lo que hacen, no lo que dicen',
+            H6:'Perder duele el doble de lo que ganar agrada',
+            H7:'Los humanos optimizan posicion relativa, no absoluta',
+            H8:'Los humanos necesitan narrativas; la realidad no las provee',
+            H9:'Quien actua por ti optimiza para si mismo primero',
+            H10:'La capacidad de retrasar la gratificacion predice casi todo',
+            H11:'Cooperacion en juegos repetidos; desercion en juegos unicos',
+            H12:'La asimetria de informacion crea poder',
+            K1:'Todo conocimiento es contextual — valido dentro de hechos identificados',
+            K2:'Los sentidos son validos — datos base, no ilusion',
+            K3:'Los conceptos se forman por abstraccion de lo concreto',
+            K4:'La logica es identificacion no contradictoria',
+            K5:'La certeza es contextual, no absoluta',
+            K6:'La carga de la prueba recae en quien afirma',
+            K7:'El conocimiento requiere integracion — hechos aislados no son comprension',
+            K8:'La correccion de errores es el mecanismo del progreso cognitivo',
+            L1:'El lenguaje mapea conceptos a simbolos — nombra, no crea',
+            L2:'El significado requiere referentes compartidos',
+            L3:'La precision del lenguaje rastrea la precision del pensamiento',
+            L4:'La ambiguedad no es profundidad — la vaguedad degrada la senal',
+            L5:'El contexto determina el significado — mismo simbolo, marcos distintos',
+            L6:'La traduccion entre marcos pierde informacion',
+            E1:'El valor presupone un valorador — sin vida, nada tiene valor',
+            E2:'La vida es la precondicion de todos los valores',
+            E3:'Racionalidad: compromiso de identificar la realidad tal como es',
+            E4:'La produccion precede a la distribucion — no puedes dar lo que no existe',
+            E5:'El intercambio voluntario es la unica transferencia no destructiva de valor',
+            E6:'Honestidad: fingir la realidad es autodestructivo',
+            E7:'Justicia: juzga y se juzgado por el mismo estandar',
+            E8:'Derechos individuales: condiciones para la coexistencia racional',
+            Ae1:'El arte es re-creacion selectiva de la realidad segun valores',
+            Ae2:'La belleza es el reconocimiento de forma integrada',
+            Ae3:'El estilo revela metafisica — como creas muestra lo que crees',
+            Ae4:'Oficio sin proposito es decoracion; proposito sin oficio es propaganda',
+            Ae5:'El gusto es cosmovision condensada, no preferencia arbitraria'
+        };
+
+        function ruleText(code) {
+            return lang === 'es' ? (RULES_ES[code] || RULES[code]) : RULES[code];
+        }
+
+        const userIntegrated = JSON.parse(localStorage.getItem('vu_integrated') || '[]');
+        const userHistory = JSON.parse(localStorage.getItem('vu_history') || '[]');
+
+        // Only show history section if user has data
+        if (userIntegrated.length > 0 || userHistory.length > 0) {
+            document.getElementById('history-section').style.display = 'block';
+        }
+
+        // ── data tabs ──
+        document.querySelectorAll('.data-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.data-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.data-panel').forEach(p => p.classList.remove('active'));
+                // Activate both en/es tabs with same target
+                const target = tab.dataset.target;
+                document.querySelectorAll(`.data-tab[data-target="${target}"]`).forEach(t => t.classList.add('active'));
+                document.getElementById(target).classList.add('active');
+            });
+        });
+
+        // ── discovered (user-integrated) ──
+        const dList = document.getElementById('discovered-list');
+        if (userIntegrated.length === 0) {
+            dList.innerHTML = '<div class="s-cmt" style="padding:12px 0"><span class="en-only">// no user-discovered truths yet. <a href="index.html" style="color:var(--cyan);text-decoration:none;">be the first</a>.</span><span class="es-only">// aun no hay verdades descubiertas. <a href="index.html" style="color:var(--cyan);text-decoration:none;">se el primero</a>.</span></div>';
+        } else {
+            const ul = document.createElement('ul');
+            ul.className = 'truth-list';
+            ul.style.listStyle = 'none';
+            ul.style.counterReset = 'truth';
+            userIntegrated.forEach(t => {
+                const li = document.createElement('li');
+                const sc = t.score !== null ? t.score.toFixed(2) : '?';
+                li.innerHTML = `<div><div class="truth-text">"${esc(t.candidate)}"</div><div class="truth-meta">C=${sc} &middot; ${t.verdict} &middot; ${new Date(t.date).toLocaleDateString()}</div></div>`;
+                ul.appendChild(li);
+            });
+            dList.appendChild(ul);
+        }
+
+        // ── history with expandable analyses ──
+        const hView = document.getElementById('history-view');
+        if (userHistory.length === 0) {
+            hView.innerHTML = '<div class="s-cmt" style="padding:12px 0"><span class="en-only">// no analysis history yet. <a href="index.html" style="color:var(--cyan);text-decoration:none;">start discovering</a>.</span><span class="es-only">// sin historial de analisis. <a href="index.html" style="color:var(--cyan);text-decoration:none;">empieza a descubrir</a>.</span></div>';
+        } else {
+            userHistory.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'hist-item';
+
+                const meta = [`#${item.num || '?'}`];
+                if (item.score != null) meta.push(`C=${item.score.toFixed(2)}`);
+                if (item.verdict) {
+                    const verdictClass = item.verdict === 'NAVIGABLE' || item.verdict === 'CLOSED' ? 's-ok'
+                        : item.verdict === 'PROVISIONAL' ? 's-warn' : 's-err';
+                    meta.push(`<span class="${verdictClass}">${item.verdict}</span>`);
+                }
+                if (item.isURL) meta.push('URL');
+                meta.push(new Date(item.date).toLocaleDateString());
+
+                const header = document.createElement('div');
+                header.className = 'hist-header';
+                header.innerHTML = `
+                    <div>
+                        <div class="hist-candidate">"${esc(item.candidate)}"</div>
+                        <div class="hist-meta">${meta.join(' &middot; ')}</div>
+                    </div>
+                    <span class="hist-toggle">expand</span>
+                `;
+
+                const analysis = document.createElement('div');
+                analysis.className = 'hist-analysis';
+                analysis.innerHTML = highlightText(item.analysis || '');
+
+                header.addEventListener('click', () => {
+                    const isOpen = analysis.classList.toggle('open');
+                    header.querySelector('.hist-toggle').textContent = isOpen ? 'collapse' : 'expand';
+                });
+
+                div.appendChild(header);
+                div.appendChild(analysis);
+                hView.appendChild(div);
+            });
+        }
+
+        // ── syntax highlighting ──
+        function highlightText(text) { return text.split('\n').map(l => highlightLine(l)).join('\n'); }
+
+        function highlightLine(raw) {
+            let line = esc(raw);
+            if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|LIMITS)\b/.test(line))
+                return `<span class="s-section">${line}</span>`;
+            if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
+            let mainPart = line, commentPart = '';
+            const ci = line.indexOf('//');
+            if (ci > 0) { mainPart = line.substring(0, ci); commentPart = `<span class="s-cmt">${line.substring(ci)}</span>`; }
+            mainPart = mainPart.replace(/\b(S|O|R)\(v\)/g, '<span class="s-kw">$&</span>');
+            mainPart = mainPart.replace(/\bVB\b/g, '<span class="s-kw">VB</span>');
+            mainPart = mainPart.replace(/\bC\s{0,3}=/g, m => `<span class="s-kw">C</span>` + m.slice(1));
+            mainPart = mainPart.replace(/\b(status|reason|action|origin|source|distortion|rule|text|novelty|correction):/g, '<span class="s-blue">$1</span>:');
+            mainPart = mainPart.replace(/\b(NAVIGABLE|CLOSED)\b/g, '<span class="s-verdict-ok">$1</span>');
+            mainPart = mainPart.replace(/\bPROVISIONAL\b/g, '<span class="s-verdict-warn">$1</span>');
+            mainPart = mainPart.replace(/\b(COLLAPSE|PARTIAL)\b/g, '<span class="s-verdict-fail">$1</span>');
+            mainPart = mainPart.replace(/\b(integrate)\b/g, '<span class="s-ok">$1</span>');
+            mainPart = mainPart.replace(/\b(reject)\b/g, '<span class="s-err">$1</span>');
+            mainPart = mainPart.replace(/\b(revise)\b/g, '<span class="s-warn">$1</span>');
+            mainPart = mainPart.replace(/\b(received)\b/g, '<span class="s-warn">$1</span>');
+            mainPart = mainPart.replace(/\b(derived)\b/g, '<span class="s-ok">$1</span>');
+            mainPart = mainPart.replace(/\b(mixed)\b/g, '<span class="s-orange">$1</span>');
+            mainPart = mainPart.replace(/\b(G\d{1,2}|U\d|H\d{1,2}|K\d|L\d|E\d|Ae\d)\b/g, m => {
+                const tip = ruleText(m) || m;
+                return `<span class="rule-ref" data-tip="${esc(tip)}">${m}</span>`;
+            });
+            mainPart = mainPart.replace(/\b(\d+\.\d+)\b/g, '<span class="s-num">$1</span>');
+            mainPart = mainPart.replace(/"([^"]*)"/g, '"<span class="s-str">$1</span>"');
+            mainPart = mainPart.replace(/-&gt;/g, '<span class="s-op">-&gt;</span>');
+            mainPart = mainPart.replace(/\bok\b/g, '<span class="s-ok">ok</span>');
+            mainPart = mainPart.replace(/\bno\b(?!\s*=)/g, '<span class="s-err">no</span>');
+            return mainPart + commentPart;
+        }
+
+        function esc(s) { return s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
+    })();
+    </script>
+</body>
+</html>

@@ -59,34 +59,14 @@
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--comment); }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
         #app {
             max-width: 680px;
             margin: 0 auto;
-            padding: 0 28px;
+            padding: 28px 28px 0;
+            padding-top: max(28px, calc(16px + env(safe-area-inset-top)));
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-
-        /* -- header zone: sticky at top -- */
-        .header-zone {
-            background: var(--bg);
-            padding-top: max(16px, env(safe-area-inset-top));
-            padding-bottom: 4px;
-            z-index: 100;
-            margin: 0 -28px;
-            padding-left: 28px;
-            padding-right: 28px;
-            position: sticky;
-            top: 0;
-        }
-        .tab-content {
-            flex: 1;
         }
 
         /* -- header -- */
@@ -245,7 +225,6 @@
         .s-warn { color: var(--yellow); font-weight: 600; }
         .s-ok { color: var(--green); font-weight: 600; }
         .s-section { color: var(--cyan); font-weight: 700; font-family: var(--font-sans); }
-        .s-emphasis { font-family: var(--font-sans); font-weight: 500; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-bright); }
         .s-verdict-ok { color: var(--green); font-weight: 700; }
         .s-verdict-warn { color: var(--yellow); font-weight: 700; }
         .s-verdict-fail { color: var(--red); font-weight: 700; }
@@ -307,12 +286,13 @@
 
         /* -- input -- */
         #input-bar {
-            padding: 12px 0;
-            padding-bottom: max(12px, env(safe-area-inset-bottom));
+            padding: 20px 0;
+            flex-shrink: 0;
             position: sticky;
             bottom: 0;
-            background: var(--bg);
+            background: linear-gradient(to bottom, transparent, var(--bg) 20%);
             z-index: 5;
+            padding-top: 32px;
         }
         .input-row {
             display: flex;
@@ -379,391 +359,25 @@
         .share-canvas-wrap canvas { border-radius: 12px; max-width: 90vw; max-height: 80vh; }
         .share-canvas-actions { position:absolute; bottom:40px; display:flex; gap:12px; }
         .share-canvas-actions button {
-            background: none; color: var(--gold); border: none;
-            padding: 8px 0; font-family: var(--font-serif); font-style: italic;
-            font-size: 16px; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;
+            background: var(--gold); color: #fff; border:none; border-radius:8px;
+            padding: 10px 24px; font-family: var(--font-sans); font-size: 14px; cursor:pointer;
         }
-        .share-canvas-actions button:hover { opacity: 1; }
-        /* -- pattern detection -- */
-        .pattern-block {
-            margin-top: 24px;
-            padding: 20px 24px;
-            border-left: 2px solid var(--gold);
-            background: rgba(184,150,12,0.03);
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 15px;
-            line-height: 1.7;
-            color: var(--text);
-            animation: blockFadeIn 0.8s ease-out;
-        }
-        .pattern-label {
-            font-family: var(--font-sans);
-            font-style: normal;
-            font-size: 10px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 8px;
-        }
-
-        /* -- design tab -- */
-        #tab-design {
-            flex: none !important;
-        }
-        #tab-knowledge {
-            flex: none !important;
-        }
-        .design-welcome {
-            text-align: center;
-            padding: 32px 20px 40px;
-            animation: blockFadeIn 0.8s ease-out;
-        }
-        .design-welcome-title {
-            font-family: var(--font-sans);
-            font-size: 10px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 20px;
-        }
-        .design-welcome-msg {
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 20px;
-            line-height: 1.6;
-            color: var(--text);
-            max-width: 400px;
-            margin: 0 auto 32px;
-        }
-        .design-start-btn {
-            font-family: var(--font-sans);
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--bg);
-            background: var(--text-bright);
+        .share-selection-btn {
+            position: absolute;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: #fff;
             border: none;
-            border-radius: 40px;
-            padding: 14px 32px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .design-start-btn:hover { opacity: 0.85; }
-        .design-pro-gate {
-            text-align: center;
-            padding: 20px 20px 40px;
-        }
-        .design-pro-gate p {
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 18px;
-            color: var(--comment);
-            margin-bottom: 24px;
-            max-width: 360px;
-        }
-        .design-conversation {
-            padding: 20px 8px;
-        }
-        .design-q {
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 18px;
-            line-height: 1.6;
-            color: var(--text);
-            margin-bottom: 16px;
-            animation: blockFadeIn 0.6s ease-out;
-        }
-        .design-input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--border);
-            font-family: var(--font-serif);
-            font-size: 16px;
-            line-height: 1.6;
-            color: var(--text);
-            padding: 12px 0;
-            outline: none;
-            resize: none;
-            min-height: 60px;
-        }
-        .design-input:focus { border-color: var(--gold); }
-        .design-input::placeholder { color: var(--comment); opacity: 0.4; }
-        .design-next {
-            margin-top: 12px;
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 13px;
-            color: var(--gold);
-            background: none;
-            border: none;
-            cursor: pointer;
-            float: right;
-        }
-        .design-portrait {
-            padding: 32px 24px;
-            border: 1px solid var(--gold);
-            border-radius: 4px;
-            background: rgba(184,150,12,0.02);
-            font-family: var(--font-serif);
-            font-size: 16px;
-            line-height: 1.8;
-            color: var(--text);
-            animation: blockFadeIn 1s ease-out;
-        }
-        .design-portrait-label {
+            border-radius: 6px;
+            padding: 6px 16px;
             font-family: var(--font-sans);
-            font-size: 10px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .design-meta {
-            margin-top: 20px;
-            font-family: var(--font-sans);
-            font-size: 11px;
-            color: var(--comment);
-            text-align: center;
-        }
-        .design-actions {
-            margin-top: 20px;
-            text-align: center;
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-        }
-        .design-actions button {
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 13px;
-            color: var(--gold);
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        /* -- morning prompt -- */
-        .morning-prompt {
-            margin-top: 24px;
-            padding: 20px 24px;
-            text-align: center;
-            cursor: pointer;
-            transition: opacity 0.3s;
-            animation: blockFadeIn 1s ease-out;
-        }
-        .morning-prompt:hover { opacity: 0.7; }
-        .morning-label {
-            font-family: var(--font-sans);
-            font-size: 10px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 12px;
-        }
-        .morning-question {
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 18px;
-            line-height: 1.5;
-            color: var(--text);
-        }
-
-        /* -- philosophical lenses -- */
-        .lens-wrap {
-            display: inline-flex;
-            gap: 12px;
-            margin-left: 12px;
-        }
-        .lens-btn {
-            font-family: var(--font-serif);
-            font-style: italic;
             font-size: 12px;
-            color: var(--comment);
-            background: none;
-            border: none;
-            cursor: pointer;
-            opacity: 0.6;
-            transition: all 0.2s;
-        }
-        .lens-btn:hover { opacity: 1; color: var(--gold); }
-        .lens-response {
-            margin-top: 16px;
-            padding: 16px 20px;
-            border-left: 2px solid var(--comment);
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 14px;
-            line-height: 1.7;
-            color: var(--text);
-            animation: blockFadeIn 0.6s ease-out;
-        }
-        .lens-response-name {
-            font-family: var(--font-sans);
-            font-style: normal;
-            font-size: 10px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--comment);
-            margin-bottom: 8px;
-        }
-
-        /* -- philosophical profile -- */
-        .profile-block {
-            margin-top: 32px;
-            padding: 28px 24px;
-            border: 1px solid var(--gold);
-            border-radius: 4px;
-            background: rgba(184,150,12,0.02);
-            font-family: var(--font-serif);
-            font-size: 16px;
-            line-height: 1.8;
-            color: var(--text);
-            animation: blockFadeIn 1.2s ease-out;
-        }
-        .profile-label {
-            font-family: var(--font-sans);
-            font-size: 10px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 16px;
-            text-align: center;
-        }
-        .profile-share {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .profile-share button {
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 13px;
-            color: var(--gold);
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-        .profile-share button:hover { text-decoration: underline; }
-
-        /* -- decision journal -- */
-        .decision-prompt {
-            margin-top: 16px;
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 14px;
-            color: var(--comment);
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .decision-prompt:hover { color: var(--gold); }
-        .decision-input-wrap {
-            margin-top: 12px;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            animation: blockFadeIn 0.4s ease-out;
-        }
-        .decision-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--border);
-            font-family: var(--font-serif);
-            font-size: 14px;
-            font-style: italic;
-            color: var(--text);
-            padding: 6px 0;
-            outline: none;
-        }
-        .decision-input:focus { border-color: var(--gold); }
-        .decision-input::placeholder { color: var(--comment); opacity: 0.5; }
-        .decision-saved {
-            margin-top: 12px;
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 14px;
-            color: var(--gold);
-            animation: blockFadeIn 0.4s ease-out;
-        }
-        .decision-review {
-            margin: 20px 0;
-            padding: 20px 24px;
-            border-left: 2px solid var(--gold);
-            background: rgba(184,150,12,0.03);
-            font-family: var(--font-serif);
-            font-size: 15px;
-            line-height: 1.7;
-            color: var(--text);
-            animation: blockFadeIn 0.8s ease-out;
-        }
-        .decision-review-label {
-            font-family: var(--font-sans);
-            font-size: 10px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 8px;
-        }
-        .decision-review em { color: var(--text-bright); }
-
-        /* -- share feature -- */
-        .btn-share-trigger {
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 14px;
-            color: var(--gold);
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px 0;
-            opacity: 0.7;
-            transition: opacity 0.3s;
-        }
-        .btn-share-trigger:hover { opacity: 1; }
-        .share-mode-hint {
-            font-family: var(--font-sans);
-            font-size: 11px;
-            color: var(--comment);
-            text-align: center;
-            padding: 8px 0;
             letter-spacing: 1px;
-            animation: fadeIn 0.3s ease;
-        }
-        .share-mode .share-sentence {
             cursor: pointer;
-            transition: all 0.2s ease;
-            border-radius: 4px;
-            padding: 2px 4px;
-            margin: -2px -4px;
+            z-index: 999;
+            animation: fadeIn 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
-        .share-mode .share-sentence:hover {
-            background: rgba(184,150,12,0.08);
-        }
-        .share-mode .share-sentence.selected {
-            background: rgba(184,150,12,0.12);
-            border-left: 2px solid var(--gold);
-            padding-left: 8px;
-        }
-        /* theory share triggers */
-        .theory-share-trigger {
-            display: inline-block;
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 12px;
-            color: var(--gold);
-            background: none;
-            border: none;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.3s;
-            margin-left: 8px;
-        }
-        .motives-section p:hover .theory-share-trigger,
-        .theory-share-trigger:focus { opacity: 0.7; }
-        .theory-share-trigger:hover { opacity: 1; }
         .btn-send {
             background: transparent;
             color: var(--gold);
@@ -796,28 +410,10 @@
 
         /* -- actions -- */
         .actions {
-            margin-top: 12px;
+            margin-top: 8px;
             display: flex;
-            gap: 16px;
+            gap: 8px;
             margin-left: 42px;
-        }
-        .actions .btn, .actions .btn-sm, .actions .btn-share-trigger {
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 14px;
-            color: var(--gold);
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px 0;
-            opacity: 0.7;
-            transition: opacity 0.3s;
-        }
-        .actions .btn:hover, .actions .btn-sm:hover, .actions .btn-share-trigger:hover {
-            opacity: 1;
-            border-color: transparent;
-            background: none;
-            color: var(--gold);
         }
 
         /* -- history & integrated -- */
@@ -946,7 +542,6 @@
         .footer {
             border-top: 1px solid var(--border);
             padding: 20px 0;
-            padding-bottom: max(20px, env(safe-area-inset-bottom));
             margin-top: auto;
             display: flex;
             justify-content: center;
@@ -1178,7 +773,7 @@
         }
 
         /* -- welcome -- */
-        .welcome-block { text-align: center; padding: 20px 20px 20px; }
+        .welcome-block { text-align: center; padding: 40px 20px 30px; }
         .welcome-line {
             font-family: var(--font-sans);
             font-size: 10px;
@@ -1193,10 +788,10 @@
 
         /* -- responsive -- */
         @media (display-mode: standalone) {
-            /* safe area handled by header-zone */
+            #app { padding-top: calc(16px + env(safe-area-inset-top)) !important; }
         }
         @media (max-width: 600px) {
-            #app { padding: 0 12px; }
+            #app { padding: 16px 12px 0; padding-top: calc(16px + env(safe-area-inset-top)); }
             .gutter { display: none; }
             .header { flex-direction: column; gap: 8px; }
             .pillars { grid-template-columns: 1fr; }
@@ -1217,7 +812,6 @@
             .welcome-line { font-size: 9px !important; letter-spacing: 2px !important; }
         }
     </style>
-    <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
 </head>
 <body>
     <div id="app">
@@ -1251,40 +845,43 @@
 
         <!-- main -->
         <div id="screen-main" class="screen">
-            <div class="header-zone">
-                <div class="header">
-                    <div class="header-left">
-                        <div class="header-title" id="main-title">nicómaco</div>
-                        <div class="header-by">by josean · <a href="#" id="nav-lang" style="color:var(--comment)">🇪🇸</a></div>
-                        <div class="header-sub" id="main-subtitle">filosofia aplicada a la toma de decisiones</div>
-                    </div>
-                    <div class="header-nav" style="display:none">
-                        <a href="#" id="nav-borrador" style="display:none;color:var(--orange)">borrador <span id="draft-badge" style="font-size:0.7em"></span></a>
-                        <a href="#" id="nav-cfg" style="display:none">cfg</a>
-                    </div>
+            <div class="header">
+                <div class="header-left">
+                    <div class="header-title" id="main-title">nicómaco</div>
+                    <div class="header-by">by josean · <a href="#" id="nav-lang" style="color:var(--comment)">🇪🇸</a></div>
+                    <div class="header-sub" id="main-subtitle">filosofia aplicada a la toma de decisiones</div>
                 </div>
+                <div class="header-nav" style="display:none">
+                    <a href="#" id="nav-borrador" style="display:none;color:var(--orange)">borrador <span id="draft-badge" style="font-size:0.7em"></span></a>
+                    <a href="#" id="nav-cfg" style="display:none">cfg</a>
+                </div>
+            </div>
 
-                <div class="tabs">
-                    <button class="tab active" data-tab="tool">
-                        <span class="tab-name">tool</span>
-                        <span class="tab-teaser en-only">ὄργανον · instrument</span>
-                        <span class="tab-teaser es-only">ὄργανον · instrumento</span>
-                    </button>
-                    <button class="tab" data-tab="knowledge">
-                        <span class="tab-name">teoría</span>
-                        <span class="tab-teaser en-only">θεμέλια · foundations</span>
-                        <span class="tab-teaser es-only">θεμέλια · fundamentos</span>
-                    </button>
-                    <button class="tab" data-tab="design">
-                        <span class="tab-name">diseño</span>
-                        <span class="tab-teaser en-only">εἶδος · self-design</span>
-                        <span class="tab-teaser es-only">εἶδος · diseño del yo</span>
-                    </button>
-                </div>
+            <div class="tabs">
+                <button class="tab active" data-tab="tool">
+                    <span class="tab-name">tool</span>
+                    <span class="tab-teaser en-only">ὄργανον · instrument</span>
+                    <span class="tab-teaser es-only">ὄργανον · instrumento</span>
+                </button>
+                <button class="tab" data-tab="knowledge">
+                    <span class="tab-name">teoría</span>
+                    <span class="tab-teaser en-only">θεμέλια · foundations</span>
+                    <span class="tab-teaser es-only">θεμέλια · fundamentos</span>
+                </button>
             </div>
 
             <div id="tab-tool" class="tab-content">
                 <div id="output"></div>
+                <div id="input-bar">
+                    <div class="input-row">
+                        <button class="history-toggle" id="btn-history" aria-label="history">&#9776;</button>
+                        <span class="input-ctx" id="input-ctx"></span>
+                        <textarea id="input" rows="1" placeholder="pregunta a Nicómaco..."></textarea>
+                        <button class="btn-send" id="btn-send" aria-label="send">&#8593;</button>
+                        <button id="btn-new-chat" title="New conversation" style="display:none">&#8634;</button>
+                    </div>
+                    <div class="input-hints">enter para enviar &middot; shift+enter nueva línea &middot; pega URL para filtrar &middot; esc cancelar</div>
+                </div>
             </div>
 
 <div id="tab-knowledge" class="tab-content" style="display:none">
@@ -1529,24 +1126,12 @@
 
 
             </div>
-
-        <!-- ═══ DESIGN TAB ═══ -->
-        <div id="tab-design" class="tab-content" style="display:none">
-            <div id="design-container"></div>
         </div>
 
-        <!-- input bar: outside tab-content, fixed at bottom -->
-        <div id="input-bar">
-            <div class="input-row">
-                <button class="history-toggle" id="btn-history" aria-label="history">&#9776;</button>
-                <span class="input-ctx" id="input-ctx"></span>
-                <textarea id="input" rows="1" placeholder="pregunta a Nicómaco..."></textarea>
-                <button class="btn-send" id="btn-send" aria-label="send">&#8593;</button>
-                <button id="btn-new-chat" title="New conversation" style="display:none">&#8634;</button>
-            </div>
+        <!-- footer -->
+        <div class="footer">
+            <span class="footer-sig">nicómaco 2026 · <a href="/pro.html" style="color:var(--gold);text-decoration:none;letter-spacing:1px">pro</a></span>
         </div>
-
-        <!-- footer inside scroll area removed — link to pro in input bar area -->
     </div>
 
     <!-- History Panel -->
@@ -1714,70 +1299,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
     const WORKER_URL = 'https://nicomaco-api.joseandv.workers.dev';
 
-    // Owner mode — activate via ?owner=aristotle
-    if (new URLSearchParams(window.location.search).get('owner') === 'aristotle') {
-        localStorage.setItem('vu_owner', 'true');
-        window.history.replaceState({}, '', window.location.pathname);
-    }
-
-    // ── AUTH STATE ──
-    let authToken = localStorage.getItem('vu_auth_token') || null;
-    let authUser = null;
-
-    // Check auth on load
-    async function checkAuth() {
-        if (!authToken) return;
-        try {
-            const res = await fetch(`${WORKER_URL}/api/auth/me`, {
-                headers: { 'Authorization': `Bearer ${authToken}` }
-            });
-            const data = await res.json();
-            if (data.authenticated) {
-                authUser = data;
-            } else {
-                authToken = null;
-                localStorage.removeItem('vu_auth_token');
-            }
-        } catch {}
-    }
-
-    // Show Apple Sign In
-    window.showAppleSignIn = async function() {
-        try {
-            AppleID.auth.init({
-                clientId: 'org.nicomaco.web',
-                scope: 'email',
-                redirectURI: `${WORKER_URL}/api/auth/apple/callback`,
-                usePopup: true,
-            });
-            const response = await AppleID.auth.signIn();
-            // Send id_token to our Worker
-            const res = await fetch(`${WORKER_URL}/api/auth/apple`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_token: response.authorization.id_token }),
-            });
-            const data = await res.json();
-            if (data.token) {
-                authToken = data.token;
-                localStorage.setItem('vu_auth_token', data.token);
-                authUser = { pro: data.pro, analysisCount: data.analysisCount };
-                // Reload to clear rate limit state
-                location.reload();
-            }
-        } catch (err) {
-            console.log('Apple Sign In cancelled or failed', err);
-        }
-    };
-
-    // Check for token in URL (from redirect flow)
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('token')) {
-        authToken = urlParams.get('token');
-        localStorage.setItem('vu_auth_token', authToken);
-        window.history.replaceState({}, '', window.location.pathname);
-    }
-
     const I18N = {
         en: {
             subtitle: 'applied philosophy for decision-making',
@@ -1863,7 +1384,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         $('#main-subtitle').textContent = t('subtitle');
         $$('[data-tab="tool"] .tab-name').forEach(el => el.textContent = t('tool'));
         $$('[data-tab="knowledge"] .tab-name').forEach(el => el.textContent = t('knowledge'));
-        $$('[data-tab="design"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'diseño' : 'design');
         // Update knowledge sub-nav
         $$('.knowledge-btn[data-section="motives"]').forEach(el => el.textContent = t('motives'));
         $$('.knowledge-btn[data-section="hierarchy"]').forEach(el => el.textContent = t('hierarchy'));
@@ -1894,11 +1414,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     }
 
     function init() {
-        // Check auth status
-        checkAuth();
-        checkDecisionReviews();
-        checkLetterDeliveries();
-
         // Restore analysis count from persisted history
         if (state.history.length) state.analysisCount = Math.max(...state.history.map(h => h.num || 0));
 
@@ -2116,11 +1631,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         state.currentTab = name;
         $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
         $$('.tab-content').forEach(tc => tc.style.display = 'none');
-        $(`#tab-${name}`).style.display = name === 'tool' ? 'flex' : 'block';
-        const ib = $('#input-bar');
-        if (ib) ib.style.display = name === 'tool' ? '' : 'none';
-        if (name === 'knowledge') { renderIntegrated(); addTheoryShareTriggers(); }
-        if (name === 'design') { renderDesignTab(); }
+        $(`#tab-${name}`).style.display = name === 'tool' ? 'flex' : '';
+        if (name === 'knowledge') renderIntegrated();
     }
 
     function renderWelcome() {
@@ -2131,8 +1643,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const intro = document.createElement('div');
         intro.className = 'block welcome-block';
         let html = es
-            ? `<p class="welcome-line">α ἐστιν α</p><p class="welcome-line" style="margin-top:4px">filosofia aplicada a la toma de decisiones</p>`
-            : `<p class="welcome-line">α ἐστιν α</p><p class="welcome-line" style="margin-top:4px">applied philosophy for decision-making</p>`;
+            ? `<p class="welcome-line">α ἐστιν α · filosofia aplicada a la toma de decisiones</p>`
+            : `<p class="welcome-line">α ἐστιν α · applied philosophy for decision-making</p>`;
         if (count > 0) {
             html += es
                 ? `<p class="welcome-progress">${count} ${count === 1 ? 'idea analizada' : 'ideas analizadas'}</p>`
@@ -2140,140 +1652,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         }
         intro.innerHTML = html;
         output.appendChild(intro);
-
-        // Morning prompt — personalized question
-        if (count >= 3) {
-            generateMorningPrompt(output, es);
-        }
-
-        // Weekly synthesis
-        if (count >= 5) {
-            tryWeeklySynthesis(output, es);
-        }
-    }
-
-    async function generateMorningPrompt(output, es) {
-        // Check cache — one per day
-        const today = new Date().toISOString().slice(0, 10);
-        const cached = JSON.parse(localStorage.getItem('vu_morning') || '{}');
-        if (cached.date === today && cached.prompt) {
-            showMorningPrompt(output, cached.prompt, es);
-            return;
-        }
-
-        try {
-            const recent = state.history.slice(0, 10).map(h => h.candidate).filter(c => c && !c.startsWith('[URL]'));
-            if (recent.length < 3) return;
-
-            const prompt = es
-                ? `Abajo están las últimas preguntas que alguien hizo a un sistema de análisis filosófico. Genera UNA pregunta filosófica personalizada para esta persona — algo que les haga pensar hoy, basado en lo que les importa. No repitas sus preguntas. Llévales un paso más allá. Una sola oración. Sin comillas. Sin explicación. Solo la pregunta.
-
-${recent.map((q, i) => `${i+1}. "${q}"`).join('\n')}`
-                : `Below are the recent questions someone asked a philosophical analysis tool. Generate ONE personalized philosophical question for this person — something to make them think today, based on what they care about. Don't repeat their questions. Push them one step further. One sentence. No quotes. No explanation. Just the question.
-
-${recent.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
-
-            const res = await fetch(`${WORKER_URL}/api/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: [{ role: 'user', content: prompt }],
-                    model: 'claude-sonnet-4-20250514',
-                    stream: false
-                }),
-            });
-
-            if (!res.ok) return;
-            const data = await res.json();
-            const morningQ = data.content?.[0]?.text?.replace(/\*{1,3}/g, '').replace(/^["']|["']$/g, '').trim();
-            if (morningQ && morningQ.length > 10) {
-                localStorage.setItem('vu_morning', JSON.stringify({ date: today, prompt: morningQ }));
-                showMorningPrompt(output, morningQ, es);
-            }
-        } catch(e) {}
-    }
-
-    async function tryWeeklySynthesis(output, es) {
-        const lastSynthesis = localStorage.getItem('vu_weekly_date') || '2000-01-01';
-        const daysSince = Math.floor((Date.now() - new Date(lastSynthesis).getTime()) / (1000*60*60*24));
-        if (daysSince < 7) return;
-
-        // Get analyses from last 7 days
-        const weekAgo = Date.now() - 7*24*60*60*1000;
-        const recent = state.history.filter(h => new Date(h.date).getTime() > weekAgo);
-        if (recent.length < 3) return;
-
-        const cached = JSON.parse(localStorage.getItem('vu_weekly') || '{}');
-        const today = new Date().toISOString().slice(0, 10);
-        if (cached.date === today && cached.text) {
-            showWeeklySynthesis(output, cached.text, es);
-            return;
-        }
-
-        try {
-            const entries = recent.map(h => {
-                let e = `"${h.candidate}"`;
-                if (h.decision) e += ` → decided: "${h.decision}"`;
-                return e;
-            }).join('\n');
-
-            const prompt = es
-                ? `Abajo están las preguntas y decisiones de una persona durante la última semana. Genera una SÍNTESIS de su semana de pensamiento en 3-4 oraciones:
-- El hilo que conecta sus preguntas (no una lista, el HILO)
-- Hacia dónde se movió su pensamiento (de qué a qué)
-- Una observación sobre su evolución
-
-Sin asteriscos. Prosa fluida. Como alguien que los conoce bien resumiendo su semana.
-
-Semana:
-${entries}`
-                : `Below are a person's questions and decisions from the last week. Generate a SYNTHESIS of their week of thinking in 3-4 sentences:
-- The thread connecting their questions (not a list, the THREAD)
-- Where their thinking moved (from what to what)
-- One observation about their evolution
-
-No asterisks. Flowing prose. Like someone who knows them well summarizing their week.
-
-Week:
-${entries}`;
-
-            const res = await fetch(`${WORKER_URL}/api/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: [{ role: 'user', content: prompt }],
-                    model: 'claude-sonnet-4-20250514',
-                    stream: false
-                }),
-            });
-            if (!res.ok) return;
-            const data = await res.json();
-            const text = data.content?.[0]?.text?.replace(/\*{1,3}/g, '').trim();
-            if (text && text.length > 20) {
-                localStorage.setItem('vu_weekly', JSON.stringify({ date: today, text }));
-                localStorage.setItem('vu_weekly_date', today);
-                showWeeklySynthesis(output, text, es);
-            }
-        } catch(e) {}
-    }
-
-    function showWeeklySynthesis(output, text, es) {
-        const el = document.createElement('div');
-        el.className = 'decision-review';
-        el.innerHTML = `<div class="decision-review-label">${es ? 'tu semana' : 'your week'}</div>${text}`;
-        output.appendChild(el);
-    }
-
-    function showMorningPrompt(output, question, es) {
-        const el = document.createElement('div');
-        el.className = 'morning-prompt';
-        el.innerHTML = `<div class="morning-label">${es ? 'para hoy' : 'for today'}</div><div class="morning-question">${esc(question)}</div>`;
-        el.addEventListener('click', () => {
-            $('#input').value = question;
-            $('#input').focus();
-            el.style.opacity = '0.3';
-        });
-        output.appendChild(el);
     }
 
     // Rotating placeholder examples
@@ -2334,219 +1712,127 @@ ${entries}`;
     }
 
     // Share analysis as beautiful image — a statement of taste
-    // Share feature: enter selection mode → tap sentence → generate image → native share
-    function enterShareMode(codeEl) {
-        if (codeEl.classList.contains('share-mode')) { exitShareMode(codeEl); return; }
+    // Selection-based share: user selects text, popup appears
+    document.addEventListener('mouseup', handleTextSelection);
+    document.addEventListener('touchend', handleTextSelection);
 
-        // Split analysis into sentences
-        const rawText = codeEl.textContent || '';
-        const sentences = rawText.split(/(?<=[.!?])\s+/).filter(s => {
-            const t = s.trim();
-            return t.length > 15 && !t.startsWith('//') && !t.startsWith('candidate') && !t.startsWith('CANDIDATE') && !t.startsWith('"');
+    function handleTextSelection() {
+        // Remove existing share popup
+        const old = document.querySelector('.share-selection-btn');
+        if (old) old.remove();
+
+        const sel = window.getSelection();
+        const text = sel?.toString().trim();
+        if (!text || text.length < 10) return;
+
+        // Only trigger inside analysis blocks (.code)
+        const node = sel.anchorNode;
+        if (!node) return;
+        const codeBlock = node.parentElement?.closest('.code-block');
+        if (!codeBlock) return;
+
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+
+        const btn = document.createElement('button');
+        btn.className = 'share-selection-btn';
+        btn.textContent = state.lang === 'es' ? 'compartir' : 'share';
+        btn.style.top = (rect.top + window.scrollY - 40) + 'px';
+        btn.style.left = (rect.left + rect.width / 2) + 'px';
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            btn.remove();
+            shareAsImage(text);
         });
+        document.body.appendChild(btn);
 
-        if (!sentences.length) return;
-
-        // Save original HTML
-        codeEl._originalHTML = codeEl.innerHTML;
-        codeEl.classList.add('share-mode');
-
-        // Add hint
-        const hint = document.createElement('div');
-        hint.className = 'share-mode-hint';
-        hint.textContent = state.lang === 'es' ? 'toca la frase que quieres compartir' : 'tap the sentence you want to share';
-        codeEl.parentElement.insertBefore(hint, codeEl);
-
-        // Wrap each sentence in a tappable span
-        let html = '';
-        sentences.forEach((s, i) => {
-            const clean = s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            html += `<span class="share-sentence" data-idx="${i}">${clean}</span> `;
-        });
-        codeEl.innerHTML = html;
-
-        // Add click handlers
-        codeEl.querySelectorAll('.share-sentence').forEach(el => {
-            el.addEventListener('click', () => {
-                const text = el.textContent.trim();
-                exitShareMode(codeEl);
-                generateShareImage(text);
-            });
-        });
-
-        // Exit on click outside
+        // Remove on next click elsewhere
         setTimeout(() => {
-            document.addEventListener('click', function outsideClick(e) {
-                if (!codeEl.contains(e.target) && !e.target.classList.contains('btn-share-trigger')) {
-                    exitShareMode(codeEl);
-                    document.removeEventListener('click', outsideClick);
-                }
+            document.addEventListener('mousedown', function rm(e) {
+                if (e.target !== btn) { btn.remove(); document.removeEventListener('mousedown', rm); }
             });
         }, 100);
     }
 
-    function exitShareMode(codeEl) {
-        codeEl.classList.remove('share-mode');
-        if (codeEl._originalHTML) codeEl.innerHTML = codeEl._originalHTML;
-        const hint = codeEl.parentElement.querySelector('.share-mode-hint');
-        if (hint) hint.remove();
-    }
-
-    // Share from theory: direct with the paragraph text
-    function shareTheoryText(text) {
-        generateShareImage(text);
-    }
-
-    // Add share triggers to theory paragraphs
-    function addTheoryShareTriggers() {
-        const es = state.lang === 'es';
-        document.querySelectorAll('#knowledge-motives .motives-section p').forEach(p => {
-            if (p.querySelector('.theory-share-trigger')) return;
-            const text = p.textContent.trim();
-            if (text.length < 20) return;
-            const btn = document.createElement('button');
-            btn.className = 'theory-share-trigger';
-            btn.textContent = es ? 'compartir' : 'share';
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                shareTheoryText(text);
-            });
-            p.style.position = 'relative';
-            p.appendChild(btn);
-        });
-    }
-
-    async function generateShareImage(analysisText, userPrompt) {
-        // Ensure fonts loaded
-        try { await document.fonts.load('400 32px Cormorant Garamond'); } catch(e) {}
-        try { await document.fonts.load('300 14px Inter'); } catch(e) {}
-
-        const serif = "'Cormorant Garamond', Georgia, serif";
-        const sans = "'Inter', sans-serif";
-        const W = 1080;
-        const mx = 100;
-        const textW = W - mx * 2;
-
-        // Clean text, split into paragraphs
-        const raw = analysisText.replace(/\*{1,3}/g, '').trim(); // strip for image (no HTML in canvas)
-        const paragraphs = raw.split(/\n+/).filter(p => p.trim());
-
-        // Measure total height with a temp canvas
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = W; tempCanvas.height = 100;
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCtx.font = `400 32px ${serif}`;
-
-        let totalTextHeight = 0;
-        // Account for user prompt height
-        if (userPrompt) {
-            tempCtx.font = `italic 400 24px ${serif}`;
-            totalTextHeight += wrapText(tempCtx, '"' + userPrompt + '"', mx, 0, textW, 36, true) + 60;
-        }
-        tempCtx.font = `400 32px ${serif}`;
-        for (const p of paragraphs) {
-            totalTextHeight += wrapText(tempCtx, p.trim(), mx, 0, textW, 46, true) + 36;
-        }
-
-        // Render on oversized canvas first, then crop
-        const topPad = 80;
-        const maxH = topPad + totalTextHeight + 600;
-
+    window.shareAsImage = function shareAsImage(selectedText) {
         const canvas = document.createElement('canvas');
-        canvas.width = W; canvas.height = maxH;
+        const W = 1080, H = 1350;
+        canvas.width = W; canvas.height = H;
         const ctx = canvas.getContext('2d');
+        const mx = 120;
 
         // Background — warm parchment
         ctx.fillStyle = '#F8F5EF';
-        ctx.fillRect(0, 0, W, maxH);
+        ctx.fillRect(0, 0, W, H);
 
-        // α at top — beginning
-        let y = topPad;
+        // Clean the selected text
+        const quote = selectedText.replace(/\*{1,3}/g, '').replace(/\n+/g, ' ').trim();
+
+        // Measure how tall the quote will be to center it vertically
+        ctx.font = '400 42px Georgia, serif';
+        const testY = wrapText(ctx, quote, mx, 0, W - mx*2, 58, true);
+        const quoteHeight = testY;
+        const brandHeight = 160;
+        const totalContent = quoteHeight + 80 + brandHeight;
+        const startY = Math.max(mx + 40, (H - totalContent) / 2);
+
+        // Gold accent — thin line above quote
         ctx.fillStyle = '#B8960C';
-        ctx.font = `300 28px ${serif}`;
-        ctx.fillText('α', mx, y + 10);
-        y += 50;
+        ctx.fillRect(mx, startY - 30, 40, 1.5);
 
-        // User prompt — small, gray, italic
-        if (userPrompt) {
-            const cleanPrompt = '"' + userPrompt.replace(/\*{1,3}/g, '').trim() + '"';
-            ctx.fillStyle = '#86868B';
-            ctx.font = `italic 400 24px ${serif}`;
-            y = wrapText(ctx, cleanPrompt, mx, y, textW, 36) + 24;
-
-            // Thin gold separator
-            ctx.fillStyle = '#B8960C';
-            ctx.fillRect(mx, y, 40, 1);
-            y += 36;
-        }
-
-        // Render each paragraph
+        // Quote — centered vertically
         ctx.fillStyle = '#1D1D1F';
-        ctx.font = `400 32px ${serif}`;
-        for (const p of paragraphs) {
-            const clean = p.trim();
-            if (!clean) continue;
-            y = wrapText(ctx, clean, mx, y, textW, 46) + 36;
-        }
+        ctx.font = '400 42px Georgia, serif';
+        const lastY = wrapText(ctx, quote, mx, startY, W - mx*2, 58);
 
-        // Brand block — tight spacing
-        y += 40;
+        // Brand block — right below quote
+        const brandY = lastY + 80;
 
-        // ω above signature
+        // Thin gold line
         ctx.fillStyle = '#B8960C';
-        ctx.font = `300 28px ${serif}`;
-        ctx.fillText('ω', W/2 - ctx.measureText('ω').width/2, y + 10);
+        ctx.fillRect(mx, brandY, W - mx*2, 0.5);
 
+        // α ἐστιν α centered
+        ctx.fillStyle = '#B8960C';
+        ctx.font = '300 18px Inter, sans-serif';
         ctx.textAlign = 'center';
+        ctx.fillText('α  ἐστιν  α', W/2, brandY + 40);
 
-        const sigFont = `400 20px ${sans}`;
-        const sigColor = '#86868B';
-        const sigSpacing = 8;
+        // nicómaco
+        ctx.fillStyle = '#1D1D1F';
+        ctx.font = '500 24px Georgia, serif';
+        ctx.fillText('nicómaco', W/2, brandY + 80);
 
-        ctx.fillStyle = sigColor;
-        ctx.font = sigFont;
-        drawSpaced(ctx, 'Α  ΕΣΤΙΝ  Α', W/2, y + 50, sigSpacing);
-
-        ctx.fillStyle = sigColor;
-        ctx.font = sigFont;
-        drawSpaced(ctx, 'NICÓMACO.ORG', W/2, y + 82, sigSpacing);
+        // nicomaco.org
+        ctx.fillStyle = '#86868B';
+        ctx.font = '300 16px Inter, sans-serif';
+        ctx.fillText('nicomaco.org', W/2, brandY + 110);
 
         ctx.textAlign = 'left';
 
-        // Crop canvas to actual content height
-        const finalH = y + 95;
-        const croppedCanvas = document.createElement('canvas');
-        croppedCanvas.width = W; croppedCanvas.height = finalH;
-        const croppedCtx = croppedCanvas.getContext('2d');
-        croppedCtx.drawImage(canvas, 0, 0);
-
-        // Show overlay with preview
+        // Show overlay
         const wrap = document.createElement('div');
         wrap.className = 'share-canvas-wrap';
         wrap.innerHTML = '<div class="share-canvas-actions"></div>';
-        wrap.insertBefore(croppedCanvas, wrap.firstChild);
+        wrap.insertBefore(canvas, wrap.firstChild);
 
         const actions = wrap.querySelector('.share-canvas-actions');
-
-        // Save image button — only option
         const btnSave = document.createElement('button');
         btnSave.textContent = state.lang === 'es' ? 'guardar imagen' : 'save image';
         btnSave.addEventListener('click', () => {
             const a = document.createElement('a');
-            a.download = 'nicomaco.png';
-            a.href = croppedCanvas.toDataURL('image/png');
+            a.download = 'nicomaco-analysis.png';
+            a.href = canvas.toDataURL('image/png');
             a.click();
             wrap.remove();
         });
         actions.appendChild(btnSave);
 
-        // Close
         const btnClose = document.createElement('button');
         btnClose.textContent = '✕';
         btnClose.style.background = 'transparent';
-        btnClose.style.color = '#86868B';
-        btnClose.style.border = 'none';
-        btnClose.style.fontSize = '18px';
+        btnClose.style.color = '#1D1D1F';
+        btnClose.style.border = '1px solid #E0DCD4';
         btnClose.addEventListener('click', () => wrap.remove());
         actions.appendChild(btnClose);
 
@@ -2554,873 +1840,23 @@ ${entries}`;
         document.body.appendChild(wrap);
     }
 
-    // Pattern detection — separate layer, never touches main prompt
-    async function tryPatternDetection(block) {
-        try {
-            const last10 = state.history.slice(0, 10).map(h => h.candidate).filter(c => c && !c.startsWith('[URL]'));
-            if (last10.length < 3) return;
-
-            const patternPrompt = `You observe how a person thinks — not what they think, but how. Below are the last ${last10.length} questions someone asked a philosophical analysis tool. Each question is a window into what they are wrestling with.
-
-Your job is to see what they cannot see about themselves. Not the topics — the structure underneath.
-
-Look at:
-- The FRAMING: do they ask "should I" (seeking permission), "how do I" (seeking method), "why don't I" (seeking cause), or "is it wrong to" (seeking absolution)? The verb structure reveals their stance toward their own agency.
-- The SEQUENCE: what came after what? Why might they have moved from one question to the next? What does the progression reveal?
-- What is ABSENT: what obvious question did they never ask? What are they avoiding?
-- The UNSPOKEN PREMISE: what belief must be true for these specific questions to make sense? Name it.
-
-Deliver your observation in 2 sentences. Maximum 3. Like a mirror — not an essay. Be specific enough that only THIS person would recognize themselves. Do not praise. Do not soften. Do not use asterisks. Do not use bullet points. Just say what you see.
-
-Respond in the same language as the questions.
-
-Their questions (most recent first):
-${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
-
-            const res = await fetch(`${WORKER_URL}/api/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: [{ role: 'user', content: patternPrompt }],
-                    model: 'claude-sonnet-4-20250514'
-                }),
-            });
-
-            if (!res.ok) return;
-
-            let patternText = '';
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder();
-            let buf = '';
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                buf += decoder.decode(value, { stream: true });
-                const lines = buf.split('\n');
-                buf = lines.pop() || '';
-                for (const line of lines) {
-                    if (!line.startsWith('data: ')) continue;
-                    const json = line.slice(6).trim();
-                    if (!json || json === '[DONE]') continue;
-                    try {
-                        const evt = JSON.parse(json);
-                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') patternText += evt.delta.text;
-                    } catch {}
-                }
-            }
-
-            if (patternText.trim()) {
-                const es = state.lang === 'es';
-                const patternEl = document.createElement('div');
-                patternEl.className = 'pattern-block';
-                patternEl.innerHTML = `<div class="pattern-label">${es ? 'patrón detectado' : 'pattern detected'}</div>${patternText.replace(/\*{1,3}/g, '').trim()}`;
-                block.appendChild(patternEl);
-                scrollToBottom();
-            }
-        } catch(e) {
-            // Silent fail — pattern is a bonus, not critical
-        }
-    }
-
-    // ── Philosophical Lenses ──
-    async function generateLensResponse(block, lens, question, analysis) {
-        try {
-            const es = state.lang === 'es';
-            const name = es ? lens.label : lens.en;
-            const prompt = es
-                ? `Eres ${name}. Alguien te preguntó: "${question}". Un análisis filosófico ya respondió lo siguiente (no lo repitas, no lo critiques):
-
-"${analysis.substring(0, 500)}"
-
-Ahora responde TÚ como ${name}. Desde tu filosofía, tu época, tu forma de ver el mundo. Máximo 3-4 oraciones. Habla en primera persona. Sé fiel a tu pensamiento real — no una caricatura. Sin asteriscos.`
-                : `You are ${name}. Someone asked you: "${question}". A philosophical analysis already responded (don't repeat it, don't critique it):
-
-"${analysis.substring(0, 500)}"
-
-Now respond as ${name}. From your philosophy, your era, your worldview. Maximum 3-4 sentences. Speak in first person. Be faithful to your real thought — not a caricature. No asterisks.`;
-
-            const res = await fetch(`${WORKER_URL}/api/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: [{ role: 'user', content: prompt }],
-                    model: 'claude-sonnet-4-20250514'
-                }),
-            });
-
-            if (!res.ok) return;
-
-            let text = '';
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder();
-            let buf = '';
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                buf += decoder.decode(value, { stream: true });
-                const lines = buf.split('\n');
-                buf = lines.pop() || '';
-                for (const line of lines) {
-                    if (!line.startsWith('data: ')) continue;
-                    const json = line.slice(6).trim();
-                    if (!json || json === '[DONE]') continue;
-                    try {
-                        const evt = JSON.parse(json);
-                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') text += evt.delta.text;
-                    } catch {}
-                }
-            }
-
-            if (text.trim()) {
-                const el = document.createElement('div');
-                el.className = 'lens-response';
-                el.innerHTML = `<div class="lens-response-name">${name}</div>${text.replace(/\*{1,3}/g, '').trim()}`;
-                block.appendChild(el);
-                scrollToBottom();
-            }
-        } catch(e) {}
-    }
-
-    // ── Design Alignment Check (runs after each analysis if portrait exists) ──
-    async function tryDesignAlignment(block, question) {
-        try {
-            const design = JSON.parse(localStorage.getItem('vu_design') || 'null');
-            if (!design || !design.portrait) return;
-            const es = state.lang === 'es';
-
-            const prompt = es
-                ? `Una persona diseñó este retrato de quién quiere ser:
-
-"${design.portrait}"
-
-Acaba de preguntar: "${question}"
-
-En UNA oración: ¿esta pregunta la acerca o la aleja de su diseño? Si la acerca, di cómo. Si la aleja, di por qué. Si no tiene relación, responde "---". Sin asteriscos.`
-                : `A person designed this portrait of who they want to be:
-
-"${design.portrait}"
-
-They just asked: "${question}"
-
-In ONE sentence: does this question move them closer or further from their design? If closer, say how. If further, say why. If unrelated, respond "---". No asterisks.`;
-
-            const res = await fetch(`${WORKER_URL}/api/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: [{ role: 'user', content: prompt }],
-                    model: 'claude-sonnet-4-20250514',
-                    stream: false
-                }),
-            });
-            if (!res.ok) return;
-            const data = await res.json();
-            const text = data.content?.[0]?.text?.replace(/\*{1,3}/g, '').trim();
-
-            if (text && text !== '---' && text.length > 10) {
-                const el = document.createElement('div');
-                el.className = 'pattern-block';
-                el.style.borderColor = 'var(--comment)';
-                el.innerHTML = `<div class="pattern-label">${es ? 'alineación con tu diseño' : 'alignment with your design'}</div>${text}`;
-                block.appendChild(el);
-                scrollToBottom();
-            }
-        } catch(e) {}
-    }
-
-    // ── Design of Self ──
-    const DESIGN_QUESTIONS = {
-        es: [
-            '¿Qué quieres que sea verdad sobre tu vida dentro de 5 años — no qué quieres tener, sino qué quieres que sea verdad?',
-            '¿Qué estás dispuesto a pagar por eso — en tiempo, en comodidad, en relaciones, en seguridad?',
-            '¿Qué no negociarias por ningún precio — qué límite define tu territorio?',
-            '¿Qué haces hoy que aleja esa versión de ti? Sé específico.',
-            '¿Qué harías diferente si supieras que nadie te está mirando — ni juzgando, ni aplaudiendo?',
-            '¿Cuál es la mentira más cómoda que te cuentas a ti mismo sobre por qué no has empezado?',
-            'Si la versión de ti que diseñaste pudiera verte ahora mismo — ¿qué te diría?',
-        ],
-        en: [
-            'What do you want to be true about your life in 5 years — not what you want to have, but what you want to be true?',
-            'What are you willing to pay for that — in time, comfort, relationships, security?',
-            'What would you not negotiate at any price — what limit defines your territory?',
-            'What are you doing today that pushes that version of you further away? Be specific.',
-            'What would you do differently if you knew no one was watching — neither judging nor applauding?',
-            'What is the most comfortable lie you tell yourself about why you haven\'t started?',
-            'If the version of yourself you designed could see you right now — what would they tell you?',
-        ]
-    };
-
-    function renderDesignTab() {
-        const container = $('#design-container');
-        if (!container) return;
-        const es = state.lang === 'es';
-
-        // All features free — no Pro gate
-        // Load existing portrait
-        const saved = JSON.parse(localStorage.getItem('vu_design') || 'null');
-
-        if (saved && saved.portrait) {
-            renderPortrait(container, saved, es);
-        } else {
-            renderDesignWelcome(container, es);
-        }
-    }
-
-    function renderDesignWelcome(container, es) {
-        container.innerHTML = `
-            <div class="design-welcome">
-                <div class="design-welcome-title">${es ? 'εἶδος · diseño del yo' : 'εἶδος · self-design'}</div>
-                <p class="design-welcome-msg">${es
-                    ? 'La mayoría de las personas nunca se han sentado a diseñar deliberadamente quién quieren ser. Heredaron sus valores, sus metas, su identidad. Este es el momento donde te conviertes en arquitecto de ti mismo.'
-                    : 'Most people have never sat down to deliberately design who they want to be. They inherited their values, their goals, their identity. This is the moment you become the architect of yourself.'
-                }</p>
-                <button class="design-start-btn" id="design-start">${es ? 'comenzar' : 'begin'}</button>
-            </div>
-        `;
-        $('#design-start').addEventListener('click', () => startDesignConversation(container, es));
-    }
-
-    function startDesignConversation(container, es) {
-        const questions = DESIGN_QUESTIONS[es ? 'es' : 'en'];
-        const answers = [];
-        let currentQ = 0;
-
-        container.innerHTML = '<div class="design-conversation" id="design-convo"></div>';
-        const convo = $('#design-convo');
-
-        function showQuestion(idx) {
-            if (idx >= questions.length) {
-                synthesizePortrait(container, questions, answers, es);
-                return;
-            }
-
-            const qEl = document.createElement('div');
-            qEl.className = 'design-q';
-            qEl.textContent = questions[idx];
-            convo.appendChild(qEl);
-
-            const textarea = document.createElement('textarea');
-            textarea.className = 'design-input';
-            textarea.placeholder = es ? 'escribe aquí...' : 'write here...';
-            convo.appendChild(textarea);
-
-            const btn = document.createElement('button');
-            btn.className = 'design-next';
-            btn.textContent = idx < questions.length - 1
-                ? (es ? 'siguiente →' : 'next →')
-                : (es ? 'generar retrato →' : 'generate portrait →');
-            btn.addEventListener('click', () => {
-                const val = textarea.value.trim();
-                if (!val) return;
-                answers.push(val);
-                textarea.disabled = true;
-                textarea.style.opacity = '0.5';
-                btn.remove();
-                currentQ++;
-                showQuestion(currentQ);
-            });
-            convo.appendChild(btn);
-
-            textarea.focus();
-            textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        showQuestion(0);
-    }
-
-    async function synthesizePortrait(container, questions, answers, es) {
-        const convo = $('#design-convo');
-        convo.innerHTML = `<div class="design-q" style="text-align:center;color:var(--gold)">${es ? 'sintetizando tu retrato...' : 'synthesizing your portrait...'}</div>`;
-
-        const pairs = questions.map((q, i) => `P: ${q}\nR: ${answers[i]}`).join('\n\n');
-
-        // Also include analysis history for context
-        const historyContext = state.history.slice(0, 10).map(h => h.candidate).filter(c => c && !c.startsWith('[URL]')).join('; ');
-
-        const prompt = es
-            ? `Abajo están las respuestas de una persona a 7 preguntas de diseño personal. También tienes contexto de sus análisis previos.
-
-Tu trabajo: sintetizar un RETRATO DEL YO DISEÑADO. No un resumen de sus respuestas — una síntesis que les muestre quiénes están eligiendo ser, con una claridad que ellos mismos no podrían alcanzar solos.
-
-El retrato debe cubrir (como prosa fluida, sin etiquetas):
-- Lo que realmente valoran (no lo que dicen — lo que sus respuestas revelan)
-- Lo que quieren crear y por qué
-- El precio que están dispuestos a pagar y el que no
-- La brecha entre quién son ahora y quién diseñaron — nombrada con precisión
-- La primera acción concreta que cierra esa brecha
-
-Escribe como quien conoce a esta persona profundamente. 6-10 oraciones. Sin asteriscos. Sin halagar. Sin suavizar. El retrato debe ser tan preciso que al leerlo digan: "sí, eso es lo que quiero ser."
-
-Respuestas:
-${pairs}
-
-Contexto (preguntas previas al sistema):
-${historyContext || 'Sin historial previo'}`
-
-            : `Below are a person's answers to 7 self-design questions. You also have context from their previous analyses.
-
-Your job: synthesize a PORTRAIT OF THE DESIGNED SELF. Not a summary of their answers — a synthesis that shows them who they are choosing to be, with a clarity they couldn't reach alone.
-
-The portrait must cover (as flowing prose, no labels):
-- What they truly value (not what they say — what their answers reveal)
-- What they want to create and why
-- The price they're willing to pay and the one they won't
-- The gap between who they are now and who they designed — named with precision
-- The first concrete action that closes that gap
-
-Write as someone who knows this person deeply. 6-10 sentences. No asterisks. No flattery. No softening. The portrait should be so precise that reading it they say: "yes, that is who I want to be."
-
-Answers:
-${pairs}
-
-Context (previous system questions):
-${historyContext || 'No previous history'}`;
-
-        try {
-            const res = await fetch(`${WORKER_URL}/api/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: [{ role: 'user', content: prompt }],
-                    model: 'claude-sonnet-4-20250514',
-                    stream: false
-                }),
-            });
-
-            if (!res.ok) throw new Error('Failed');
-            const data = await res.json();
-            const portrait = data.content?.[0]?.text?.replace(/\*{1,3}/g, '').trim();
-
-            if (portrait) {
-                const design = {
-                    portrait,
-                    answers,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                };
-                localStorage.setItem('vu_design', JSON.stringify(design));
-                renderPortrait(container, design, es);
-            }
-        } catch(e) {
-            convo.innerHTML = `<div class="design-q" style="color:var(--comment)">${es ? 'Error al generar el retrato. Intenta de nuevo.' : 'Error generating portrait. Try again.'}</div>`;
-        }
-    }
-
-    function renderPortrait(container, design, es) {
-        const daysAgo = Math.floor((Date.now() - new Date(design.createdAt).getTime()) / (1000*60*60*24));
-        const needsReview = daysAgo >= 30;
-
-        container.innerHTML = `
-            <div class="design-portrait">
-                <div class="design-portrait-label">${es ? 'tu diseño' : 'your design'}</div>
-                ${design.portrait}
-                <div class="design-meta">${es ? `creado hace ${daysAgo} días` : `created ${daysAgo} days ago`}${needsReview ? ` · <span style="color:var(--gold)">${es ? 'revisión sugerida' : 'review suggested'}</span>` : ''}</div>
-                <div class="design-actions">
-                    <button id="design-share">${es ? 'compartir' : 'share'}</button>
-                    <button id="design-redo">${es ? 'rediseñar' : 'redesign'}</button>
-                </div>
-            </div>
-        `;
-
-        $('#design-share')?.addEventListener('click', () => generateShareImage(design.portrait));
-        $('#design-redo')?.addEventListener('click', () => {
-            localStorage.removeItem('vu_design');
-            renderDesignWelcome(container, es);
-        });
-    }
-
-    // ── Letter to Future Self ──
-    function showLetterInput(block, id, question) {
-        const es = state.lang === 'es';
-        const wrap = document.createElement('div');
-        wrap.className = 'decision-review';
-        wrap.style.borderColor = 'var(--comment)';
-        wrap.innerHTML = `
-            <div class="decision-review-label">${es ? 'carta a tu yo de dentro de 6 meses' : 'letter to yourself 6 months from now'}</div>
-            <p style="font-style:italic;color:var(--comment);font-size:13px;margin-bottom:12px">${es ? 'Escribe lo que piensas ahora. En 6 meses, Nicómaco te la entregará.' : 'Write what you\'re thinking now. In 6 months, Nicómaco will deliver it to you.'}</p>
-            <textarea class="decision-input" style="width:100%;min-height:80px;resize:vertical;border:1px solid var(--border);padding:12px;border-radius:4px;font-size:15px;line-height:1.6" placeholder="${es ? 'Querido yo del futuro...' : 'Dear future me...'}"></textarea>
-            <div style="margin-top:8px;text-align:right">
-                <button class="lens-btn" style="opacity:1;color:var(--gold)" id="send-letter">${es ? 'guardar carta' : 'save letter'}</button>
-            </div>
-        `;
-        block.appendChild(wrap);
-        scrollToBottom();
-
-        wrap.querySelector('#send-letter').addEventListener('click', () => {
-            const text = wrap.querySelector('textarea').value.trim();
-            if (!text) return;
-
-            const letters = JSON.parse(localStorage.getItem('vu_letters') || '[]');
-            letters.push({
-                id,
-                question,
-                letter: text,
-                writtenAt: new Date().toISOString(),
-                deliverAt: new Date(Date.now() + 180*24*60*60*1000).toISOString(),
-                delivered: false
-            });
-            localStorage.setItem('vu_letters', JSON.stringify(letters));
-
-            wrap.innerHTML = `
-                <div class="decision-review-label">${es ? 'carta guardada' : 'letter saved'}</div>
-                <p style="font-style:italic;color:var(--comment);font-size:13px">${es ? 'Se entregará en 6 meses.' : 'It will be delivered in 6 months.'}</p>
-            `;
-        });
-    }
-
-    function checkLetterDeliveries() {
-        const letters = JSON.parse(localStorage.getItem('vu_letters') || '[]');
-        const now = new Date();
-        const due = letters.filter(l => !l.delivered && new Date(l.deliverAt) <= now);
-        if (due.length === 0) return;
-
-        const es = state.lang === 'es';
-        const output = $('#output');
-        for (const letter of due) {
-            const daysAgo = Math.floor((now - new Date(letter.writtenAt)) / (1000*60*60*24));
-            const el = document.createElement('div');
-            el.className = 'profile-block';
-            el.innerHTML = `
-                <div class="profile-label">${es ? 'carta del pasado' : 'letter from the past'}</div>
-                <p style="color:var(--comment);font-size:13px;margin-bottom:12px">${es ? `Hace ${daysAgo} días, después de preguntarte "${esc(letter.question?.substring(0,60))}", te escribiste esto:` : `${daysAgo} days ago, after asking "${esc(letter.question?.substring(0,60))}", you wrote this to yourself:`}</p>
-                <p style="font-style:italic;font-size:16px;line-height:1.7">"${esc(letter.letter)}"</p>
-            `;
-            output.insertBefore(el, output.firstChild);
-
-            letter.delivered = true;
-        }
-        localStorage.setItem('vu_letters', JSON.stringify(letters));
-    }
-
-    // ── Absence Detector (what you don't ask) ──
-    async function tryAbsenceDetection(block) {
-        try {
-            const es = state.lang === 'es';
-            const all = state.history.map(h => `"${h.candidate}"`).join('\n');
-
-            const prompt = es
-                ? `Abajo están TODAS las preguntas que una persona ha hecho a un sistema de análisis filosófico (${state.history.length} preguntas). La vida humana tiene dimensiones fundamentales: trabajo, dinero, relaciones, salud, propósito, familia, creatividad, sexualidad, muerte, poder, vulnerabilidad, espiritualidad.
-
-Tu trabajo: detectar qué dimensión importante está AUSENTE. No la menos frecuente — la que NO APARECE EN ABSOLUTO a pesar de que las otras preguntas implícitamente la tocan.
-
-La ausencia no es accidental. Es evasión. Nombra la dimensión ausente y en 2-3 oraciones explica por qué, dado lo que SÍ preguntan, esa ausencia es significativa. Formula una pregunta que el usuario ha estado evitando.
-
-Sin asteriscos. Prosa directa. Si no hay ausencia significativa, responde "---".
-
-Preguntas:
-${all}`
-                : `Below are ALL the questions a person has asked a philosophical analysis tool (${state.history.length} questions). Human life has fundamental dimensions: work, money, relationships, health, purpose, family, creativity, sexuality, death, power, vulnerability, spirituality.
-
-Your job: detect which important dimension is ABSENT. Not the least frequent — the one that DOES NOT APPEAR AT ALL despite other questions implicitly touching it.
-
-The absence is not accidental. It is avoidance. Name the absent dimension and in 2-3 sentences explain why, given what they DO ask, that absence is significant. Formulate a question the user has been avoiding.
-
-No asterisks. Direct prose. If there is no significant absence, respond "---".
-
-Questions:
-${all}`;
-
-            const res = await fetch(`${WORKER_URL}/api/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: [{ role: 'user', content: prompt }],
-                    model: 'claude-sonnet-4-20250514'
-                }),
-            });
-            if (!res.ok) return;
-
-            let text = '';
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder();
-            let buf = '';
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                buf += decoder.decode(value, { stream: true });
-                const lines = buf.split('\n');
-                buf = lines.pop() || '';
-                for (const line of lines) {
-                    if (!line.startsWith('data: ')) continue;
-                    const json = line.slice(6).trim();
-                    if (!json || json === '[DONE]') continue;
-                    try {
-                        const evt = JSON.parse(json);
-                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') text += evt.delta.text;
-                    } catch {}
-                }
-            }
-
-            const clean = text.replace(/\*{1,3}/g, '').trim();
-            if (clean && clean !== '---' && clean.length > 10) {
-                const el = document.createElement('div');
-                el.className = 'profile-block';
-                el.innerHTML = `<div class="profile-label">${es ? 'lo que no preguntas' : 'what you don\'t ask'}</div>${clean}`;
-                block.appendChild(el);
-                scrollToBottom();
-            }
-        } catch(e) {}
-    }
-
-    // ── Cross-Question Integration ──
-    async function tryIntegration(block, currentQuestion) {
-        try {
-            if (state.history.length < 5) return;
-            const es = state.lang === 'es';
-            const previous = state.history.slice(1, 15).map(h => {
-                let e = `"${h.candidate}"`;
-                if (h.decision) e += ` → "${h.decision}"`;
-                return e;
-            }).join('\n');
-
-            const prompt = es
-                ? `Abajo está la pregunta que alguien acaba de hacer y sus preguntas anteriores. Tu ÚNICO trabajo: detectar si la pregunta actual está CONECTADA con alguna pregunta anterior de una forma que el usuario probablemente NO VE. No conexiones obvias (mismo tema). Conexiones profundas — el mismo principio operando en dos dominios distintos, la misma premisa escondida en dos preguntas aparentemente diferentes, o un patrón donde una pregunta es la consecuencia lógica de otra sin que el usuario lo sepa.
-
-Si NO hay conexión profunda, responde EXACTAMENTE: "---"
-Si SÍ hay una, descríbela en 2-3 oraciones. Muestra el hilo invisible. Sin asteriscos. Prosa directa.
-
-Pregunta actual: "${currentQuestion}"
-
-Anteriores:
-${previous}`
-                : `Below is a question someone just asked and their previous questions. Your ONLY job: detect if the current question is CONNECTED to a previous one in a way the user probably DOES NOT SEE. Not obvious connections (same topic). Deep connections — the same principle operating in two different domains, the same hidden premise in two seemingly different questions, or a pattern where one question is the logical consequence of another without the user knowing.
-
-If there is NO deep connection, respond EXACTLY: "---"
-If there IS one, describe it in 2-3 sentences. Show the invisible thread. No asterisks. Direct prose.
-
-Current question: "${currentQuestion}"
-
-Previous:
-${previous}`;
-
-            const res = await fetch(`${WORKER_URL}/api/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: [{ role: 'user', content: prompt }],
-                    model: 'claude-sonnet-4-20250514'
-                }),
-            });
-            if (!res.ok) return;
-
-            let text = '';
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder();
-            let buf = '';
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                buf += decoder.decode(value, { stream: true });
-                const lines = buf.split('\n');
-                buf = lines.pop() || '';
-                for (const line of lines) {
-                    if (!line.startsWith('data: ')) continue;
-                    const json = line.slice(6).trim();
-                    if (!json || json === '[DONE]') continue;
-                    try {
-                        const evt = JSON.parse(json);
-                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') text += evt.delta.text;
-                    } catch {}
-                }
-            }
-
-            const clean = text.replace(/\*{1,3}/g, '').trim();
-            if (clean && clean !== '---' && clean.length > 10) {
-                const el = document.createElement('div');
-                el.className = 'pattern-block';
-                el.innerHTML = `<div class="pattern-label">${es ? 'conexión' : 'connection'}</div>${clean}`;
-                block.appendChild(el);
-                scrollToBottom();
-            }
-        } catch(e) {}
-    }
-
-    // ── Reading Recommendations ──
-    async function generateReadingRec(block, question, analysis) {
-        try {
-            const es = state.lang === 'es';
-            const prompt = es
-                ? `Alguien preguntó: "${question}". Basándote en esta pregunta y su análisis, recomienda EXACTAMENTE un libro o capítulo específico que responda directamente lo que están buscando. No una lista. UN libro, UN capítulo o sección específica, y UNA oración explicando por qué exactamente ese pasaje responde su pregunta. Sé concreto: "Capítulo 7 de la Ética Nicomáquea" no "lee a Aristóteles". Sin asteriscos. Máximo 3 oraciones.`
-                : `Someone asked: "${question}". Based on this question and its analysis, recommend EXACTLY one book or specific chapter that directly answers what they're looking for. Not a list. ONE book, ONE specific chapter or section, and ONE sentence explaining why that exact passage answers their question. Be concrete: "Chapter 7 of the Nicomachean Ethics" not "read Aristotle". No asterisks. Maximum 3 sentences.`;
-
-            const res = await fetch(`${WORKER_URL}/api/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: [{ role: 'user', content: prompt }],
-                    model: 'claude-sonnet-4-20250514'
-                }),
-            });
-
-            if (!res.ok) return;
-
-            let text = '';
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder();
-            let buf = '';
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                buf += decoder.decode(value, { stream: true });
-                const lines = buf.split('\n');
-                buf = lines.pop() || '';
-                for (const line of lines) {
-                    if (!line.startsWith('data: ')) continue;
-                    const json = line.slice(6).trim();
-                    if (!json || json === '[DONE]') continue;
-                    try {
-                        const evt = JSON.parse(json);
-                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') text += evt.delta.text;
-                    } catch {}
-                }
-            }
-
-            if (text.trim()) {
-                const el = document.createElement('div');
-                el.className = 'lens-response';
-                el.innerHTML = `<div class="lens-response-name">${es ? 'lectura recomendada' : 'recommended reading'}</div>${text.replace(/\*{1,3}/g, '').trim()}`;
-                block.appendChild(el);
-                scrollToBottom();
-            }
-        } catch(e) {}
-    }
-
-    // ── Contradiction Detector (triggered after analysis #5, checks against history) ──
-    async function tryContradictionDetection(block, currentQuestion) {
-        try {
-            if (state.history.length < 5) return;
-            const es = state.lang === 'es';
-            const previous = state.history.slice(1, 20); // skip current (just added)
-            const entries = previous.map(h => {
-                let entry = `"${h.candidate}"`;
-                if (h.decision) entry += ` → decided: "${h.decision}"`;
-                return entry;
-            }).join('\n');
-
-            const prompt = es
-                ? `Eres un detector de contradicciones. Abajo está la pregunta que alguien acaba de hacer, y sus preguntas/decisiones anteriores.
-
-Tu ÚNICO trabajo: detectar si la pregunta actual CONTRADICE o está en TENSIÓN con algo que preguntaron o decidieron antes. No tensiones superficiales — tensiones reales donde una posición niega o socava la otra.
-
-Si NO hay contradicción genuina, responde EXACTAMENTE: "---"
-Si SÍ hay una, descríbela en 2-3 oraciones. Sé específico: "En [fecha/pregunta anterior] afirmaste X. Ahora preguntas Y. Si X es verdad, Y no tiene sentido — a menos que algo cambió. ¿Qué cambió?"
-
-No halagues. No suavices. No uses asteriscos. Prosa directa.
-
-Pregunta actual: "${currentQuestion}"
-
-Historial:
-${entries}`
-                : `You are a contradiction detector. Below is a question someone just asked, and their previous questions/decisions.
-
-Your ONLY job: detect if the current question CONTRADICTS or is in TENSION with something they asked or decided before. Not superficial tensions — real ones where one position undermines the other.
-
-If there is NO genuine contradiction, respond EXACTLY: "---"
-If there IS one, describe it in 2-3 sentences. Be specific: "In [previous question] you stated X. Now you ask Y. If X is true, Y doesn't make sense — unless something changed. What changed?"
-
-No flattery. No softening. No asterisks. Direct prose.
-
-Current question: "${currentQuestion}"
-
-History:
-${entries}`;
-
-            const res = await fetch(`${WORKER_URL}/api/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: [{ role: 'user', content: prompt }],
-                    model: 'claude-sonnet-4-20250514'
-                }),
-            });
-
-            if (!res.ok) return;
-
-            let text = '';
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder();
-            let buf = '';
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                buf += decoder.decode(value, { stream: true });
-                const lines = buf.split('\n');
-                buf = lines.pop() || '';
-                for (const line of lines) {
-                    if (!line.startsWith('data: ')) continue;
-                    const json = line.slice(6).trim();
-                    if (!json || json === '[DONE]') continue;
-                    try {
-                        const evt = JSON.parse(json);
-                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') text += evt.delta.text;
-                    } catch {}
-                }
-            }
-
-            const clean = text.replace(/\*{1,3}/g, '').trim();
-            if (clean && clean !== '---' && clean.length > 10) {
-                const el = document.createElement('div');
-                el.className = 'pattern-block';
-                el.innerHTML = `<div class="pattern-label">${es ? 'tensión detectada' : 'tension detected'}</div>${clean}`;
-                block.appendChild(el);
-                scrollToBottom();
-            }
-        } catch(e) {}
-    }
-
-    // ── Philosophical Profile (triggered at analysis #20, then every 50) ──
-    async function tryPhilosophicalProfile(block) {
-        try {
-            const allQuestions = state.history.map(h => h.candidate).filter(c => c && !c.startsWith('[URL]'));
-            const allDecisions = state.history.filter(h => h.decision).map(h => `Q: "${h.candidate}" → Decision: "${h.decision}"`);
-            if (allQuestions.length < 15) return;
-
-            const es = state.lang === 'es';
-            const profilePrompt = es
-                ? `Eres un observador filosófico. Abajo están las últimas ${allQuestions.length} preguntas que una persona le hizo a un sistema de análisis filosófico${allDecisions.length ? `, y ${allDecisions.length} decisiones que tomó después` : ''}.
-
-Tu trabajo: generar su PERFIL FILOSÓFICO OPERATIVO. No lo que dicen creer — lo que sus preguntas y decisiones revelan que operan como su filosofía real.
-
-Cubre estas dimensiones (sin etiquetarlas explícitamente, como prosa fluida):
-- Su metafísica operativa: ¿tratan la realidad como objetiva o subjetiva? ¿Actúan como si las cosas fueran lo que son, o como si dependieran de la percepción?
-- Su epistemología: ¿buscan evidencia o validación? ¿Preguntan para saber o para confirmar?
-- Su ética: ¿priorizan deber o autointerés? ¿Hay brecha entre lo que dicen valorar y cómo actúan?
-- Su tensión central: la contradicción no resuelta que atraviesa la mayoría de sus preguntas.
-- Su territorio siguiente: lo que todavía no han preguntado pero sus preguntas apuntan hacia ahí.
-
-Máximo 6-8 oraciones. Escribe como quien conoce a esta persona profundamente. Sin halagar. Sin suavizar. Como un espejo que habla.
-
-No uses asteriscos. No uses encabezados. Prosa continua.
-
-Preguntas:
-${allQuestions.map((q, i) => `${i+1}. "${q}"`).join('\n')}
-${allDecisions.length ? `\nDecisiones:\n${allDecisions.join('\n')}` : ''}`
-
-                : `You are a philosophical observer. Below are the last ${allQuestions.length} questions a person asked a philosophical analysis tool${allDecisions.length ? `, and ${allDecisions.length} decisions they made afterward` : ''}.
-
-Your job: generate their OPERATIVE PHILOSOPHICAL PROFILE. Not what they claim to believe — what their questions and decisions reveal as their actual operating philosophy.
-
-Cover these dimensions (without labeling them explicitly, as flowing prose):
-- Operative metaphysics: do they treat reality as objective or subjective?
-- Epistemology: do they seek evidence or validation?
-- Ethics: do they prioritize duty or self-interest? Is there a gap between stated and acted values?
-- Central tension: the unresolved contradiction running through most of their questions.
-- Next territory: what they haven't asked yet but their questions point toward.
-
-Maximum 6-8 sentences. Write as someone who knows this person deeply. No flattery. No softening. Like a mirror that speaks.
-
-No asterisks. No headers. Flowing prose.
-
-Questions:
-${allQuestions.map((q, i) => `${i+1}. "${q}"`).join('\n')}
-${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
-
-            const res = await fetch(`${WORKER_URL}/api/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: [{ role: 'user', content: profilePrompt }],
-                    model: 'claude-sonnet-4-20250514'
-                }),
-            });
-
-            if (!res.ok) return;
-
-            let profileText = '';
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder();
-            let buf = '';
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                buf += decoder.decode(value, { stream: true });
-                const lines = buf.split('\n');
-                buf = lines.pop() || '';
-                for (const line of lines) {
-                    if (!line.startsWith('data: ')) continue;
-                    const json = line.slice(6).trim();
-                    if (!json || json === '[DONE]') continue;
-                    try {
-                        const evt = JSON.parse(json);
-                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') profileText += evt.delta.text;
-                    } catch {}
-                }
-            }
-
-            if (profileText.trim()) {
-                const profileEl = document.createElement('div');
-                profileEl.className = 'profile-block';
-                const cleanText = profileText.replace(/\*{1,3}/g, '').trim();
-                profileEl.innerHTML = `
-                    <div class="profile-label">${es ? 'tu perfil filosófico' : 'your philosophical profile'}</div>
-                    ${cleanText}
-                    <div class="profile-share">
-                        <button onclick="generateShareImage(\`${cleanText.replace(/`/g, "'").replace(/\\/g, '\\\\')}\`)">${es ? 'compartir perfil' : 'share profile'}</button>
-                    </div>
-                `;
-                block.appendChild(profileEl);
-                scrollToBottom();
-
-                // Save to state
-                state.lastProfile = { text: cleanText, date: new Date().toISOString() };
-                localStorage.setItem('vu_profile', JSON.stringify(state.lastProfile));
-            }
-        } catch(e) {
-            // Silent fail
-        }
-    }
-
-    // Draw text with extra letter-spacing, centered
-    function drawSpaced(ctx, text, centerX, y, spacing) {
-        let totalW = 0;
-        for (const ch of text) totalW += ctx.measureText(ch).width + spacing;
-        totalW -= spacing;
-        let x = centerX - totalW / 2;
-        for (const ch of text) {
-            ctx.fillText(ch, x, y);
-            x += ctx.measureText(ch).width + spacing;
-        }
-    }
-
     function wrapText(ctx, text, x, y, maxW, lineH, measureOnly) {
         const words = text.split(' ');
         let line = '';
         let lines = 0;
-        const allLines = [];
         for (const word of words) {
             const test = line + word + ' ';
             if (ctx.measureText(test).width > maxW && line) {
-                allLines.push(line.trim());
+                if (!measureOnly) ctx.fillText(line.trim(), x, y);
                 line = word + ' ';
+                y += lineH;
+                lines++;
             } else {
                 line = test;
             }
         }
-        allLines.push(line.trim()); // last line
-
-        if (!measureOnly) {
-            for (let i = 0; i < allLines.length; i++) {
-                const isLast = i === allLines.length - 1;
-                if (isLast || allLines[i].split(' ').length <= 1) {
-                    // Last line or single word: left-aligned
-                    ctx.fillText(allLines[i], x, y);
-                } else {
-                    // Justify: distribute extra space between words
-                    const lineWords = allLines[i].split(' ');
-                    const textWidth = ctx.measureText(allLines[i]).width;
-                    const totalSpaces = lineWords.length - 1;
-                    const extraSpace = (maxW - textWidth) / totalSpaces;
-                    let cx = x;
-                    for (let w = 0; w < lineWords.length; w++) {
-                        ctx.fillText(lineWords[w], cx, y);
-                        cx += ctx.measureText(lineWords[w]).width + ctx.measureText(' ').width + extraSpace;
-                    }
-                }
-                y += lineH;
-            }
-            return y - lineH; // return last line y
-        }
-        return allLines.length * lineH;
+        if (!measureOnly) ctx.fillText(line.trim(), x, y);
+        return measureOnly ? (lines + 1) * lineH : y;
     }
 
     function handleKey(e) {
@@ -3578,30 +2014,6 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
             localStorage.setItem('vu_history', JSON.stringify(state.history));
             playCompletionSound();
 
-            // Pattern detection layer — at 3rd, then every 10
-            if (state.history.length === 3 || (state.history.length > 3 && state.history.length % 10 === 0)) {
-                tryPatternDetection(block);
-            }
-
-            // Contradiction detector + integration — every analysis after #5
-            if (state.history.length >= 5) {
-                tryContradictionDetection(block, text);
-                tryIntegration(block, text);
-            }
-
-            // Absence detector — every 15 analyses
-            if (state.history.length >= 10 && state.history.length % 15 === 0) {
-                tryAbsenceDetection(block);
-            }
-
-            // Design alignment — every analysis if portrait exists
-            tryDesignAlignment(block, text);
-
-            // Philosophical profile — at 20th, then every 50
-            if (state.history.length === 20 || (state.history.length > 20 && state.history.length % 50 === 0)) {
-                tryPhilosophicalProfile(block);
-            }
-
         } catch (err) {
             if (err.name === 'AbortError') {
                 codeEl.innerHTML += `\n\n<span class="s-cmt">// analysis cancelled</span>`;
@@ -3609,7 +2021,7 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
                 let errorMsg = esc(err.message);
                 let hint = '';
                 if (err.message.includes('consultas') || err.message.includes('Daily limit')) {
-                    hint = `<span class="s-cmt">// <a href="#" onclick="showAppleSignIn();return false" style="color:var(--gold)">iniciar sesión</a> para continuar — o <a href="/pro.html" style="color:var(--gold)">nicómaco pro</a> para consultas ilimitadas</span>`;
+                    hint = `<span class="s-cmt">// <a href="/pro.html" style="color:var(--gold)">nicomaco pro</a> — consultas ilimitadas con el modelo mas avanzado</span>`;
                 } else if (err.message.includes('credit balance') || err.message.includes('balance is too low')) {
                     hint = `<span class="s-warn">// try switching to a different model in cfg</span>\n<span class="s-cmt">// current: ${esc(state.model)}</span>`;
                 } else if (err.message.includes('Could not resolve') || err.message.includes('not found')) {
@@ -3685,11 +2097,9 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
 
         // All traffic goes through Worker (system prompt is server-side)
         const payload = { model: state.model, messages, max_tokens: 4096, stream: true };
-        const headers = { 'Content-Type': 'application/json' };
-        if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
         res = await fetch(`${WORKER_URL}/api/analyze`, {
             method: 'POST',
-            headers,
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
             signal: state.controller.signal
         });
@@ -3745,156 +2155,21 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
         });
         acts.appendChild(btnCp);
         const btnSh = document.createElement('button');
-        btnSh.className = 'btn-share-trigger';
-        btnSh.textContent = state.lang === 'es' ? 'compartir' : 'share';
+        btnSh.className = 'btn btn-sm'; btnSh.textContent = t('share');
         btnSh.addEventListener('click', () => {
-            generateShareImage(fullText, candidate);
-        });
-        acts.appendChild(btnSh);
-
-        // Philosophical lenses
-        const lensWrap = document.createElement('div');
-        lensWrap.className = 'lens-wrap';
-        const lenses = [
-            { id: 'aristotle', label: 'Aristóteles', en: 'Aristotle' },
-            { id: 'rand', label: 'Rand', en: 'Rand' },
-            { id: 'aurelius', label: 'Marco Aurelio', en: 'Marcus Aurelius' },
-        ];
-        for (const lens of lenses) {
-            const btn = document.createElement('button');
-            btn.className = 'lens-btn';
-            btn.textContent = state.lang === 'es' ? lens.label : lens.en;
-            btn.addEventListener('click', async () => {
-                if (btn.dataset.used) return;
-                btn.dataset.used = 'true';
-                btn.style.opacity = '0.4';
-                await generateLensResponse(block, lens, candidate, fullText);
-            });
-            lensWrap.appendChild(btn);
-        }
-        acts.appendChild(lensWrap);
-
-        block.appendChild(acts);
-
-        // Letter to future self
-        const btnLetter = document.createElement('button');
-        btnLetter.className = 'lens-btn';
-        btnLetter.textContent = state.lang === 'es' ? 'carta al futuro' : 'letter to future';
-        btnLetter.addEventListener('click', () => {
-            if (btnLetter.dataset.used) return;
-            btnLetter.dataset.used = 'true';
-            btnLetter.style.opacity = '0.4';
-            showLetterInput(block, id, candidate);
-        });
-        lensWrap.appendChild(btnLetter);
-
-        // Reading recommendation
-        const btnRead = document.createElement('button');
-        btnRead.className = 'lens-btn';
-        btnRead.textContent = state.lang === 'es' ? 'qué leer' : 'what to read';
-        btnRead.addEventListener('click', async () => {
-            if (btnRead.dataset.used) return;
-            btnRead.dataset.used = 'true';
-            btnRead.style.opacity = '0.4';
-            await generateReadingRec(block, candidate, fullText);
-        });
-        lensWrap.appendChild(btnRead);
-
-        // Decision journal — "¿qué decidiste?"
-        const existing = state.history.find(h => h.id === id);
-        if (existing && existing.decision) {
-            const saved = document.createElement('div');
-            saved.className = 'decision-saved';
-            saved.textContent = `${state.lang === 'es' ? 'decidiste' : 'you decided'}: "${existing.decision}"`;
-            block.appendChild(saved);
-        } else {
-            const decPrompt = document.createElement('div');
-            decPrompt.className = 'decision-prompt';
-            decPrompt.textContent = state.lang === 'es' ? '¿qué decidiste?' : 'what did you decide?';
-            decPrompt.addEventListener('click', () => {
-                decPrompt.remove();
-                const wrap = document.createElement('div');
-                wrap.className = 'decision-input-wrap';
-                const inp = document.createElement('input');
-                inp.className = 'decision-input';
-                inp.type = 'text';
-                inp.placeholder = state.lang === 'es' ? 'escribir decisión...' : 'write your decision...';
-                inp.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' && inp.value.trim()) saveDecision(id, inp.value.trim(), wrap);
-                });
-                wrap.appendChild(inp);
-                block.appendChild(wrap);
-                inp.focus();
-            });
-            block.appendChild(decPrompt);
-        }
-    }
-
-    // ── Decision Journal ──
-    function saveDecision(id, decision, wrapEl) {
-        const item = state.history.find(h => h.id === id);
-        if (item) {
-            item.decision = decision;
-            item.decisionDate = new Date().toISOString();
-            localStorage.setItem('vu_history', JSON.stringify(state.history));
-        }
-        wrapEl.remove();
-        const saved = document.createElement('div');
-        saved.className = 'decision-saved';
-        saved.textContent = `${state.lang === 'es' ? 'decidiste' : 'you decided'}: "${decision}"`;
-        wrapEl.parentElement?.appendChild(saved) || document.querySelector(`[data-id="${id}"]`)?.appendChild(saved);
-    }
-
-    function checkDecisionReviews() {
-        const now = Date.now();
-        const reviewDays = [30, 60, 90];
-        const pendingReviews = [];
-
-        for (const item of state.history) {
-            if (!item.decision || item.decisionReviewed) continue;
-            const decDate = new Date(item.decisionDate).getTime();
-            const daysSince = Math.floor((now - decDate) / (1000 * 60 * 60 * 24));
-
-            for (const d of reviewDays) {
-                if (daysSince >= d) {
-                    pendingReviews.push({ item, days: daysSince });
-                    break;
+            const item = state.history.find(h => h.id === id);
+            if (item) {
+                if (navigator.share) {
+                    const text = `${item.candidate}\n\n${item.analysis}\n\n— nicomaco.org`;
+                    navigator.share({ title: 'Nicómaco', text }).catch(() => {});
+                } else {
+                    navigator.clipboard.writeText(`${item.candidate}\n\n${item.analysis}\n\n— nicomaco.org`);
+                    btnSh.textContent = t('copied'); setTimeout(() => btnSh.textContent = t('share'), 1500);
                 }
             }
-        }
-
-        if (pendingReviews.length === 0) return;
-
-        const es = state.lang === 'es';
-        const output = $('#output');
-        for (const { item, days } of pendingReviews.slice(0, 2)) {
-            const reviewEl = document.createElement('div');
-            reviewEl.className = 'decision-review';
-            reviewEl.innerHTML = `
-                <div class="decision-review-label">${es ? 'revisión pendiente' : 'pending review'}</div>
-                ${es
-                    ? `Hace <em>${days} días</em> decidiste: "<em>${esc(item.decision)}</em>"<br><br>Tu análisis original exploró: "<em>${esc(item.candidate?.substring(0, 80))}${item.candidate?.length > 80 ? '...' : ''}</em>"<br><br>¿Se cumplió lo que anticipaste?`
-                    : `<em>${days} days ago</em> you decided: "<em>${esc(item.decision)}</em>"<br><br>Your original analysis explored: "<em>${esc(item.candidate?.substring(0, 80))}${item.candidate?.length > 80 ? '...' : ''}</em>"<br><br>Did what you anticipated come true?`
-                }
-            `;
-            const reviewInput = document.createElement('div');
-            reviewInput.className = 'decision-input-wrap';
-            const inp = document.createElement('input');
-            inp.className = 'decision-input';
-            inp.placeholder = es ? 'escribir reflexión...' : 'write your reflection...';
-            inp.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && inp.value.trim()) {
-                    item.decisionReview = inp.value.trim();
-                    item.decisionReviewed = true;
-                    item.decisionReviewDate = new Date().toISOString();
-                    localStorage.setItem('vu_history', JSON.stringify(state.history));
-                    reviewEl.remove();
-                }
-            });
-            reviewInput.appendChild(inp);
-            reviewEl.appendChild(reviewInput);
-            output.insertBefore(reviewEl, output.firstChild);
-        }
+        });
+        acts.appendChild(btnSh);
+        block.appendChild(acts);
     }
 
     function gutterLines(n) { return Array.from({length: n}, (_, i) => String(i+1).padStart(3)).join('\n'); }
@@ -3925,7 +2200,7 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
     }
 
     function highlightLine(raw) {
-        let line = esc(raw.replace(/\*{1,3}/g, ''));
+        let line = esc(raw);
         if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|RESCUE|MAP VALUE|PRODUCTOR|RAMAS EN JUEGO|VEREDICTO)\b/.test(line))
             return `<span class="s-section">${line}</span>`;
         if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
