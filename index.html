@@ -359,9 +359,11 @@
         .share-canvas-wrap canvas { border-radius: 12px; max-width: 90vw; max-height: 80vh; }
         .share-canvas-actions { position:absolute; bottom:40px; display:flex; gap:12px; }
         .share-canvas-actions button {
-            background: var(--gold); color: #fff; border:none; border-radius:8px;
-            padding: 10px 24px; font-family: var(--font-sans); font-size: 14px; cursor:pointer;
+            background: none; color: var(--gold); border: none;
+            padding: 8px 0; font-family: var(--font-serif); font-style: italic;
+            font-size: 16px; cursor: pointer; opacity: 0.8; transition: opacity 0.3s;
         }
+        .share-canvas-actions button:hover { opacity: 1; }
         /* -- pattern detection -- */
         .pattern-block {
             margin-top: 24px;
