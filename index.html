@@ -2647,6 +2647,53 @@ Now respond as ${name}. From your philosophy, your era, your worldview. Maximum 
         } catch(e) {}
     }
 
+    // ── Design Alignment Check (runs after each analysis if portrait exists) ──
+    async function tryDesignAlignment(block, question) {
+        try {
+            const design = JSON.parse(localStorage.getItem('vu_design') || 'null');
+            if (!design || !design.portrait) return;
+            const es = state.lang === 'es';
+
+            const prompt = es
+                ? `Una persona diseñó este retrato de quién quiere ser:
+
+"${design.portrait}"
+
+Acaba de preguntar: "${question}"
+
+En UNA oración: ¿esta pregunta la acerca o la aleja de su diseño? Si la acerca, di cómo. Si la aleja, di por qué. Si no tiene relación, responde "---". Sin asteriscos.`
+                : `A person designed this portrait of who they want to be:
+
+"${design.portrait}"
+
+They just asked: "${question}"
+
+In ONE sentence: does this question move them closer or further from their design? If closer, say how. If further, say why. If unrelated, respond "---". No asterisks.`;
+
+            const res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: prompt }],
+                    model: 'claude-sonnet-4-20250514',
+                    stream: false
+                }),
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            const text = data.content?.[0]?.text?.replace(/\*{1,3}/g, '').trim();
+
+            if (text && text !== '---' && text.length > 10) {
+                const el = document.createElement('div');
+                el.className = 'pattern-block';
+                el.style.borderColor = 'var(--comment)';
+                el.innerHTML = `<div class="pattern-label">${es ? 'alineación con tu diseño' : 'alignment with your design'}</div>${text}`;
+                block.appendChild(el);
+                scrollToBottom();
+            }
+        } catch(e) {}
+    }
+
     // ── Design of Self ──
     const DESIGN_QUESTIONS = {
         es: [
@@ -2674,8 +2721,22 @@ Now respond as ${name}. From your philosophy, your era, your worldview. Maximum 
         if (!container) return;
         const es = state.lang === 'es';
 
-        // Check if Pro (for now, allow all — gate later)
-        const isPro = !!authToken || true; // TODO: gate with real Pro check
+        // Check if Pro
+        const isPro = !!(authUser && authUser.pro);
+
+        if (!isPro) {
+            container.innerHTML = `
+                <div class="design-pro-gate">
+                    <div class="design-welcome-title">${es ? 'εἶδος · diseño del yo' : 'εἶδος · self-design'}</div>
+                    <p>${es
+                        ? 'Diseñar quién quieres ser es el acto más importante que puedes hacer con tu mente. Esta herramienta te guía en ese proceso.'
+                        : 'Designing who you want to be is the most important act you can do with your mind. This tool guides you through that process.'
+                    }</p>
+                    <a href="/pro.html" class="design-start-btn" style="display:inline-block;text-decoration:none;margin-top:8px">${es ? 'desbloquear con pro' : 'unlock with pro'}</a>
+                </div>
+            `;
+            return;
+        }
 
         // Load existing portrait
         const saved = JSON.parse(localStorage.getItem('vu_design') || 'null');
@@ -3514,6 +3575,9 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
             if (state.history.length >= 10 && state.history.length % 15 === 0) {
                 tryAbsenceDetection(block);
             }
+
+            // Design alignment — every analysis if portrait exists
+            tryDesignAlignment(block, text);
 
             // Philosophical profile — at 20th, then every 50
             if (state.history.length === 20 || (state.history.length > 20 && state.history.length % 50 === 0)) {
