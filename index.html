@@ -547,7 +547,7 @@
 
         /* -- motives styles -- */
         .motives-section { margin-bottom: 40px; }
-        .motives-section p { color: var(--text); margin-bottom: 16px; font-size: 16px; line-height: 1.9; }
+        .motives-section p { color: var(--text); margin-bottom: 16px; font-size: 16px; line-height: 1.9; text-align: justify; }
         .motives-section p.dim { color: var(--comment); }
         .highlight { color: var(--gold); font-weight: 600; }
 
@@ -606,45 +606,39 @@
         .donate-box p { margin-bottom: 10px; }
 
         .truth-box {
-            border: 1px solid var(--border);
-            border-top: 3px solid var(--cyan);
-            background: var(--surface);
-            border-radius: 8px;
-            padding: 28px 32px;
-            margin-bottom: 40px;
+            margin-bottom: 28px;
         }
         .truth-box-title {
-            font-family: var(--font-serif);
-            font-size: 1.3em;
-            font-weight: 700;
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
             color: var(--text-bright);
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
         .truth-box-def {
             font-family: var(--font-serif);
-            font-size: 1.05em;
-            line-height: 1.8;
+            font-size: 16px;
+            line-height: 1.9;
             color: var(--text);
             margin-bottom: 16px;
             font-style: italic;
+            text-align: justify;
         }
         .truth-types {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
         .truth-type {
-            padding: 12px 16px;
-            background: var(--bg);
-            border-radius: 6px;
-            line-height: 1.7;
+            line-height: 1.8;
+            font-size: 15px;
+            text-align: justify;
         }
         .truth-type-name {
-            font-weight: 700;
-            color: var(--cyan);
-        }
-        @media (max-width: 600px) {
-            .truth-box { padding: 20px 16px; }
+            font-weight: 600;
+            color: var(--gold);
         }
 
         /* -- glossary styles -- */
