@@ -546,19 +546,21 @@
         .knowledge-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); }
 
         /* -- motives styles -- */
-        .motives-section { margin-bottom: 40px; }
-        .motives-section p { color: var(--text); margin-bottom: 16px; font-size: 16px; line-height: 1.9; text-align: justify; }
-        .motives-section p.dim { color: var(--comment); }
-        .highlight { color: var(--gold); font-weight: 600; }
+        .motives-section { margin-bottom: 48px; }
+        .motives-section p { color: var(--text); margin-bottom: 16px; font-family: var(--font-serif); font-size: 16px; line-height: 2; text-align: justify; }
+        .motives-section p.dim { color: var(--comment); font-style: italic; }
+        .highlight { color: var(--gold); }
 
         .section-title {
-            color: var(--text-bright);
+            color: var(--comment);
             font-family: var(--font-sans);
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            letter-spacing: 1.5px;
+            font-size: 10px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            margin-top: 8px;
+            letter-spacing: 2px;
             text-transform: uppercase;
+            text-align: center;
         }
 
         .pillars {
@@ -605,41 +607,28 @@
         }
         .donate-box p { margin-bottom: 10px; }
 
-        .truth-box {
-            margin-bottom: 28px;
-        }
+        .truth-box { margin-bottom: 24px; }
         .truth-box-title {
-            font-family: var(--font-sans);
-            font-size: 13px;
+            font-family: var(--font-serif);
+            font-size: 20px;
             font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
+            font-style: italic;
             color: var(--text-bright);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
+            text-align: center;
         }
         .truth-box-def {
             font-family: var(--font-serif);
             font-size: 16px;
-            line-height: 1.9;
+            line-height: 2;
             color: var(--text);
             margin-bottom: 16px;
             font-style: italic;
-            text-align: justify;
+            text-align: center;
         }
-        .truth-types {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .truth-type {
-            line-height: 1.8;
-            font-size: 15px;
-            text-align: justify;
-        }
-        .truth-type-name {
-            font-weight: 600;
-            color: var(--gold);
-        }
+        .truth-types { display: flex; flex-direction: column; gap: 12px; }
+        .truth-type { line-height: 2; font-size: 15px; font-family: var(--font-serif); text-align: justify; }
+        .truth-type-name { font-weight: 600; color: var(--gold); }
 
         /* -- glossary styles -- */
         .search-bar {
@@ -708,23 +697,22 @@
             color: var(--cyan);
             font-weight: 700;
         }
-        .protocol-steps { margin-top: 8px; }
+        .protocol-steps { margin-top: 12px; }
         .protocol-step {
-            padding: 10px 0 10px 28px;
-            border-bottom: 1px solid var(--border);
-            line-height: 1.7;
-            position: relative;
+            padding: 8px 0;
+            line-height: 2;
+            font-family: var(--font-serif);
+            font-size: 15px;
+            text-align: justify;
         }
-        .protocol-step:last-of-type { border-bottom: none; }
         .step-number {
-            position: absolute;
-            left: 0;
             color: var(--comment);
-            font-weight: 600;
+            font-weight: 400;
+            margin-right: 4px;
         }
         .step-name {
-            color: var(--cyan);
-            font-weight: 700;
+            color: var(--gold);
+            font-weight: 600;
         }
         .verdict-list {
             padding-left: 28px;
@@ -2079,17 +2067,15 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         let html = '';
         hierarchy.forEach(r => {
             if (r.section) {
-                html += `\n<span class="s-section">${esc(r.text)}</span>\n`;
+                html += `<div style="font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--comment);margin:28px 0 12px;text-align:center">${esc(r.text)}</div>`;
             } else if (r.level === 0 && r.code && r.code.startsWith('A')) {
-                html += `<span class="s-cyan">${r.code}</span> <span class="${r.color}">${esc(r.text)}</span>\n`;
+                html += `<div style="font-family:var(--font-serif);font-size:15px;line-height:2;color:var(--text-bright);text-align:center">${esc(r.text)}</div>`;
             } else {
-                const indent = '  '.repeat(r.level);
-                const codeSpan = `<span class="rule-ref" data-tip="${esc(r.text)}">${r.code}</span>`;
-                html += `${indent}${codeSpan} <span class="s-cmt">${esc(r.text)}</span>\n`;
+                html += `<div style="font-family:var(--font-serif);font-size:14px;line-height:2;color:var(--comment);font-style:italic;text-align:center">${esc(r.text)}</div>`;
             }
         });
 
-        rulesBlock.innerHTML = `<div class="gutter">${gutterLines(html.split('\n').length)}</div><div class="code">${html}</div>`;
+        rulesBlock.innerHTML = html;
         c.appendChild(rulesBlock);
     }
 
