@@ -1894,26 +1894,20 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         ctx.textAlign = 'center';
 
-        // Α ΕΣΤΙΝ Α — same style as welcome: uppercase, sans, spaced, gold
-        ctx.fillStyle = '#B8960C';
-        ctx.font = `400 16px ${sans}`;
-        ctx.fillText('Α   Ε Σ Τ Ι Ν   Α', W/2, y + 44);
+        // Both lines: same style as welcome — sans, uppercase, spaced, same color
+        const sigFont = `400 18px ${sans}`;
+        const sigColor = '#86868B';
+        const sigSpacing = 6;
 
-        // NICÓMACO as logo + .org normal
-        ctx.font = `500 22px ${serif}`;
-        const nw = ctx.measureText('NICÓMACO').width;
-        ctx.font = `300 14px ${sans}`;
-        const ow = ctx.measureText('.org').width;
-        const totalW = nw + ow + 1;
-        const startX = (W - totalW) / 2;
+        // Α  ΕΣΤΙΝ  Α
+        ctx.fillStyle = sigColor;
+        ctx.font = sigFont;
+        drawSpaced(ctx, 'Α  ΕΣΤΙΝ  Α', W/2, y + 44, sigSpacing);
 
-        ctx.fillStyle = '#1D1D1F';
-        ctx.font = `500 22px ${serif}`;
-        ctx.fillText('NICÓMACO', startX, y + 72);
-
-        ctx.fillStyle = '#86868B';
-        ctx.font = `300 14px ${sans}`;
-        ctx.fillText('.org', startX + nw + 1, y + 72);
+        // NICÓMACO.ORG
+        ctx.fillStyle = sigColor;
+        ctx.font = sigFont;
+        drawSpaced(ctx, 'NICÓMACO.ORG', W/2, y + 72, sigSpacing);
 
         ctx.textAlign = 'left';
 
@@ -1949,6 +1943,18 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         wrap.addEventListener('click', e => { if (e.target === wrap) wrap.remove(); });
         document.body.appendChild(wrap);
+    }
+
+    // Draw text with extra letter-spacing, centered
+    function drawSpaced(ctx, text, centerX, y, spacing) {
+        let totalW = 0;
+        for (const ch of text) totalW += ctx.measureText(ch).width + spacing;
+        totalW -= spacing;
+        let x = centerX - totalW / 2;
+        for (const ch of text) {
+            ctx.fillText(ch, x, y);
+            x += ctx.measureText(ch).width + spacing;
+        }
     }
 
     function wrapText(ctx, text, x, y, maxW, lineH, measureOnly) {
