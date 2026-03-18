@@ -225,6 +225,7 @@
         .s-warn { color: var(--yellow); font-weight: 600; }
         .s-ok { color: var(--green); font-weight: 600; }
         .s-section { color: var(--cyan); font-weight: 700; font-family: var(--font-sans); }
+        .s-emphasis { font-family: var(--font-sans); font-weight: 500; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-bright); }
         .s-verdict-ok { color: var(--green); font-weight: 700; }
         .s-verdict-warn { color: var(--yellow); font-weight: 700; }
         .s-verdict-fail { color: var(--red); font-weight: 700; }
@@ -1950,7 +1951,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const textW = W - mx * 2;
 
         // Clean text, split into paragraphs
-        const raw = analysisText.replace(/\*{1,3}/g, '').trim();
+        const raw = analysisText.replace(/\*{1,3}/g, '').trim(); // strip for image (no HTML in canvas)
         const paragraphs = raw.split(/\n+/).filter(p => p.trim());
 
         // Measure total height with a temp canvas
@@ -2498,7 +2499,9 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
     function highlightURL(text) { return text.split('\n').map(l => highlightURLLine(l)).join('\n'); }
 
     function highlightURLLine(raw) {
-        let line = esc(raw.replace(/\*{1,3}/g, ''));
+        let line = esc(raw);
+        line = line.replace(/\*\*([^*]+)\*\*/g, '<span class="s-emphasis">$1</span>');
+        line = line.replace(/\*{1,3}/g, '');
         if (/^(PRODUCTOR|LO QUE IMPORTA|MENTIRAS|CONCEPTOS ROBADOS|INCENTIVOS PERVERSOS|RAMAS EN JUEGO|VEREDICTO|SOURCE AUDIT|CLAIMS DETECTED|TERRITORY CHECK|INHERITANCE ANALYSIS|INFORMATION QUALITY|EXTRACTED TRUTHS)\b/i.test(line))
             return `<span class="s-section">${line}</span>`;
         if (/^\*\*\d+\.\s/.test(line))
@@ -2519,6 +2522,10 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
 
     function highlightLine(raw) {
         let line = esc(raw);
+        // Convert **text** to styled emphasis
+        line = line.replace(/\*\*([^*]+)\*\*/g, '<span class="s-emphasis">$1</span>');
+        // Strip any remaining stray asterisks
+        line = line.replace(/\*{1,3}/g, '');
         if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|RESCUE|MAP VALUE|PRODUCTOR|RAMAS EN JUEGO|VEREDICTO)\b/.test(line))
             return `<span class="s-section">${line}</span>`;
         if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
