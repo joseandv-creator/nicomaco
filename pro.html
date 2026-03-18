@@ -160,14 +160,41 @@
     </div>
 
     <script>
-    // Stripe Checkout will be configured here once you have your Stripe keys
-    document.getElementById('btn-checkout').addEventListener('click', async (e) => {
+    // Check for success/cancel from Stripe redirect
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+        document.querySelector('.container').innerHTML = `
+            <div class="logo">NICOMACO</div>
+            <h1>Bienvenido a Pro</h1>
+            <p class="subtitle">Tu suscripcion esta activa. Consultas ilimitadas.</p>
+            <p class="note" style="margin-top:24px">Recibiras un email de confirmacion de Stripe.<br>Ya puedes usar Nicomaco sin limites.</p>
+            <a href="/" class="back" style="margin-top:32px">ir a nicomaco</a>
+        `;
+    } else if (params.get('canceled') === 'true') {
+        document.querySelector('.note').innerHTML = 'Pago cancelado. Puedes intentar de nuevo cuando quieras.';
+    }
+
+    document.getElementById('btn-checkout')?.addEventListener('click', async (e) => {
         e.preventDefault();
-        alert('Stripe aun no configurado. Necesitas crear tu cuenta en stripe.com y agregar las API keys.');
-        // Future flow:
-        // const res = await fetch('https://nicomaco-api.joseandv.workers.dev/api/create-checkout', { method: 'POST' });
-        // const { url } = await res.json();
-        // window.location.href = url;
+        const btn = e.target;
+        btn.textContent = 'conectando...';
+        btn.style.opacity = '0.6';
+        try {
+            const res = await fetch('https://nicomaco-api.joseandv.workers.dev/api/create-checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            const data = await res.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                throw new Error(data.error || 'Error al crear sesion de pago');
+            }
+        } catch (err) {
+            btn.textContent = 'suscribirme';
+            btn.style.opacity = '1';
+            alert('Error: ' + err.message);
+        }
     });
     </script>
 </body>
