@@ -1890,14 +1890,14 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         // Brand block
         y += 40;
         ctx.fillStyle = '#B8960C';
-        ctx.fillRect(mx, y, textW, 0.5);
+        ctx.fillRect(W/2 - 30, y, 60, 1);
 
         ctx.textAlign = 'center';
 
-        // Both lines: same style as welcome — sans, uppercase, spaced, same color
-        const sigFont = `400 18px ${sans}`;
+        // Both lines: EXACT same style as welcome page — scaled 2x for image resolution
+        const sigFont = `400 20px ${sans}`;
         const sigColor = '#86868B';
-        const sigSpacing = 6;
+        const sigSpacing = 8;
 
         // Α  ΕΣΤΙΝ  Α
         ctx.fillStyle = sigColor;
