@@ -68,11 +68,8 @@
             flex-direction: column;
         }
 
-        /* -- sticky header zone -- */
+        /* -- header zone -- */
         .header-zone {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 0;
             background: var(--bg);
             padding-top: max(12px, env(safe-area-inset-top));
             padding-bottom: 4px;
@@ -81,7 +78,7 @@
             padding-left: 28px;
             padding-right: 28px;
         }
-        /* header stays at top via sticky */
+        html, body { overflow-x: hidden; }
         .tab-content {
             flex: 1;
         }
