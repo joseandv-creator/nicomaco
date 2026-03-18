@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
     <title>Nicómaco</title>
-    <meta name="description" content="Filosofía aplicada a la toma de decisiones.">
+    <meta name="description" content="Aprende a pensar sobre tu propia vida.">
     <meta property="og:title" content="Nicómaco">
-    <meta property="og:description" content="Filosofía aplicada a la toma de decisiones.">
+    <meta property="og:description" content="Aprende a pensar sobre tu propia vida.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://nicomaco.org/icon-512.png">
     <meta name="theme-color" content="#faf7f2">
@@ -1256,7 +1256,7 @@
                     <div class="header-left">
                         <div class="header-title" id="main-title">nicómaco</div>
                         <div class="header-by">by josean · <a href="#" id="nav-lang" style="color:var(--comment)">🇪🇸</a></div>
-                        <div class="header-sub" id="main-subtitle">filosofia aplicada a la toma de decisiones</div>
+                        <div class="header-sub" id="main-subtitle">aprende a pensar sobre tu propia vida</div>
                     </div>
                     <div class="header-nav" style="display:none">
                         <a href="#" id="nav-borrador" style="display:none;color:var(--orange)">borrador <span id="draft-badge" style="font-size:0.7em"></span></a>
@@ -1796,7 +1796,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
     const I18N = {
         en: {
-            subtitle: 'applied philosophy for decision-making',
+            subtitle: 'learn to think about your own life',
             tool: 'tool',
             knowledge: 'theory',
             motives: 'motives',
@@ -1823,7 +1823,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             noResults: 'no definitions match your search',
         },
         es: {
-            subtitle: 'filosofia aplicada a la toma de decisiones',
+            subtitle: 'aprende a pensar sobre tu propia vida',
             tool: 'herramienta',
             knowledge: 'teoría',
             motives: 'motivos',
@@ -2160,8 +2160,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const intro = document.createElement('div');
         intro.className = 'block welcome-block';
         let html = es
-            ? `<p class="welcome-line">α ἐστιν α</p><p class="welcome-line" style="margin-top:4px">filosofia aplicada a la toma de decisiones</p>`
-            : `<p class="welcome-line">α ἐστιν α</p><p class="welcome-line" style="margin-top:4px">applied philosophy for decision-making</p>`;
+            ? `<p class="welcome-line">α ἐστιν α</p><p class="welcome-line" style="margin-top:4px">aprende a pensar sobre tu propia vida</p>`
+            : `<p class="welcome-line">α ἐστιν α</p><p class="welcome-line" style="margin-top:4px">learn to think about your own life</p>`;
         if (count > 0) {
             html += es
                 ? `<p class="welcome-progress">${count} ${count === 1 ? 'idea analizada' : 'ideas analizadas'}</p>`
@@ -2311,7 +2311,100 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         if (count >= 5) {
             tryWeeklySynthesis(output, es);
         }
+
+        // Reverse mode — training button (5+ analyses)
+        if (count >= 5) {
+            const trainBtn = document.createElement('div');
+            trainBtn.style.cssText = 'text-align:center;margin-top:20px';
+            trainBtn.innerHTML = `<button id="btn-train" style="font-family:var(--font-sans);font-size:11px;letter-spacing:2px;padding:10px 24px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--comment);cursor:pointer">${es ? 'ENTRENAR' : 'TRAIN'}</button>`;
+            output.appendChild(trainBtn);
+            $('#btn-train')?.addEventListener('click', () => startReverseMode(es));
+        }
     }
+
+    // ── REVERSE MODE (TRAINING) ──
+    const TRAINING_CLAIMS = [
+        { es: 'La propiedad es un robo.', en: 'Property is theft.' },
+        { es: 'La verdad es relativa — cada quien tiene la suya.', en: 'Truth is relative — everyone has their own.' },
+        { es: 'El fin justifica los medios.', en: 'The end justifies the means.' },
+        { es: 'Nadie debería imponer sus valores a otros.', en: 'Nobody should impose their values on others.' },
+        { es: 'La riqueza de unos es la pobreza de otros.', en: 'The wealth of some is the poverty of others.' },
+    ];
+
+    function startReverseMode(es) {
+        const output = $('#output');
+        output.innerHTML = '';
+        const claim = TRAINING_CLAIMS[Math.floor(Math.random() * TRAINING_CLAIMS.length)];
+        const text = es ? claim.es : claim.en;
+
+        const block = document.createElement('div');
+        block.className = 'block';
+        block.innerHTML = `
+            <div style="text-align:center;margin-bottom:20px">
+                <p style="font-family:var(--font-sans);font-size:10px;letter-spacing:2px;color:var(--gold);margin-bottom:16px">${es ? 'MODO ENTRENAMIENTO' : 'TRAINING MODE'}</p>
+                <p style="font-family:var(--font-serif);font-size:20px;font-style:italic;color:var(--text);line-height:1.5">"${text}"</p>
+                <p style="font-size:12px;color:var(--comment);margin-top:16px">${es ? '¿qué detectas? ¿hay un concepto robado? ¿cuál es la premisa oculta?' : 'what do you detect? is there a stolen concept? what is the hidden premise?'}</p>
+            </div>
+            <textarea id="train-input" rows="5" placeholder="${es ? 'escribe tu análisis...' : 'write your analysis...'}" style="width:100%;font-family:var(--font-serif);font-size:15px;padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);resize:none;line-height:1.6;box-sizing:border-box"></textarea>
+            <div style="text-align:right;margin-top:8px">
+                <button id="train-submit" style="font-family:var(--font-sans);font-size:11px;letter-spacing:2px;padding:10px 24px;background:var(--text);color:var(--bg);border:none;border-radius:6px;cursor:pointer">${es ? 'EVALUAR' : 'EVALUATE'}</button>
+            </div>
+        `;
+        output.appendChild(block);
+
+        $('#train-submit').addEventListener('click', async () => {
+            const userAnalysis = $('#train-input').value.trim();
+            if (!userAnalysis) return;
+            $('#train-submit').disabled = true;
+            $('#train-submit').textContent = es ? 'evaluando...' : 'evaluating...';
+
+            const prompt = es
+                ? `Eres un evaluador de pensamiento critico. Una persona esta entrenando su capacidad de analisis filosofico.
+
+Se le presento esta afirmacion: "${text}"
+
+Su analisis fue: "${userAnalysis}"
+
+Evalua su analisis en prosa fluida. Di que detecto bien (si detecto algo). Di que se le escapo. No le des la respuesta completa — señala la direccion para que el pueda llegar. Maximo 4 oraciones. Sin asteriscos. Tono: mentor honesto, no profesor condescendiente.`
+                : `You are a critical thinking evaluator. A person is training their philosophical analysis ability.
+
+They were presented this claim: "${text}"
+
+Their analysis was: "${userAnalysis}"
+
+Evaluate their analysis in flowing prose. Say what they detected well (if they detected anything). Say what they missed. Do not give the complete answer — point the direction so they can get there themselves. Maximum 4 sentences. No asterisks. Tone: honest mentor, not condescending professor.`;
+
+            try {
+                const res = await fetch(`${WORKER_URL}/api/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: apiBody({
+                        messages: [{ role: 'user', content: prompt }],
+                        model: 'claude-sonnet-4-20250514',
+                        stream: false
+                    }),
+                });
+                const data = await res.json();
+                const evalText = data.content?.[0]?.text?.replace(/\*{1,3}/g, '').trim() || (es ? 'No se pudo evaluar.' : 'Could not evaluate.');
+
+                const evalBlock = document.createElement('div');
+                evalBlock.className = 'pattern-block';
+                evalBlock.style.cssText = 'margin-top:16px;border-color:var(--gold)';
+                evalBlock.innerHTML = `<div class="pattern-label">${es ? 'EVALUACIÓN' : 'EVALUATION'}</div>${evalText}`;
+                block.appendChild(evalBlock);
+
+                // Button to try another
+                const again = document.createElement('div');
+                again.style.cssText = 'text-align:center;margin-top:16px';
+                again.innerHTML = `<button onclick="startReverseMode(${es})" style="font-family:var(--font-sans);font-size:11px;letter-spacing:2px;padding:8px 20px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--comment);cursor:pointer">${es ? 'OTRA AFIRMACIÓN' : 'ANOTHER CLAIM'}</button>`;
+                block.appendChild(again);
+            } catch(e) {
+                $('#train-submit').textContent = es ? 'error — intentar de nuevo' : 'error — try again';
+                $('#train-submit').disabled = false;
+            }
+        });
+    }
+    window.startReverseMode = startReverseMode;
 
     async function generateMorningPrompt(output, es) {
         // Check cache — one per day
