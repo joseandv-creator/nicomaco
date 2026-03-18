@@ -1939,7 +1939,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         });
     }
 
-    async function generateShareImage(analysisText) {
+    async function generateShareImage(analysisText, userPrompt) {
         // Ensure fonts loaded
         try { await document.fonts.load('400 32px Cormorant Garamond'); } catch(e) {}
         try { await document.fonts.load('300 14px Inter'); } catch(e) {}
@@ -1961,6 +1961,12 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         tempCtx.font = `400 32px ${serif}`;
 
         let totalTextHeight = 0;
+        // Account for user prompt height
+        if (userPrompt) {
+            tempCtx.font = `italic 400 24px ${serif}`;
+            totalTextHeight += wrapText(tempCtx, '"' + userPrompt + '"', mx, 0, textW, 36, true) + 60;
+        }
+        tempCtx.font = `400 32px ${serif}`;
         for (const p of paragraphs) {
             totalTextHeight += wrapText(tempCtx, p.trim(), mx, 0, textW, 46, true) + 36;
         }
@@ -1983,6 +1989,19 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         ctx.font = `300 28px ${serif}`;
         ctx.fillText('α', mx, y + 10);
         y += 50;
+
+        // User prompt — small, gray, italic
+        if (userPrompt) {
+            const cleanPrompt = '"' + userPrompt.replace(/\*{1,3}/g, '').trim() + '"';
+            ctx.fillStyle = '#86868B';
+            ctx.font = `italic 400 24px ${serif}`;
+            y = wrapText(ctx, cleanPrompt, mx, y, textW, 36) + 24;
+
+            // Thin gold separator
+            ctx.fillStyle = '#B8960C';
+            ctx.fillRect(mx, y, 40, 1);
+            y += 36;
+        }
 
         // Render each paragraph
         ctx.fillStyle = '#1D1D1F';
@@ -2485,7 +2504,7 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
         btnSh.className = 'btn-share-trigger';
         btnSh.textContent = state.lang === 'es' ? 'compartir' : 'share';
         btnSh.addEventListener('click', () => {
-            generateShareImage(fullText);
+            generateShareImage(fullText, candidate);
         });
         acts.appendChild(btnSh);
         block.appendChild(acts);
