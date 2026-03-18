@@ -2244,6 +2244,89 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
         }
     }
 
+    // ── Contradiction Detector (triggered after analysis #5, checks against history) ──
+    async function tryContradictionDetection(block, currentQuestion) {
+        try {
+            if (state.history.length < 5) return;
+            const es = state.lang === 'es';
+            const previous = state.history.slice(1, 20); // skip current (just added)
+            const entries = previous.map(h => {
+                let entry = `"${h.candidate}"`;
+                if (h.decision) entry += ` → decided: "${h.decision}"`;
+                return entry;
+            }).join('\n');
+
+            const prompt = es
+                ? `Eres un detector de contradicciones. Abajo está la pregunta que alguien acaba de hacer, y sus preguntas/decisiones anteriores.
+
+Tu ÚNICO trabajo: detectar si la pregunta actual CONTRADICE o está en TENSIÓN con algo que preguntaron o decidieron antes. No tensiones superficiales — tensiones reales donde una posición niega o socava la otra.
+
+Si NO hay contradicción genuina, responde EXACTAMENTE: "---"
+Si SÍ hay una, descríbela en 2-3 oraciones. Sé específico: "En [fecha/pregunta anterior] afirmaste X. Ahora preguntas Y. Si X es verdad, Y no tiene sentido — a menos que algo cambió. ¿Qué cambió?"
+
+No halagues. No suavices. No uses asteriscos. Prosa directa.
+
+Pregunta actual: "${currentQuestion}"
+
+Historial:
+${entries}`
+                : `You are a contradiction detector. Below is a question someone just asked, and their previous questions/decisions.
+
+Your ONLY job: detect if the current question CONTRADICTS or is in TENSION with something they asked or decided before. Not superficial tensions — real ones where one position undermines the other.
+
+If there is NO genuine contradiction, respond EXACTLY: "---"
+If there IS one, describe it in 2-3 sentences. Be specific: "In [previous question] you stated X. Now you ask Y. If X is true, Y doesn't make sense — unless something changed. What changed?"
+
+No flattery. No softening. No asterisks. Direct prose.
+
+Current question: "${currentQuestion}"
+
+History:
+${entries}`;
+
+            const res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: prompt }],
+                    model: 'claude-sonnet-4-20250514'
+                }),
+            });
+
+            if (!res.ok) return;
+
+            let text = '';
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buf = '';
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buf += decoder.decode(value, { stream: true });
+                const lines = buf.split('\n');
+                buf = lines.pop() || '';
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    const json = line.slice(6).trim();
+                    if (!json || json === '[DONE]') continue;
+                    try {
+                        const evt = JSON.parse(json);
+                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') text += evt.delta.text;
+                    } catch {}
+                }
+            }
+
+            const clean = text.replace(/\*{1,3}/g, '').trim();
+            if (clean && clean !== '---' && clean.length > 10) {
+                const el = document.createElement('div');
+                el.className = 'pattern-block';
+                el.innerHTML = `<div class="pattern-label">${es ? 'tensión detectada' : 'tension detected'}</div>${clean}`;
+                block.appendChild(el);
+                scrollToBottom();
+            }
+        } catch(e) {}
+    }
+
     // ── Philosophical Profile (triggered at analysis #20, then every 50) ──
     async function tryPhilosophicalProfile(block) {
         try {
@@ -2557,6 +2640,11 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
             // Pattern detection layer — at 3rd, then every 10
             if (state.history.length === 3 || (state.history.length > 3 && state.history.length % 10 === 0)) {
                 tryPatternDetection(block);
+            }
+
+            // Contradiction detector — every analysis after #5
+            if (state.history.length >= 5) {
+                tryContradictionDetection(block, text);
             }
 
             // Philosophical profile — at 20th, then every 50
