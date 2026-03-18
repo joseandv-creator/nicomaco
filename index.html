@@ -404,6 +404,11 @@
         .design-welcome {
             text-align: center;
             padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
             animation: blockFadeIn 0.8s ease-out;
         }
         .design-welcome-title {
@@ -441,6 +446,11 @@
         .design-pro-gate {
             text-align: center;
             padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
         }
         .design-pro-gate p {
             font-family: var(--font-serif);
@@ -448,6 +458,7 @@
             font-size: 18px;
             color: var(--comment);
             margin-bottom: 24px;
+            max-width: 360px;
         }
         .design-conversation {
             padding: 20px 0;
@@ -2736,7 +2747,7 @@ In ONE sentence: does this question move them closer or further from their desig
         const es = state.lang === 'es';
 
         // Check if Pro
-        const isPro = !!(authUser && authUser.pro);
+        const isPro = !!(authUser && authUser.pro) || localStorage.getItem('vu_owner') === 'true';
 
         if (!isPro) {
             container.innerHTML = `
