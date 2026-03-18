@@ -232,18 +232,16 @@
         .s-orange { color: var(--orange); }
         .s-bright { color: var(--text-bright); }
         .user-bubble {
-            background: transparent;
+            background: var(--surface);
             color: var(--text-bright);
-            border: none;
-            border-bottom: 1px solid var(--border);
-            border-radius: 0;
+            border: 1px solid var(--border);
+            border-radius: 12px;
             padding: 14px 20px;
             margin-bottom: 24px;
             font-family: var(--font-serif);
             font-size: 16px;
             line-height: 1.6;
             text-align: left;
-            font-style: italic;
         }
         .s-blue { color: var(--blue); }
         .s-yellow { color: var(--yellow); }
@@ -300,15 +298,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--border);
-            border-radius: 0;
-            padding: 12px 4px 12px 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 12px 10px 16px;
             transition: border-color 0.3s ease;
         }
         .input-row:focus-within {
-            border-bottom-color: var(--gold);
+            border-color: var(--gold);
         }
         .input-chevron {
             display: none;
