@@ -1722,6 +1722,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         // Check auth status
         checkAuth();
         checkDecisionReviews();
+        checkLetterDeliveries();
 
         // Restore analysis count from persisted history
         if (state.history.length) state.analysisCount = Math.max(...state.history.map(h => h.num || 0));
@@ -1966,6 +1967,11 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         if (count >= 3) {
             generateMorningPrompt(output, es);
         }
+
+        // Weekly synthesis
+        if (count >= 5) {
+            tryWeeklySynthesis(output, es);
+        }
     }
 
     async function generateMorningPrompt(output, es) {
@@ -2007,6 +2013,77 @@ ${recent.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
                 showMorningPrompt(output, morningQ, es);
             }
         } catch(e) {}
+    }
+
+    async function tryWeeklySynthesis(output, es) {
+        const lastSynthesis = localStorage.getItem('vu_weekly_date') || '2000-01-01';
+        const daysSince = Math.floor((Date.now() - new Date(lastSynthesis).getTime()) / (1000*60*60*24));
+        if (daysSince < 7) return;
+
+        // Get analyses from last 7 days
+        const weekAgo = Date.now() - 7*24*60*60*1000;
+        const recent = state.history.filter(h => new Date(h.date).getTime() > weekAgo);
+        if (recent.length < 3) return;
+
+        const cached = JSON.parse(localStorage.getItem('vu_weekly') || '{}');
+        const today = new Date().toISOString().slice(0, 10);
+        if (cached.date === today && cached.text) {
+            showWeeklySynthesis(output, cached.text, es);
+            return;
+        }
+
+        try {
+            const entries = recent.map(h => {
+                let e = `"${h.candidate}"`;
+                if (h.decision) e += ` → decided: "${h.decision}"`;
+                return e;
+            }).join('\n');
+
+            const prompt = es
+                ? `Abajo están las preguntas y decisiones de una persona durante la última semana. Genera una SÍNTESIS de su semana de pensamiento en 3-4 oraciones:
+- El hilo que conecta sus preguntas (no una lista, el HILO)
+- Hacia dónde se movió su pensamiento (de qué a qué)
+- Una observación sobre su evolución
+
+Sin asteriscos. Prosa fluida. Como alguien que los conoce bien resumiendo su semana.
+
+Semana:
+${entries}`
+                : `Below are a person's questions and decisions from the last week. Generate a SYNTHESIS of their week of thinking in 3-4 sentences:
+- The thread connecting their questions (not a list, the THREAD)
+- Where their thinking moved (from what to what)
+- One observation about their evolution
+
+No asterisks. Flowing prose. Like someone who knows them well summarizing their week.
+
+Week:
+${entries}`;
+
+            const res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: prompt }],
+                    model: 'claude-sonnet-4-20250514',
+                    stream: false
+                }),
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            const text = data.content?.[0]?.text?.replace(/\*{1,3}/g, '').trim();
+            if (text && text.length > 20) {
+                localStorage.setItem('vu_weekly', JSON.stringify({ date: today, text }));
+                localStorage.setItem('vu_weekly_date', today);
+                showWeeklySynthesis(output, text, es);
+            }
+        } catch(e) {}
+    }
+
+    function showWeeklySynthesis(output, text, es) {
+        const el = document.createElement('div');
+        el.className = 'decision-review';
+        el.innerHTML = `<div class="decision-review-label">${es ? 'tu semana' : 'your week'}</div>${text}`;
+        output.appendChild(el);
     }
 
     function showMorningPrompt(output, question, es) {
@@ -2420,6 +2497,212 @@ Now respond as ${name}. From your philosophy, your era, your worldview. Maximum 
                 const el = document.createElement('div');
                 el.className = 'lens-response';
                 el.innerHTML = `<div class="lens-response-name">${name}</div>${text.replace(/\*{1,3}/g, '').trim()}`;
+                block.appendChild(el);
+                scrollToBottom();
+            }
+        } catch(e) {}
+    }
+
+    // ── Letter to Future Self ──
+    function showLetterInput(block, id, question) {
+        const es = state.lang === 'es';
+        const wrap = document.createElement('div');
+        wrap.className = 'decision-review';
+        wrap.style.borderColor = 'var(--comment)';
+        wrap.innerHTML = `
+            <div class="decision-review-label">${es ? 'carta a tu yo de dentro de 6 meses' : 'letter to yourself 6 months from now'}</div>
+            <p style="font-style:italic;color:var(--comment);font-size:13px;margin-bottom:12px">${es ? 'Escribe lo que piensas ahora. En 6 meses, Nicómaco te la entregará.' : 'Write what you\'re thinking now. In 6 months, Nicómaco will deliver it to you.'}</p>
+            <textarea class="decision-input" style="width:100%;min-height:80px;resize:vertical;border:1px solid var(--border);padding:12px;border-radius:4px;font-size:15px;line-height:1.6" placeholder="${es ? 'Querido yo del futuro...' : 'Dear future me...'}"></textarea>
+            <div style="margin-top:8px;text-align:right">
+                <button class="lens-btn" style="opacity:1;color:var(--gold)" id="send-letter">${es ? 'guardar carta' : 'save letter'}</button>
+            </div>
+        `;
+        block.appendChild(wrap);
+        scrollToBottom();
+
+        wrap.querySelector('#send-letter').addEventListener('click', () => {
+            const text = wrap.querySelector('textarea').value.trim();
+            if (!text) return;
+
+            const letters = JSON.parse(localStorage.getItem('vu_letters') || '[]');
+            letters.push({
+                id,
+                question,
+                letter: text,
+                writtenAt: new Date().toISOString(),
+                deliverAt: new Date(Date.now() + 180*24*60*60*1000).toISOString(),
+                delivered: false
+            });
+            localStorage.setItem('vu_letters', JSON.stringify(letters));
+
+            wrap.innerHTML = `
+                <div class="decision-review-label">${es ? 'carta guardada' : 'letter saved'}</div>
+                <p style="font-style:italic;color:var(--comment);font-size:13px">${es ? 'Se entregará en 6 meses.' : 'It will be delivered in 6 months.'}</p>
+            `;
+        });
+    }
+
+    function checkLetterDeliveries() {
+        const letters = JSON.parse(localStorage.getItem('vu_letters') || '[]');
+        const now = new Date();
+        const due = letters.filter(l => !l.delivered && new Date(l.deliverAt) <= now);
+        if (due.length === 0) return;
+
+        const es = state.lang === 'es';
+        const output = $('#output');
+        for (const letter of due) {
+            const daysAgo = Math.floor((now - new Date(letter.writtenAt)) / (1000*60*60*24));
+            const el = document.createElement('div');
+            el.className = 'profile-block';
+            el.innerHTML = `
+                <div class="profile-label">${es ? 'carta del pasado' : 'letter from the past'}</div>
+                <p style="color:var(--comment);font-size:13px;margin-bottom:12px">${es ? `Hace ${daysAgo} días, después de preguntarte "${esc(letter.question?.substring(0,60))}", te escribiste esto:` : `${daysAgo} days ago, after asking "${esc(letter.question?.substring(0,60))}", you wrote this to yourself:`}</p>
+                <p style="font-style:italic;font-size:16px;line-height:1.7">"${esc(letter.letter)}"</p>
+            `;
+            output.insertBefore(el, output.firstChild);
+
+            letter.delivered = true;
+        }
+        localStorage.setItem('vu_letters', JSON.stringify(letters));
+    }
+
+    // ── Absence Detector (what you don't ask) ──
+    async function tryAbsenceDetection(block) {
+        try {
+            const es = state.lang === 'es';
+            const all = state.history.map(h => `"${h.candidate}"`).join('\n');
+
+            const prompt = es
+                ? `Abajo están TODAS las preguntas que una persona ha hecho a un sistema de análisis filosófico (${state.history.length} preguntas). La vida humana tiene dimensiones fundamentales: trabajo, dinero, relaciones, salud, propósito, familia, creatividad, sexualidad, muerte, poder, vulnerabilidad, espiritualidad.
+
+Tu trabajo: detectar qué dimensión importante está AUSENTE. No la menos frecuente — la que NO APARECE EN ABSOLUTO a pesar de que las otras preguntas implícitamente la tocan.
+
+La ausencia no es accidental. Es evasión. Nombra la dimensión ausente y en 2-3 oraciones explica por qué, dado lo que SÍ preguntan, esa ausencia es significativa. Formula una pregunta que el usuario ha estado evitando.
+
+Sin asteriscos. Prosa directa. Si no hay ausencia significativa, responde "---".
+
+Preguntas:
+${all}`
+                : `Below are ALL the questions a person has asked a philosophical analysis tool (${state.history.length} questions). Human life has fundamental dimensions: work, money, relationships, health, purpose, family, creativity, sexuality, death, power, vulnerability, spirituality.
+
+Your job: detect which important dimension is ABSENT. Not the least frequent — the one that DOES NOT APPEAR AT ALL despite other questions implicitly touching it.
+
+The absence is not accidental. It is avoidance. Name the absent dimension and in 2-3 sentences explain why, given what they DO ask, that absence is significant. Formulate a question the user has been avoiding.
+
+No asterisks. Direct prose. If there is no significant absence, respond "---".
+
+Questions:
+${all}`;
+
+            const res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: prompt }],
+                    model: 'claude-sonnet-4-20250514'
+                }),
+            });
+            if (!res.ok) return;
+
+            let text = '';
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buf = '';
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buf += decoder.decode(value, { stream: true });
+                const lines = buf.split('\n');
+                buf = lines.pop() || '';
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    const json = line.slice(6).trim();
+                    if (!json || json === '[DONE]') continue;
+                    try {
+                        const evt = JSON.parse(json);
+                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') text += evt.delta.text;
+                    } catch {}
+                }
+            }
+
+            const clean = text.replace(/\*{1,3}/g, '').trim();
+            if (clean && clean !== '---' && clean.length > 10) {
+                const el = document.createElement('div');
+                el.className = 'profile-block';
+                el.innerHTML = `<div class="profile-label">${es ? 'lo que no preguntas' : 'what you don\'t ask'}</div>${clean}`;
+                block.appendChild(el);
+                scrollToBottom();
+            }
+        } catch(e) {}
+    }
+
+    // ── Cross-Question Integration ──
+    async function tryIntegration(block, currentQuestion) {
+        try {
+            if (state.history.length < 5) return;
+            const es = state.lang === 'es';
+            const previous = state.history.slice(1, 15).map(h => {
+                let e = `"${h.candidate}"`;
+                if (h.decision) e += ` → "${h.decision}"`;
+                return e;
+            }).join('\n');
+
+            const prompt = es
+                ? `Abajo está la pregunta que alguien acaba de hacer y sus preguntas anteriores. Tu ÚNICO trabajo: detectar si la pregunta actual está CONECTADA con alguna pregunta anterior de una forma que el usuario probablemente NO VE. No conexiones obvias (mismo tema). Conexiones profundas — el mismo principio operando en dos dominios distintos, la misma premisa escondida en dos preguntas aparentemente diferentes, o un patrón donde una pregunta es la consecuencia lógica de otra sin que el usuario lo sepa.
+
+Si NO hay conexión profunda, responde EXACTAMENTE: "---"
+Si SÍ hay una, descríbela en 2-3 oraciones. Muestra el hilo invisible. Sin asteriscos. Prosa directa.
+
+Pregunta actual: "${currentQuestion}"
+
+Anteriores:
+${previous}`
+                : `Below is a question someone just asked and their previous questions. Your ONLY job: detect if the current question is CONNECTED to a previous one in a way the user probably DOES NOT SEE. Not obvious connections (same topic). Deep connections — the same principle operating in two different domains, the same hidden premise in two seemingly different questions, or a pattern where one question is the logical consequence of another without the user knowing.
+
+If there is NO deep connection, respond EXACTLY: "---"
+If there IS one, describe it in 2-3 sentences. Show the invisible thread. No asterisks. Direct prose.
+
+Current question: "${currentQuestion}"
+
+Previous:
+${previous}`;
+
+            const res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: prompt }],
+                    model: 'claude-sonnet-4-20250514'
+                }),
+            });
+            if (!res.ok) return;
+
+            let text = '';
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buf = '';
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buf += decoder.decode(value, { stream: true });
+                const lines = buf.split('\n');
+                buf = lines.pop() || '';
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    const json = line.slice(6).trim();
+                    if (!json || json === '[DONE]') continue;
+                    try {
+                        const evt = JSON.parse(json);
+                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') text += evt.delta.text;
+                    } catch {}
+                }
+            }
+
+            const clean = text.replace(/\*{1,3}/g, '').trim();
+            if (clean && clean !== '---' && clean.length > 10) {
+                const el = document.createElement('div');
+                el.className = 'pattern-block';
+                el.innerHTML = `<div class="pattern-label">${es ? 'conexión' : 'connection'}</div>${clean}`;
                 block.appendChild(el);
                 scrollToBottom();
             }
@@ -2874,9 +3157,15 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
                 tryPatternDetection(block);
             }
 
-            // Contradiction detector — every analysis after #5
+            // Contradiction detector + integration — every analysis after #5
             if (state.history.length >= 5) {
                 tryContradictionDetection(block, text);
+                tryIntegration(block, text);
+            }
+
+            // Absence detector — every 15 analyses
+            if (state.history.length >= 10 && state.history.length % 15 === 0) {
+                tryAbsenceDetection(block);
             }
 
             // Philosophical profile — at 20th, then every 50
@@ -3057,6 +3346,18 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
         acts.appendChild(lensWrap);
 
         block.appendChild(acts);
+
+        // Letter to future self
+        const btnLetter = document.createElement('button');
+        btnLetter.className = 'lens-btn';
+        btnLetter.textContent = state.lang === 'es' ? 'carta al futuro' : 'letter to future';
+        btnLetter.addEventListener('click', () => {
+            if (btnLetter.dataset.used) return;
+            btnLetter.dataset.used = 'true';
+            btnLetter.style.opacity = '0.4';
+            showLetterInput(block, id, candidate);
+        });
+        lensWrap.appendChild(btnLetter);
 
         // Reading recommendation
         const btnRead = document.createElement('button');
