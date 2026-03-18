@@ -671,7 +671,7 @@
         }
 
         /* -- bilingual toggle -- */
-        .en-only { display: none; }
+        .lang-hide { display: none !important; }
 
         /* -- responsive -- */
         @media (max-width: 600px) {
@@ -1276,8 +1276,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const lblImp = $('label[style*="cursor:pointer"]');
         if (lblImp) { const inp = lblImp.querySelector('input'); lblImp.textContent = t('importJSON'); if (inp) lblImp.appendChild(inp); }
         // Bilingual toggle for knowledge content
-        $$('.en-only').forEach(el => el.style.display = lang === 'en' ? '' : 'none');
-        $$('.es-only').forEach(el => el.style.display = lang === 'es' ? '' : 'none');
+        $$('.en-only').forEach(el => lang === 'en' ? el.classList.remove('lang-hide') : el.classList.add('lang-hide'));
+        $$('.es-only').forEach(el => lang === 'es' ? el.classList.remove('lang-hide') : el.classList.add('lang-hide'));
         // Glossary language toggle
         const gEn = $('#glossary-en');
         const gEs = $('#glossary-es');
@@ -2018,6 +2018,13 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             navigator.clipboard.writeText(text);
         }
     }
+
+    // Immediately hide one language to prevent flash of both
+    (function() {
+        const lang = localStorage.getItem('vu_lang') || (navigator.language?.startsWith('es') ? 'es' : 'en');
+        const hide = lang === 'es' ? '.en-only' : '.es-only';
+        document.querySelectorAll(hide).forEach(el => el.classList.add('lang-hide'));
+    })();
 
     document.addEventListener('DOMContentLoaded', init);
     })();
