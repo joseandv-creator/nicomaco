@@ -1994,13 +1994,23 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     async function tryPatternDetection(block) {
         try {
             const last10 = state.history.slice(0, 10).map(h => h.candidate).filter(c => c && !c.startsWith('[URL]'));
-            if (last10.length < 5) return;
+            if (last10.length < 3) return;
 
-            const patternPrompt = `You are a pattern observer. Below are the last ${last10.length} questions a person has asked a philosophical analysis tool. Your ONLY job: detect the underlying pattern — what unexamined premise, recurring theme, or blind spot do these questions reveal about how this person thinks?
+            const patternPrompt = `You observe how a person thinks — not what they think, but how. Below are the last ${last10.length} questions someone asked a philosophical analysis tool. Each question is a window into what they are wrestling with.
 
-Answer in 2-3 sentences maximum. Be direct, personal, and specific. Do not be generic. Do not praise. Do not use asterisks. Respond in the same language as the questions.
+Your job is to see what they cannot see about themselves. Not the topics — the structure underneath.
 
-Questions (most recent first):
+Look at:
+- The FRAMING: do they ask "should I" (seeking permission), "how do I" (seeking method), "why don't I" (seeking cause), or "is it wrong to" (seeking absolution)? The verb structure reveals their stance toward their own agency.
+- The SEQUENCE: what came after what? Why might they have moved from one question to the next? What does the progression reveal?
+- What is ABSENT: what obvious question did they never ask? What are they avoiding?
+- The UNSPOKEN PREMISE: what belief must be true for these specific questions to make sense? Name it.
+
+Deliver your observation in 2 sentences. Maximum 3. Like a mirror — not an essay. Be specific enough that only THIS person would recognize themselves. Do not praise. Do not soften. Do not use asterisks. Do not use bullet points. Just say what you see.
+
+Respond in the same language as the questions.
+
+Their questions (most recent first):
 ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
 
             const res = await fetch(`${WORKER_URL}/api/analyze`, {
