@@ -1301,8 +1301,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         // New chat button title
         const newChatBtn = $('#btn-new-chat');
         if (newChatBtn) newChatBtn.title = t('newChat');
-        const sendBtn = $('#btn-send');
-        if (sendBtn) sendBtn.textContent = t('send');
+        // Send button uses ↑ icon, no text override
         if ($('#output').children.length <= 1) renderWelcome();
     }
 
