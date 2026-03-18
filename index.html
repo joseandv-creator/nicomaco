@@ -329,7 +329,39 @@
             min-height: 24px;
             overflow: hidden;
         }
-        #input::placeholder { color: var(--border); font-weight: 300; font-style: italic; }
+        #input::placeholder { color: var(--border); font-weight: 300; font-style: italic; opacity: 0.6; transition: opacity 0.5s ease; }
+
+        /* -- block fade-in -- */
+        .block { animation: blockFadeIn 0.6s ease-out; }
+        @keyframes blockFadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* -- welcome progress -- */
+        .welcome-progress {
+            font-family: var(--font-sans);
+            font-size: 11px;
+            color: var(--comment);
+            letter-spacing: 1px;
+            margin-top: 16px;
+        }
+
+        /* -- share image overlay -- */
+        .share-canvas-wrap {
+            position: fixed; top:0; left:0; right:0; bottom:0;
+            background: rgba(0,0,0,0.6);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+        .share-canvas-wrap canvas { border-radius: 12px; max-width: 90vw; max-height: 80vh; }
+        .share-canvas-actions { position:absolute; bottom:40px; display:flex; gap:12px; }
+        .share-canvas-actions button {
+            background: var(--gold); color: #fff; border:none; border-radius:8px;
+            padding: 10px 24px; font-family: var(--font-sans); font-size: 14px; cursor:pointer;
+        }
         .btn-send {
             background: transparent;
             color: var(--gold);
@@ -843,7 +875,7 @@
                 <div id="knowledge-motives" class="knowledge-section">
                     <div class="motives-section" style="margin-top:32px">
 
-                    <div class="es-only">
+                    <div class="es-only" style="text-align:justify;line-height:1.9">
                         <p>Hace veintitres siglos, en un mundo que no tenia palabra para lo que estaba haciendo, un hombre se sento y construyo la primera maquina para pensar correctamente. Se llamaba Aristoteles. Le dio a la humanidad el silogismo, las categorias, la ley de no contradiccion — los huesos de cada argumento que se ha sostenido o caido desde entonces. Lo llamo <span class="highlight">ὄργανον</span> — el instrumento. No porque la logica fuera una herramienta mas, sino porque era la unica que no podias dejar de usar ni siquiera para negarla.</p>
 
                         <p>Tambien fue padre.</p>
@@ -909,7 +941,7 @@
                         <p class="dim">Esto no es un libro. Es lo mas parecido que encontre a ese gesto.</p>
                     </div>
 
-                    <div class="en-only">
+                    <div class="en-only" style="text-align:justify;line-height:1.9">
                         <p>Twenty-three centuries ago, in a world that had no word for what he was doing, a man sat down and built the first machine for thinking correctly. His name was Aristotle. He gave humanity the syllogism, the categories, the law of non-contradiction — the bones of every argument that has ever stood or fallen since. He called it <span class="highlight">ὄργανον</span> — the instrument. Not because logic was just another tool, but because it was the only one you could not stop using even to deny it.</p>
 
                         <p>He was also a father.</p>
@@ -1557,6 +1589,9 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         // Apply initial language for bilingual content
         setLang(state.lang);
+
+        // Start rotating placeholders
+        startPlaceholderRotation();
     }
 
     function showScreen(name) {
@@ -1588,12 +1623,157 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const output = $('#output');
         output.innerHTML = '';
         const es = state.lang === 'es';
+        const count = state.history.length;
         const intro = document.createElement('div');
         intro.className = 'block welcome-block';
-        intro.innerHTML = es
+        let html = es
             ? `<p class="welcome-line">α ἐστιν α · filosofia aplicada a la toma de decisiones</p>`
             : `<p class="welcome-line">α ἐστιν α · applied philosophy for decision-making</p>`;
+        if (count > 0) {
+            html += es
+                ? `<p class="welcome-progress">${count} ${count === 1 ? 'idea analizada' : 'ideas analizadas'}</p>`
+                : `<p class="welcome-progress">${count} ${count === 1 ? 'idea analyzed' : 'ideas analyzed'}</p>`;
+        }
+        intro.innerHTML = html;
         output.appendChild(intro);
+    }
+
+    // Rotating placeholder examples
+    const placeholderExamples = {
+        es: [
+            'pregunta a Nicómaco...',
+            '¿debería dejar mi trabajo?',
+            '¿es egoísta priorizar mi bienestar?',
+            '¿por qué no hago lo que sé que debo hacer?',
+            '¿cómo sé que estoy tomando la decisión correcta?',
+            '¿es moral cobrar impuestos?',
+            'pega una URL para analizarla...',
+        ],
+        en: [
+            'ask Nicómaco...',
+            'should I quit my job?',
+            'is it selfish to prioritize my well-being?',
+            'why don\'t I do what I know I should?',
+            'how do I know I\'m making the right decision?',
+            'is it moral to tax people?',
+            'paste a URL to analyze...',
+        ]
+    };
+    let placeholderIdx = 0;
+    let placeholderInterval = null;
+
+    function startPlaceholderRotation() {
+        if (placeholderInterval) clearInterval(placeholderInterval);
+        placeholderIdx = 0;
+        placeholderInterval = setInterval(() => {
+            const input = $('#input');
+            if (input.value || state.processing) return;
+            input.style.opacity = '0';
+            setTimeout(() => {
+                placeholderIdx = (placeholderIdx + 1) % placeholderExamples[state.lang].length;
+                input.placeholder = placeholderExamples[state.lang][placeholderIdx];
+                input.style.opacity = '1';
+            }, 300);
+        }, 4000);
+    }
+
+    // Completion sound using Web Audio API
+    function playCompletionSound() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+            gain.gain.setValueAtTime(0, ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 1.2);
+        } catch(e) {}
+    }
+
+    // Share analysis as beautiful image
+    function shareAsImage(item) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1080; canvas.height = 1350;
+        const ctx = canvas.getContext('2d');
+
+        // Background
+        ctx.fillStyle = '#1D1D1F';
+        ctx.fillRect(0, 0, 1080, 1350);
+
+        // Gold accent line
+        ctx.fillStyle = '#B8960C';
+        ctx.fillRect(80, 80, 3, 120);
+
+        // Quote from analysis - extract first meaningful line
+        const lines = (item.analysis || '').split('\n').filter(l => l.trim() && !l.startsWith('//') && !l.startsWith('CANDIDATE'));
+        const quote = lines[0]?.replace(/\*{1,3}/g, '').trim().slice(0, 200) || '';
+
+        ctx.fillStyle = '#FDFCFA';
+        ctx.font = '300 36px Georgia, serif';
+        wrapText(ctx, quote, 120, 120, 840, 48);
+
+        // User question
+        const question = (item.candidate || '').slice(0, 120);
+        ctx.fillStyle = '#86868B';
+        ctx.font = '300 24px Georgia, serif';
+        ctx.fillText('"' + question + '"', 120, 1140);
+
+        // Logo
+        ctx.fillStyle = '#B8960C';
+        ctx.font = '500 20px Inter, sans-serif';
+        ctx.fillText('nicómaco', 120, 1260);
+        ctx.fillStyle = '#86868B';
+        ctx.font = '300 16px Inter, sans-serif';
+        ctx.fillText('nicomaco.org', 120, 1290);
+
+        // Show overlay
+        const wrap = document.createElement('div');
+        wrap.className = 'share-canvas-wrap';
+        wrap.innerHTML = '<div class="share-canvas-actions"></div>';
+        wrap.insertBefore(canvas, wrap.firstChild);
+
+        const actions = wrap.querySelector('.share-canvas-actions');
+        const btnSave = document.createElement('button');
+        btnSave.textContent = state.lang === 'es' ? 'guardar imagen' : 'save image';
+        btnSave.addEventListener('click', () => {
+            const a = document.createElement('a');
+            a.download = 'nicomaco-analysis.png';
+            a.href = canvas.toDataURL('image/png');
+            a.click();
+            wrap.remove();
+        });
+        actions.appendChild(btnSave);
+
+        const btnClose = document.createElement('button');
+        btnClose.textContent = '✕';
+        btnClose.style.background = 'transparent';
+        btnClose.style.border = '1px solid rgba(255,255,255,0.3)';
+        btnClose.addEventListener('click', () => wrap.remove());
+        actions.appendChild(btnClose);
+
+        wrap.addEventListener('click', e => { if (e.target === wrap) wrap.remove(); });
+        document.body.appendChild(wrap);
+    }
+
+    function wrapText(ctx, text, x, y, maxW, lineH) {
+        const words = text.split(' ');
+        let line = '';
+        for (const word of words) {
+            const test = line + word + ' ';
+            if (ctx.measureText(test).width > maxW && line) {
+                ctx.fillText(line.trim(), x, y);
+                line = word + ' ';
+                y += lineH;
+            } else {
+                line = test;
+            }
+        }
+        ctx.fillText(line.trim(), x, y);
     }
 
     function handleKey(e) {
@@ -1677,6 +1857,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             gutterEl.textContent = gutterLines(highlighted.split('\n').length);
             state.history.unshift({ id, num, candidate: `[URL] ${url}`, analysis: fullText, date: new Date().toISOString(), messages, isURL: true });
             localStorage.setItem('vu_history', JSON.stringify(state.history));
+            playCompletionSound();
 
             const acts = document.createElement('div');
             acts.className = 'actions';
@@ -1748,6 +1929,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             addActions(block, id, text, fullText, messages);
             state.history.unshift({ id, num, candidate: text, analysis: fullText, date: new Date().toISOString(), messages: [...state.conversationHistory] });
             localStorage.setItem('vu_history', JSON.stringify(state.history));
+            playCompletionSound();
 
         } catch (err) {
             if (err.name === 'AbortError') {
@@ -1893,10 +2075,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         btnSh.className = 'btn btn-sm'; btnSh.textContent = t('share');
         btnSh.addEventListener('click', () => {
             const item = state.history.find(h => h.id === id);
-            if (item) {
-                shareAnalysis(item);
-                btnSh.textContent = t('shared'); setTimeout(() => btnSh.textContent = t('share'), 1500);
-            }
+            if (item) shareAsImage(item);
         });
         acts.appendChild(btnSh);
         block.appendChild(acts);
