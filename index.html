@@ -1872,10 +1872,11 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         ctx.fillStyle = '#F8F5EF';
         ctx.fillRect(0, 0, W, H);
 
-        // Gold accent line at top
+        // α at top — beginning
         let y = topPad;
         ctx.fillStyle = '#B8960C';
-        ctx.fillRect(mx, y, 40, 1.5);
+        ctx.font = `300 28px ${serif}`;
+        ctx.fillText('α', mx, y + 10);
         y += 40;
 
         // Render each paragraph
@@ -1890,9 +1891,10 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         // Brand block — generous breathing space
         y += 80;
 
-        // Short gold line — centered
+        // ω above signature — end
         ctx.fillStyle = '#B8960C';
-        ctx.fillRect(W/2 - 30, y, 60, 1);
+        ctx.font = `300 28px ${serif}`;
+        ctx.fillText('ω', W/2 - ctx.measureText('ω').width/2, y + 10);
 
         ctx.textAlign = 'center';
 
