@@ -1366,11 +1366,10 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         // Language is applied at the end of init() via setLang(state.lang)
 
         // BTC donation copy
-        $('#footer-btc').addEventListener('click', () => {
+        $('#footer-btc')?.addEventListener('click', () => {
             navigator.clipboard.writeText('bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5');
             const el = $('#footer-btc');
-            el.textContent = t('btcCopied');
-            setTimeout(() => { el.innerHTML = 'btc &#9671;'; }, 2000);
+            if (el) { el.textContent = t('btcCopied'); setTimeout(() => { el.innerHTML = 'btc &#9671;'; }, 2000); }
         });
 
         // Knowledge sections all visible (continuous scroll)
