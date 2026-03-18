@@ -388,6 +388,32 @@
             margin-bottom: 8px;
         }
 
+        /* -- morning prompt -- */
+        .morning-prompt {
+            margin-top: 24px;
+            padding: 20px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            animation: blockFadeIn 1s ease-out;
+        }
+        .morning-prompt:hover { opacity: 0.7; }
+        .morning-label {
+            font-family: var(--font-sans);
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+        .morning-question {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 18px;
+            line-height: 1.5;
+            color: var(--text);
+        }
+
         /* -- philosophical lenses -- */
         .lens-wrap {
             display: inline-flex;
@@ -1935,6 +1961,64 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         }
         intro.innerHTML = html;
         output.appendChild(intro);
+
+        // Morning prompt — personalized question
+        if (count >= 3) {
+            generateMorningPrompt(output, es);
+        }
+    }
+
+    async function generateMorningPrompt(output, es) {
+        // Check cache — one per day
+        const today = new Date().toISOString().slice(0, 10);
+        const cached = JSON.parse(localStorage.getItem('vu_morning') || '{}');
+        if (cached.date === today && cached.prompt) {
+            showMorningPrompt(output, cached.prompt, es);
+            return;
+        }
+
+        try {
+            const recent = state.history.slice(0, 10).map(h => h.candidate).filter(c => c && !c.startsWith('[URL]'));
+            if (recent.length < 3) return;
+
+            const prompt = es
+                ? `Abajo están las últimas preguntas que alguien hizo a un sistema de análisis filosófico. Genera UNA pregunta filosófica personalizada para esta persona — algo que les haga pensar hoy, basado en lo que les importa. No repitas sus preguntas. Llévales un paso más allá. Una sola oración. Sin comillas. Sin explicación. Solo la pregunta.
+
+${recent.map((q, i) => `${i+1}. "${q}"`).join('\n')}`
+                : `Below are the recent questions someone asked a philosophical analysis tool. Generate ONE personalized philosophical question for this person — something to make them think today, based on what they care about. Don't repeat their questions. Push them one step further. One sentence. No quotes. No explanation. Just the question.
+
+${recent.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
+
+            const res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: prompt }],
+                    model: 'claude-sonnet-4-20250514',
+                    stream: false
+                }),
+            });
+
+            if (!res.ok) return;
+            const data = await res.json();
+            const morningQ = data.content?.[0]?.text?.replace(/\*{1,3}/g, '').replace(/^["']|["']$/g, '').trim();
+            if (morningQ && morningQ.length > 10) {
+                localStorage.setItem('vu_morning', JSON.stringify({ date: today, prompt: morningQ }));
+                showMorningPrompt(output, morningQ, es);
+            }
+        } catch(e) {}
+    }
+
+    function showMorningPrompt(output, question, es) {
+        const el = document.createElement('div');
+        el.className = 'morning-prompt';
+        el.innerHTML = `<div class="morning-label">${es ? 'para hoy' : 'for today'}</div><div class="morning-question">${esc(question)}</div>`;
+        el.addEventListener('click', () => {
+            $('#input').value = question;
+            $('#input').focus();
+            el.style.opacity = '0.3';
+        });
+        output.appendChild(el);
     }
 
     // Rotating placeholder examples
