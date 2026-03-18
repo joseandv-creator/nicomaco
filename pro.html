@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nicómaco Pro</title>
+    <title>nicómaco · pro</title>
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #F5F0E8;
-            --surface: #FAF7F2;
-            --text: #4a3728;
-            --text-bright: #2c1810;
-            --cyan: #8B4513;
-            --border: #d4c5b0;
-            --comment: #9a8b7a;
-            --gold: #D4AF37;
-            --font-serif: 'Crimson Text', Georgia, serif;
+            --bg: #F8F5EF;
+            --text: #3d3529;
+            --text-bright: #1D1D1F;
+            --comment: #86868B;
+            --gold: #B8960C;
+            --border: rgba(184,150,12,0.15);
+            --font-serif: 'Cormorant Garamond', Georgia, serif;
             --font-sans: 'Inter', system-ui, sans-serif;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,152 +24,196 @@
             color: var(--text);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
+            padding: 40px 24px;
         }
         .container {
-            max-width: 480px;
+            max-width: 440px;
             width: 100%;
             text-align: center;
         }
-        .logo {
-            font-family: var(--font-sans);
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--cyan);
-            margin-bottom: 40px;
-        }
-        h1 {
-            font-size: 32px;
-            font-weight: 700;
+
+        /* header */
+        .header-name {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            font-weight: 400;
             color: var(--text-bright);
-            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+            margin-bottom: 48px;
         }
-        .subtitle {
-            font-size: 18px;
-            color: var(--comment);
+
+        /* main message */
+        .message {
+            font-size: 22px;
+            line-height: 1.6;
+            color: var(--text);
+            margin-bottom: 48px;
             font-style: italic;
-            margin-bottom: 40px;
         }
-        .price-card {
-            background: var(--surface);
-            border: 2px solid var(--gold);
-            border-radius: 12px;
-            padding: 32px 24px;
+
+        /* separator */
+        .sep {
+            width: 40px;
+            height: 1px;
+            background: var(--gold);
+            margin: 0 auto 48px;
+        }
+
+        /* what you get */
+        .detail {
+            font-family: var(--font-sans);
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--comment);
+            margin-bottom: 48px;
+            letter-spacing: 0.2px;
+        }
+        .detail span {
+            display: block;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* price */
+        .price-block {
             margin-bottom: 32px;
         }
         .price {
-            font-size: 48px;
-            font-weight: 700;
+            font-size: 42px;
+            font-weight: 300;
             color: var(--text-bright);
+            letter-spacing: -1px;
         }
-        .price-period {
-            font-size: 16px;
+        .price-currency {
+            font-size: 20px;
+            font-weight: 400;
             color: var(--comment);
         }
-        .features {
-            text-align: left;
-            margin: 24px 0;
-            list-style: none;
+        .price-period {
+            font-family: var(--font-sans);
+            font-size: 12px;
+            color: var(--comment);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 4px;
         }
-        .features li {
-            padding: 8px 0;
-            font-size: 16px;
-            color: var(--text);
-            border-bottom: 1px solid var(--border);
-        }
-        .features li:last-child { border: none; }
-        .features li::before {
-            content: ">";
-            color: var(--cyan);
-            font-weight: 600;
-            margin-right: 12px;
-        }
+
+        /* button */
         .btn-subscribe {
             display: block;
             width: 100%;
-            background: var(--cyan);
-            color: #fff;
+            max-width: 280px;
+            margin: 0 auto 24px;
+            background: var(--text-bright);
+            color: var(--bg);
             border: none;
-            border-radius: 8px;
-            padding: 16px;
+            border-radius: 40px;
+            padding: 16px 32px;
             font-family: var(--font-sans);
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
             cursor: pointer;
             transition: opacity 0.2s;
             text-decoration: none;
         }
-        .btn-subscribe:hover { opacity: 0.9; }
+        .btn-subscribe:hover { opacity: 0.85; }
+
         .note {
-            margin-top: 20px;
-            font-size: 13px;
-            color: var(--comment);
             font-family: var(--font-sans);
+            font-size: 11px;
+            color: var(--comment);
+            margin-bottom: 40px;
         }
+
+        /* back */
         .back {
-            display: inline-block;
-            margin-top: 32px;
-            color: var(--cyan);
-            text-decoration: none;
             font-family: var(--font-sans);
-            font-size: 14px;
-        }
-        .free-info {
-            margin-bottom: 32px;
-            padding: 16px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 14px;
+            font-size: 12px;
             color: var(--comment);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+        .back:hover { color: var(--text); }
+
+        /* footer sig */
+        .sig {
+            margin-top: 60px;
             font-family: var(--font-sans);
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--comment);
+        }
+
+        /* success state */
+        .success-msg {
+            font-size: 20px;
+            line-height: 1.6;
+            font-style: italic;
+            color: var(--text);
+            margin: 32px 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">NICOMACO</div>
-        <h1>Pro</h1>
-        <p class="subtitle">El modelo mas avanzado. Sin limites.</p>
+    <div class="container" id="main-content">
+        <div class="header-name">nicómaco</div>
 
-        <div class="free-info">
-            La version gratuita usa Claude Sonnet (3 consultas/dia).<br>
-            Pro usa <strong>Claude Opus</strong> — razonamiento mas profundo, sin limite.
+        <p class="message">
+            En tres consultas, el sistema te vio.<br>
+            Detecto el patron debajo de tus preguntas.<br>
+            Pro te deja seguir descubriendote.
+        </p>
+
+        <div class="sep"></div>
+
+        <div class="detail">
+            <span>razonamiento mas profundo</span>
+            el modelo mas avanzado de analisis filosofico
+            <br><br>
+            <span>sin limite de consultas</span>
+            usa nicomaco todas las veces que necesites
+            <br><br>
+            <span>tu patron evoluciona</span>
+            cada analisis alimenta el espejo — entre mas preguntas, mas te ve
         </div>
 
-        <div class="price-card">
-            <div class="price">$499 <span class="price-period">MXN/mes</span></div>
-            <ul class="features">
-                <li>Claude Opus — el modelo mas avanzado</li>
-                <li>Cadenas de razonamiento mas largas y profundas</li>
-                <li>Consultas ilimitadas</li>
-                <li>Analisis de URLs ilimitado</li>
-            </ul>
-            <a href="#" class="btn-subscribe" id="btn-checkout">suscribirme</a>
+        <div class="price-block">
+            <div class="price">499 <span class="price-currency">MXN</span></div>
+            <div class="price-period">al mes</div>
         </div>
 
-        <p class="note">Cancela cuando quieras. Sin compromisos.<br>Pago seguro via Stripe.</p>
+        <a href="#" class="btn-subscribe" id="btn-checkout">continuar</a>
 
-        <a href="/" class="back">volver a nicomaco</a>
+        <p class="note">cancela cuando quieras · pago seguro via stripe</p>
+
+        <a href="/" class="back">← nicómaco</a>
+
+        <div class="sig">Α  ΕΣΤΙΝ  Α</div>
     </div>
 
     <script>
-    // Check for success/cancel from Stripe redirect
     const params = new URLSearchParams(window.location.search);
     if (params.get('success') === 'true') {
-        document.querySelector('.container').innerHTML = `
-            <div class="logo">NICOMACO</div>
-            <h1>Bienvenido a Pro</h1>
-            <p class="subtitle">Tu suscripcion esta activa. Consultas ilimitadas.</p>
-            <p class="note" style="margin-top:24px">Recibiras un email de confirmacion de Stripe.<br>Ya puedes usar Nicomaco sin limites.</p>
-            <a href="/" class="back" style="margin-top:32px">ir a nicomaco</a>
+        document.getElementById('main-content').innerHTML = `
+            <div class="header-name">nicómaco</div>
+            <div class="sep" style="margin-top:0"></div>
+            <p class="success-msg">
+                Tu suscripcion esta activa.<br>
+                Consultas ilimitadas. Sin restricciones.<br>
+                El espejo esta listo.
+            </p>
+            <a href="/" class="btn-subscribe" style="margin-top:32px">ir a nicómaco</a>
+            <p class="note" style="margin-top:16px">recibiras un email de confirmacion de stripe</p>
+            <div class="sig">Α  ΕΣΤΙΝ  Α</div>
         `;
     } else if (params.get('canceled') === 'true') {
-        document.querySelector('.note').innerHTML = 'Pago cancelado. Puedes intentar de nuevo cuando quieras.';
+        document.querySelector('.note').textContent = 'pago cancelado · puedes intentar de nuevo cuando quieras';
     }
 
     document.getElementById('btn-checkout')?.addEventListener('click', async (e) => {
@@ -180,18 +222,21 @@
         btn.textContent = 'conectando...';
         btn.style.opacity = '0.6';
         try {
+            const headers = { 'Content-Type': 'application/json' };
+            const token = localStorage.getItem('vu_auth_token');
+            if (token) headers['Authorization'] = `Bearer ${token}`;
             const res = await fetch('https://nicomaco-api.joseandv.workers.dev/api/create-checkout', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
             });
             const data = await res.json();
             if (data.url) {
                 window.location.href = data.url;
             } else {
-                throw new Error(data.error || 'Error al crear sesion de pago');
+                throw new Error(data.error || 'error al crear sesion de pago');
             }
         } catch (err) {
-            btn.textContent = 'suscribirme';
+            btn.textContent = 'continuar';
             btn.style.opacity = '1';
             alert('Error: ' + err.message);
         }
