@@ -405,7 +405,7 @@
         /* -- design tab -- */
         .design-welcome {
             text-align: center;
-            padding: 60px 20px 40px;
+            padding: 20px 20px 40px;
             animation: blockFadeIn 0.8s ease-out;
         }
         .design-welcome-title {
@@ -442,7 +442,7 @@
         .design-start-btn:hover { opacity: 0.85; }
         .design-pro-gate {
             text-align: center;
-            padding: 60px 20px 40px;
+            padding: 20px 20px 40px;
         }
         .design-pro-gate p {
             font-family: var(--font-serif);
@@ -935,6 +935,7 @@
         .footer {
             border-top: 1px solid var(--border);
             padding: 20px 0;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
             margin-top: auto;
             display: flex;
             justify-content: center;
@@ -1166,7 +1167,7 @@
         }
 
         /* -- welcome -- */
-        .welcome-block { text-align: center; padding: 40px 20px 30px; }
+        .welcome-block { text-align: center; padding: 20px 20px 20px; }
         .welcome-line {
             font-family: var(--font-sans);
             font-size: 10px;
@@ -1181,10 +1182,10 @@
 
         /* -- responsive -- */
         @media (display-mode: standalone) {
-            #app { padding-top: calc(16px + env(safe-area-inset-top)) !important; }
+            /* safe area handled by header-zone */
         }
         @media (max-width: 600px) {
-            #app { padding: 16px 12px 0; padding-top: calc(16px + env(safe-area-inset-top)); }
+            #app { padding: 0 12px; }
             .gutter { display: none; }
             .header { flex-direction: column; gap: 8px; }
             .pillars { grid-template-columns: 1fr; }
