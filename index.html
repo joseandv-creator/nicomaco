@@ -63,9 +63,10 @@
             max-width: 680px;
             margin: 0 auto;
             padding: 0 28px;
-            min-height: 100vh;
+            height: 100%;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
         /* -- fixed header zone -- */
@@ -76,10 +77,18 @@
             padding-bottom: 4px;
             z-index: 100;
         }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        #app {
+            height: 100%;
+            overflow: hidden;
+        }
         #screen-main {
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 100%;
             overflow: hidden;
         }
         .tab-content {
