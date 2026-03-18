@@ -362,22 +362,61 @@
             background: var(--gold); color: #fff; border:none; border-radius:8px;
             padding: 10px 24px; font-family: var(--font-sans); font-size: 14px; cursor:pointer;
         }
-        .share-selection-btn {
-            position: absolute;
-            transform: translateX(-50%);
-            background: var(--gold);
-            color: #fff;
+        /* -- share feature -- */
+        .btn-share-trigger {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 14px;
+            color: var(--gold);
+            background: none;
             border: none;
-            border-radius: 6px;
-            padding: 6px 16px;
-            font-family: var(--font-sans);
-            font-size: 12px;
-            letter-spacing: 1px;
             cursor: pointer;
-            z-index: 999;
-            animation: fadeIn 0.2s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            padding: 4px 0;
+            opacity: 0.7;
+            transition: opacity 0.3s;
         }
+        .btn-share-trigger:hover { opacity: 1; }
+        .share-mode-hint {
+            font-family: var(--font-sans);
+            font-size: 11px;
+            color: var(--comment);
+            text-align: center;
+            padding: 8px 0;
+            letter-spacing: 1px;
+            animation: fadeIn 0.3s ease;
+        }
+        .share-mode .share-sentence {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+            padding: 2px 4px;
+            margin: -2px -4px;
+        }
+        .share-mode .share-sentence:hover {
+            background: rgba(184,150,12,0.08);
+        }
+        .share-mode .share-sentence.selected {
+            background: rgba(184,150,12,0.12);
+            border-left: 2px solid var(--gold);
+            padding-left: 8px;
+        }
+        /* theory share triggers */
+        .theory-share-trigger {
+            display: inline-block;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 12px;
+            color: var(--gold);
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            margin-left: 8px;
+        }
+        .motives-section p:hover .theory-share-trigger,
+        .theory-share-trigger:focus { opacity: 0.7; }
+        .theory-share-trigger:hover { opacity: 1; }
         .btn-send {
             background: transparent;
             color: var(--gold);
@@ -1632,7 +1671,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
         $$('.tab-content').forEach(tc => tc.style.display = 'none');
         $(`#tab-${name}`).style.display = name === 'tool' ? 'flex' : '';
-        if (name === 'knowledge') renderIntegrated();
+        if (name === 'knowledge') { renderIntegrated(); addTheoryShareTriggers(); }
     }
 
     function renderWelcome() {
@@ -1712,49 +1751,89 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     }
 
     // Share analysis as beautiful image — a statement of taste
-    // Selection-based share: user selects text, popup appears
-    document.addEventListener('mouseup', handleTextSelection);
-    document.addEventListener('touchend', handleTextSelection);
+    // Share feature: enter selection mode → tap sentence → generate image → native share
+    function enterShareMode(codeEl) {
+        if (codeEl.classList.contains('share-mode')) { exitShareMode(codeEl); return; }
 
-    function handleTextSelection() {
-        // Remove existing share popup
-        const old = document.querySelector('.share-selection-btn');
-        if (old) old.remove();
-
-        const sel = window.getSelection();
-        const text = sel?.toString().trim();
-        if (!text || text.length < 10) return;
-
-        // Only trigger inside analysis blocks (.code)
-        const node = sel.anchorNode;
-        if (!node) return;
-        const codeBlock = node.parentElement?.closest('.code-block');
-        if (!codeBlock) return;
-
-        const range = sel.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-
-        const btn = document.createElement('button');
-        btn.className = 'share-selection-btn';
-        btn.textContent = state.lang === 'es' ? 'compartir' : 'share';
-        btn.style.top = (rect.top + window.scrollY - 40) + 'px';
-        btn.style.left = (rect.left + rect.width / 2) + 'px';
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            btn.remove();
-            shareAsImage(text);
+        // Split analysis into sentences
+        const rawText = codeEl.textContent || '';
+        const sentences = rawText.split(/(?<=[.!?])\s+/).filter(s => {
+            const t = s.trim();
+            return t.length > 15 && !t.startsWith('//') && !t.startsWith('candidate') && !t.startsWith('CANDIDATE') && !t.startsWith('"');
         });
-        document.body.appendChild(btn);
 
-        // Remove on next click elsewhere
+        if (!sentences.length) return;
+
+        // Save original HTML
+        codeEl._originalHTML = codeEl.innerHTML;
+        codeEl.classList.add('share-mode');
+
+        // Add hint
+        const hint = document.createElement('div');
+        hint.className = 'share-mode-hint';
+        hint.textContent = state.lang === 'es' ? 'toca la frase que quieres compartir' : 'tap the sentence you want to share';
+        codeEl.parentElement.insertBefore(hint, codeEl);
+
+        // Wrap each sentence in a tappable span
+        let html = '';
+        sentences.forEach((s, i) => {
+            const clean = s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            html += `<span class="share-sentence" data-idx="${i}">${clean}</span> `;
+        });
+        codeEl.innerHTML = html;
+
+        // Add click handlers
+        codeEl.querySelectorAll('.share-sentence').forEach(el => {
+            el.addEventListener('click', () => {
+                const text = el.textContent.trim();
+                exitShareMode(codeEl);
+                generateShareImage(text);
+            });
+        });
+
+        // Exit on click outside
         setTimeout(() => {
-            document.addEventListener('mousedown', function rm(e) {
-                if (e.target !== btn) { btn.remove(); document.removeEventListener('mousedown', rm); }
+            document.addEventListener('click', function outsideClick(e) {
+                if (!codeEl.contains(e.target) && !e.target.classList.contains('btn-share-trigger')) {
+                    exitShareMode(codeEl);
+                    document.removeEventListener('click', outsideClick);
+                }
             });
         }, 100);
     }
 
-    window.shareAsImage = function shareAsImage(selectedText) {
+    function exitShareMode(codeEl) {
+        codeEl.classList.remove('share-mode');
+        if (codeEl._originalHTML) codeEl.innerHTML = codeEl._originalHTML;
+        const hint = codeEl.parentElement.querySelector('.share-mode-hint');
+        if (hint) hint.remove();
+    }
+
+    // Share from theory: direct with the paragraph text
+    function shareTheoryText(text) {
+        generateShareImage(text);
+    }
+
+    // Add share triggers to theory paragraphs
+    function addTheoryShareTriggers() {
+        const es = state.lang === 'es';
+        document.querySelectorAll('#knowledge-motives .motives-section p').forEach(p => {
+            if (p.querySelector('.theory-share-trigger')) return;
+            const text = p.textContent.trim();
+            if (text.length < 20) return;
+            const btn = document.createElement('button');
+            btn.className = 'theory-share-trigger';
+            btn.textContent = es ? 'compartir' : 'share';
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                shareTheoryText(text);
+            });
+            p.style.position = 'relative';
+            p.appendChild(btn);
+        });
+    }
+
+    window.shareAsImage = function generateShareImage(selectedText) {
         const canvas = document.createElement('canvas');
         const W = 1080, H = 1350;
         canvas.width = W; canvas.height = H;
@@ -1765,74 +1844,101 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         ctx.fillStyle = '#F8F5EF';
         ctx.fillRect(0, 0, W, H);
 
-        // Clean the selected text
-        const quote = selectedText.replace(/\*{1,3}/g, '').replace(/\n+/g, ' ').trim();
+        // Clean the selected text, add comillas
+        const raw = selectedText.replace(/\*{1,3}/g, '').replace(/\n+/g, ' ').trim();
+        const quote = '\u201C' + raw + '\u201D'; // "quote"
 
-        // Measure how tall the quote will be to center it vertically
+        // Measure quote height to center everything vertically
         ctx.font = '400 42px Georgia, serif';
-        const testY = wrapText(ctx, quote, mx, 0, W - mx*2, 58, true);
-        const quoteHeight = testY;
-        const brandHeight = 160;
-        const totalContent = quoteHeight + 80 + brandHeight;
-        const startY = Math.max(mx + 40, (H - totalContent) / 2);
+        const quoteHeight = wrapText(ctx, quote, mx, 0, W - mx*2, 58, true);
+        const brandHeight = 100;
+        const gap = 70;
+        const totalContent = quoteHeight + gap + brandHeight;
+        const startY = Math.max(160, (H - totalContent) / 2);
 
-        // Gold accent — thin line above quote
+        // Gold accent line above quote
         ctx.fillStyle = '#B8960C';
-        ctx.fillRect(mx, startY - 30, 40, 1.5);
+        ctx.fillRect(mx, startY - 40, 40, 1.5);
 
-        // Quote — centered vertically
+        // Quote with comillas
         ctx.fillStyle = '#1D1D1F';
         ctx.font = '400 42px Georgia, serif';
         const lastY = wrapText(ctx, quote, mx, startY, W - mx*2, 58);
 
-        // Brand block — right below quote
-        const brandY = lastY + 80;
+        // Brand — close below quote
+        const brandY = lastY + gap;
 
-        // Thin gold line
+        // Thin gold line full width
         ctx.fillStyle = '#B8960C';
         ctx.fillRect(mx, brandY, W - mx*2, 0.5);
 
-        // α ἐστιν α centered
-        ctx.fillStyle = '#B8960C';
-        ctx.font = '300 18px Inter, sans-serif';
+        // α ἐστιν α + nicomaco.org on same line, centered
         ctx.textAlign = 'center';
-        ctx.fillText('α  ἐστιν  α', W/2, brandY + 40);
 
-        // nicómaco
-        ctx.fillStyle = '#1D1D1F';
-        ctx.font = '500 24px Georgia, serif';
-        ctx.fillText('nicómaco', W/2, brandY + 80);
-
-        // nicomaco.org
-        ctx.fillStyle = '#86868B';
+        ctx.fillStyle = '#B8960C';
         ctx.font = '300 16px Inter, sans-serif';
-        ctx.fillText('nicomaco.org', W/2, brandY + 110);
+        ctx.fillText('α  ἐστιν  α', W/2, brandY + 36);
+
+        ctx.fillStyle = '#1D1D1F';
+        ctx.font = '400 18px Georgia, serif';
+        ctx.fillText('nicomaco.org', W/2, brandY + 66);
 
         ctx.textAlign = 'left';
 
-        // Show overlay
+        // Show overlay with preview
         const wrap = document.createElement('div');
         wrap.className = 'share-canvas-wrap';
         wrap.innerHTML = '<div class="share-canvas-actions"></div>';
         wrap.insertBefore(canvas, wrap.firstChild);
 
         const actions = wrap.querySelector('.share-canvas-actions');
+
+        // Native share button (works on iOS/Android)
+        const btnShare = document.createElement('button');
+        btnShare.textContent = state.lang === 'es' ? 'compartir' : 'share';
+        btnShare.addEventListener('click', async () => {
+            try {
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], 'nicomaco.png', { type: 'image/png' });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({ files: [file] });
+                    } else if (navigator.share) {
+                        await navigator.share({ title: 'nicómaco', text: raw, url: 'https://nicomaco.org' });
+                    } else {
+                        // Fallback: download
+                        const a = document.createElement('a');
+                        a.download = 'nicomaco.png';
+                        a.href = canvas.toDataURL('image/png');
+                        a.click();
+                    }
+                    wrap.remove();
+                }, 'image/png');
+            } catch(e) { if (e.name !== 'AbortError') wrap.remove(); }
+        });
+        actions.appendChild(btnShare);
+
+        // Save button
         const btnSave = document.createElement('button');
-        btnSave.textContent = state.lang === 'es' ? 'guardar imagen' : 'save image';
+        btnSave.textContent = state.lang === 'es' ? 'guardar' : 'save';
+        btnSave.style.background = 'transparent';
+        btnSave.style.color = '#1D1D1F';
+        btnSave.style.border = '1px solid #E0DCD4';
         btnSave.addEventListener('click', () => {
             const a = document.createElement('a');
-            a.download = 'nicomaco-analysis.png';
+            a.download = 'nicomaco.png';
             a.href = canvas.toDataURL('image/png');
             a.click();
             wrap.remove();
         });
         actions.appendChild(btnSave);
 
+        // Close
         const btnClose = document.createElement('button');
         btnClose.textContent = '✕';
         btnClose.style.background = 'transparent';
-        btnClose.style.color = '#1D1D1F';
-        btnClose.style.border = '1px solid #E0DCD4';
+        btnClose.style.color = '#86868B';
+        btnClose.style.border = 'none';
+        btnClose.style.fontSize = '18px';
         btnClose.addEventListener('click', () => wrap.remove());
         actions.appendChild(btnClose);
 
@@ -2155,18 +2261,11 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         });
         acts.appendChild(btnCp);
         const btnSh = document.createElement('button');
-        btnSh.className = 'btn btn-sm'; btnSh.textContent = t('share');
+        btnSh.className = 'btn-share-trigger';
+        btnSh.textContent = state.lang === 'es' ? 'compartir' : 'share';
         btnSh.addEventListener('click', () => {
-            const item = state.history.find(h => h.id === id);
-            if (item) {
-                if (navigator.share) {
-                    const text = `${item.candidate}\n\n${item.analysis}\n\n— nicomaco.org`;
-                    navigator.share({ title: 'Nicómaco', text }).catch(() => {});
-                } else {
-                    navigator.clipboard.writeText(`${item.candidate}\n\n${item.analysis}\n\n— nicomaco.org`);
-                    btnSh.textContent = t('copied'); setTimeout(() => btnSh.textContent = t('share'), 1500);
-                }
-            }
+            const codeEl = block.querySelector('.code');
+            if (codeEl) enterShareMode(codeEl);
         });
         acts.appendChild(btnSh);
         block.appendChild(acts);
