@@ -1963,19 +1963,41 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const words = text.split(' ');
         let line = '';
         let lines = 0;
+        const allLines = [];
         for (const word of words) {
             const test = line + word + ' ';
             if (ctx.measureText(test).width > maxW && line) {
-                if (!measureOnly) ctx.fillText(line.trim(), x, y);
+                allLines.push(line.trim());
                 line = word + ' ';
-                y += lineH;
-                lines++;
             } else {
                 line = test;
             }
         }
-        if (!measureOnly) ctx.fillText(line.trim(), x, y);
-        return measureOnly ? (lines + 1) * lineH : y;
+        allLines.push(line.trim()); // last line
+
+        if (!measureOnly) {
+            for (let i = 0; i < allLines.length; i++) {
+                const isLast = i === allLines.length - 1;
+                if (isLast || allLines[i].split(' ').length <= 1) {
+                    // Last line or single word: left-aligned
+                    ctx.fillText(allLines[i], x, y);
+                } else {
+                    // Justify: distribute extra space between words
+                    const lineWords = allLines[i].split(' ');
+                    const textWidth = ctx.measureText(allLines[i]).width;
+                    const totalSpaces = lineWords.length - 1;
+                    const extraSpace = (maxW - textWidth) / totalSpaces;
+                    let cx = x;
+                    for (let w = 0; w < lineWords.length; w++) {
+                        ctx.fillText(lineWords[w], cx, y);
+                        cx += ctx.measureText(lineWords[w]).width + ctx.measureText(' ').width + extraSpace;
+                    }
+                }
+                y += lineH;
+            }
+            return y - lineH; // return last line y
+        }
+        return allLines.length * lineH;
     }
 
     function handleKey(e) {
