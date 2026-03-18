@@ -1713,6 +1713,12 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
     const WORKER_URL = 'https://nicomaco-api.joseandv.workers.dev';
 
+    // Owner mode — activate via ?owner=aristotle
+    if (new URLSearchParams(window.location.search).get('owner') === 'aristotle') {
+        localStorage.setItem('vu_owner', 'true');
+        window.history.replaceState({}, '', window.location.pathname);
+    }
+
     // ── AUTH STATE ──
     let authToken = localStorage.getItem('vu_auth_token') || null;
     let authUser = null;
