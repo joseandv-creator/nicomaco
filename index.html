@@ -388,6 +388,45 @@
             margin-bottom: 8px;
         }
 
+        /* -- philosophical lenses -- */
+        .lens-wrap {
+            display: inline-flex;
+            gap: 12px;
+            margin-left: 12px;
+        }
+        .lens-btn {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 12px;
+            color: var(--comment);
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+        .lens-btn:hover { opacity: 1; color: var(--gold); }
+        .lens-response {
+            margin-top: 16px;
+            padding: 16px 20px;
+            border-left: 2px solid var(--comment);
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text);
+            animation: blockFadeIn 0.6s ease-out;
+        }
+        .lens-response-name {
+            font-family: var(--font-sans);
+            font-style: normal;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--comment);
+            margin-bottom: 8px;
+        }
+
         /* -- philosophical profile -- */
         .profile-block {
             margin-top: 32px;
@@ -2244,6 +2283,65 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
         }
     }
 
+    // ── Philosophical Lenses ──
+    async function generateLensResponse(block, lens, question, analysis) {
+        try {
+            const es = state.lang === 'es';
+            const name = es ? lens.label : lens.en;
+            const prompt = es
+                ? `Eres ${name}. Alguien te preguntó: "${question}". Un análisis filosófico ya respondió lo siguiente (no lo repitas, no lo critiques):
+
+"${analysis.substring(0, 500)}"
+
+Ahora responde TÚ como ${name}. Desde tu filosofía, tu época, tu forma de ver el mundo. Máximo 3-4 oraciones. Habla en primera persona. Sé fiel a tu pensamiento real — no una caricatura. Sin asteriscos.`
+                : `You are ${name}. Someone asked you: "${question}". A philosophical analysis already responded (don't repeat it, don't critique it):
+
+"${analysis.substring(0, 500)}"
+
+Now respond as ${name}. From your philosophy, your era, your worldview. Maximum 3-4 sentences. Speak in first person. Be faithful to your real thought — not a caricature. No asterisks.`;
+
+            const res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: prompt }],
+                    model: 'claude-sonnet-4-20250514'
+                }),
+            });
+
+            if (!res.ok) return;
+
+            let text = '';
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buf = '';
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buf += decoder.decode(value, { stream: true });
+                const lines = buf.split('\n');
+                buf = lines.pop() || '';
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    const json = line.slice(6).trim();
+                    if (!json || json === '[DONE]') continue;
+                    try {
+                        const evt = JSON.parse(json);
+                        if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') text += evt.delta.text;
+                    } catch {}
+                }
+            }
+
+            if (text.trim()) {
+                const el = document.createElement('div');
+                el.className = 'lens-response';
+                el.innerHTML = `<div class="lens-response-name">${name}</div>${text.replace(/\*{1,3}/g, '').trim()}`;
+                block.appendChild(el);
+                scrollToBottom();
+            }
+        } catch(e) {}
+    }
+
     // ── Contradiction Detector (triggered after analysis #5, checks against history) ──
     async function tryContradictionDetection(block, currentQuestion) {
         try {
@@ -2801,6 +2899,29 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
             generateShareImage(fullText, candidate);
         });
         acts.appendChild(btnSh);
+
+        // Philosophical lenses
+        const lensWrap = document.createElement('div');
+        lensWrap.className = 'lens-wrap';
+        const lenses = [
+            { id: 'aristotle', label: 'Aristóteles', en: 'Aristotle' },
+            { id: 'rand', label: 'Rand', en: 'Rand' },
+            { id: 'aurelius', label: 'Marco Aurelio', en: 'Marcus Aurelius' },
+        ];
+        for (const lens of lenses) {
+            const btn = document.createElement('button');
+            btn.className = 'lens-btn';
+            btn.textContent = state.lang === 'es' ? lens.label : lens.en;
+            btn.addEventListener('click', async () => {
+                if (btn.dataset.used) return;
+                btn.dataset.used = 'true';
+                btn.style.opacity = '0.4';
+                await generateLensResponse(block, lens, candidate, fullText);
+            });
+            lensWrap.appendChild(btn);
+        }
+        acts.appendChild(lensWrap);
+
         block.appendChild(acts);
 
         // Decision journal — "¿qué decidiste?"
