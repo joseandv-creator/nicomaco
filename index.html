@@ -1682,8 +1682,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const intro = document.createElement('div');
         intro.className = 'block welcome-block';
         let html = es
-            ? `<p class="welcome-line">α ἐστιν α · filosofia aplicada a la toma de decisiones</p>`
-            : `<p class="welcome-line">α ἐστιν α · applied philosophy for decision-making</p>`;
+            ? `<p class="welcome-line">α ἐστιν α</p><p class="welcome-line" style="margin-top:4px">filosofia aplicada a la toma de decisiones</p>`
+            : `<p class="welcome-line">α ἐστιν α</p><p class="welcome-line" style="margin-top:4px">applied philosophy for decision-making</p>`;
         if (count > 0) {
             html += es
                 ? `<p class="welcome-progress">${count} ${count === 1 ? 'idea analizada' : 'ideas analizadas'}</p>`
