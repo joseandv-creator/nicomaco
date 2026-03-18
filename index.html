@@ -2257,7 +2257,7 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
             playCompletionSound();
 
             // Pattern detection layer — every 10 analyses, separate call
-            if (state.history.length > 0 && state.history.length % 10 === 0) {
+            if (state.history.length === 3 || (state.history.length > 3 && state.history.length % 10 === 0)) {
                 tryPatternDetection(block);
             }
 
