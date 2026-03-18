@@ -1899,10 +1899,21 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         ctx.font = `400 16px ${sans}`;
         ctx.fillText('Α   Ε Σ Τ Ι Ν   Α', W/2, y + 44);
 
-        // nicomaco.org — beneath, same sans
+        // NICÓMACO as logo + .org normal
+        ctx.font = `500 22px ${serif}`;
+        const nw = ctx.measureText('NICÓMACO').width;
+        ctx.font = `300 14px ${sans}`;
+        const ow = ctx.measureText('.org').width;
+        const totalW = nw + ow + 1;
+        const startX = (W - totalW) / 2;
+
+        ctx.fillStyle = '#1D1D1F';
+        ctx.font = `500 22px ${serif}`;
+        ctx.fillText('NICÓMACO', startX, y + 72);
+
         ctx.fillStyle = '#86868B';
-        ctx.font = `400 13px ${sans}`;
-        ctx.fillText('nicomaco.org', W/2, y + 70);
+        ctx.font = `300 14px ${sans}`;
+        ctx.fillText('.org', startX + nw + 1, y + 72);
 
         ctx.textAlign = 'left';
 
