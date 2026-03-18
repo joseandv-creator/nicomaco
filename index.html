@@ -1276,9 +1276,14 @@
                         <span class="tab-teaser es-only">θεμέλια · fundamentos</span>
                     </button>
                     <button class="tab" data-tab="design">
-                        <span class="tab-name">diseño</span>
-                        <span class="tab-teaser en-only">εἶδος · self-design</span>
-                        <span class="tab-teaser es-only">εἶδος · diseño del yo</span>
+                        <span class="tab-name">arquitectura</span>
+                        <span class="tab-teaser en-only">ἀρχιτεκτονική · architecture</span>
+                        <span class="tab-teaser es-only">ἀρχιτεκτονική · arquitectura del yo</span>
+                    </button>
+                    <button class="tab" data-tab="log">
+                        <span class="tab-name">bitácora</span>
+                        <span class="tab-teaser en-only">ἡμερολόγιον · log</span>
+                        <span class="tab-teaser es-only">ἡμερολόγιον · bitácora</span>
                     </button>
                 </div>
             </div>
@@ -1533,6 +1538,11 @@
         <!-- ═══ DESIGN TAB ═══ -->
         <div id="tab-design" class="tab-content" style="display:none">
             <div id="design-container"></div>
+        </div>
+
+        <!-- ═══ LOG/BITÁCORA TAB ═══ -->
+        <div id="tab-log" class="tab-content" style="display:none">
+            <div id="log-container"></div>
         </div>
 
         <!-- input bar: outside tab-content, fixed at bottom -->
@@ -1870,7 +1880,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         $('#main-subtitle').textContent = t('subtitle');
         $$('[data-tab="tool"] .tab-name').forEach(el => el.textContent = t('tool'));
         $$('[data-tab="knowledge"] .tab-name').forEach(el => el.textContent = t('knowledge'));
-        $$('[data-tab="design"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'diseño' : 'design');
+        $$('[data-tab="design"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'arquitectura' : 'architecture');
+        $$('[data-tab="log"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'bitácora' : 'log');
         // Update knowledge sub-nav
         $$('.knowledge-btn[data-section="motives"]').forEach(el => el.textContent = t('motives'));
         $$('.knowledge-btn[data-section="hierarchy"]').forEach(el => el.textContent = t('hierarchy'));
@@ -2128,6 +2139,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         if (ib) ib.style.display = name === 'tool' ? '' : 'none';
         if (name === 'knowledge') { renderIntegrated(); addTheoryShareTriggers(); }
         if (name === 'design') { renderDesignTab(); }
+        if (name === 'log') { renderBitacora(); }
     }
 
     window.registerEmail = function() {
@@ -2801,16 +2813,143 @@ In ONE sentence: does this question move them closer or further from their desig
         const saved = JSON.parse(localStorage.getItem('vu_design') || 'null');
 
         if (saved && saved.portrait) {
+            // Check if 30-day review is due
+            const savedDate = new Date(saved.date || saved.createdAt || 0).getTime();
+            const daysSince = Math.round((Date.now() - savedDate) / (24*60*60*1000));
+            if (daysSince >= 30 && !saved.lastReview) {
+                saved.needsReview = true;
+            } else if (saved.lastReview) {
+                const reviewDays = Math.round((Date.now() - new Date(saved.lastReview).getTime()) / (24*60*60*1000));
+                if (reviewDays >= 30) saved.needsReview = true;
+            }
             renderPortrait(container, saved, es);
         } else {
             renderDesignWelcome(container, es);
         }
     }
 
+    function renderBitacora() {
+        const container = $('#log-container');
+        if (!container) return;
+        const es = state.lang === 'es';
+        const history = state.history;
+        const letters = JSON.parse(localStorage.getItem('vu_letters') || '[]');
+
+        let html = `<div style="padding:20px 16px;">`;
+
+        // ── PENDING DECISIONS ──
+        const pending = history.filter(h => h.decision && h.decisionDate && !h.decisionReview);
+        const now = Date.now();
+        const reviewable = pending.filter(h => {
+            const elapsed = now - new Date(h.decisionDate).getTime();
+            return elapsed > 30 * 24 * 60 * 60 * 1000; // 30 days
+        });
+
+        if (reviewable.length > 0) {
+            html += `<div style="margin-bottom:24px;padding:16px;border:1px solid var(--gold);border-radius:8px;background:rgba(212,175,55,0.05)">`;
+            html += `<p style="font-family:var(--font-sans);font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:12px">${es ? 'DECISIONES PENDIENTES DE REVISIÓN' : 'DECISIONS PENDING REVIEW'}</p>`;
+            for (const h of reviewable) {
+                const days = Math.round((now - new Date(h.decisionDate).getTime()) / (24*60*60*1000));
+                html += `<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">`;
+                html += `<p style="font-style:italic;color:var(--comment);font-size:13px">"${h.candidate}"</p>`;
+                html += `<p style="font-size:14px;margin-top:4px">${es ? 'decidiste' : 'you decided'}: "${h.decision}" <span style="color:var(--comment);font-size:12px">· ${es ? 'hace' : ''} ${days} ${es ? 'días' : 'days ago'}</span></p>`;
+                html += `<div style="margin-top:8px"><textarea id="review-${h.id}" rows="2" placeholder="${es ? '¿se cumplió? ¿qué cambió?' : 'did it work? what changed?'}" style="width:100%;font-family:var(--font-serif);font-size:14px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);resize:none"></textarea>`;
+                html += `<button onclick="saveDecisionReview('${h.id}')" style="margin-top:4px;font-family:var(--font-sans);font-size:11px;padding:6px 14px;background:var(--text);color:var(--bg);border:none;border-radius:4px;cursor:pointer;letter-spacing:1px">${es ? 'GUARDAR' : 'SAVE'}</button></div>`;
+                html += `</div>`;
+            }
+            html += `</div>`;
+        }
+
+        // ── LETTERS TO DELIVER ──
+        const deliverable = letters.filter(l => new Date(l.deliverDate).getTime() <= now && !l.delivered);
+        if (deliverable.length > 0) {
+            html += `<div style="margin-bottom:24px;padding:16px;border:1px solid var(--gold);border-radius:8px;background:rgba(212,175,55,0.05)">`;
+            html += `<p style="font-family:var(--font-sans);font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:12px">${es ? 'CARTA DE TU YO PASADO' : 'LETTER FROM YOUR PAST SELF'}</p>`;
+            for (const l of deliverable) {
+                const written = new Date(l.writtenDate).toLocaleDateString(es ? 'es-MX' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                html += `<p style="font-size:12px;color:var(--comment);margin-bottom:8px">${es ? 'escrita el' : 'written on'} ${written}</p>`;
+                html += `<p style="font-family:var(--font-serif);font-size:15px;font-style:italic;line-height:1.6">"${l.text}"</p>`;
+                l.delivered = true;
+            }
+            localStorage.setItem('vu_letters', JSON.stringify(letters));
+            html += `</div>`;
+        }
+
+        // ── CHRONOLOGICAL ENTRIES ──
+        if (history.length === 0) {
+            html += `<div style="text-align:center;padding:60px 20px">`;
+            html += `<p style="font-family:var(--font-serif);font-size:16px;color:var(--comment);font-style:italic">${es ? 'tu bitácora está vacía. cada análisis que hagas aparecerá aquí.' : 'your log is empty. every analysis you make will appear here.'}</p>`;
+            html += `</div>`;
+        } else {
+            // Group by date
+            const grouped = {};
+            for (const h of history) {
+                const date = new Date(h.date).toLocaleDateString(es ? 'es-MX' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                if (!grouped[date]) grouped[date] = [];
+                grouped[date].push(h);
+            }
+
+            for (const [date, items] of Object.entries(grouped)) {
+                html += `<div style="margin-bottom:28px">`;
+                html += `<p style="font-family:var(--font-sans);font-size:11px;letter-spacing:2px;color:var(--comment);margin-bottom:12px">${date.toUpperCase()}</p>`;
+                for (const h of items) {
+                    const q = h.candidate || '';
+                    const isURL = q.startsWith('[URL]');
+                    const display = isURL ? q.replace('[URL] ', '') : q;
+                    html += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">`;
+                    html += `<p style="font-family:var(--font-serif);font-size:15px;font-style:italic;cursor:pointer" onclick="loadFromBitacora('${h.id}')">"${display}"</p>`;
+                    if (h.decision) {
+                        html += `<p style="font-size:13px;margin-top:6px;color:var(--text)">→ ${es ? 'decidiste' : 'you decided'}: "${h.decision}"</p>`;
+                        if (h.decisionReview) {
+                            html += `<p style="font-size:12px;margin-top:4px;color:var(--comment)">→ ${es ? 'revisión' : 'review'}: "${h.decisionReview}"</p>`;
+                        }
+                    }
+                    html += `</div>`;
+                }
+                html += `</div>`;
+            }
+        }
+
+        // ── LAST PATTERN ──
+        const lastPattern = localStorage.getItem('vu_last_pattern');
+        if (lastPattern) {
+            html += `<div style="margin-top:16px;padding:16px;border:1px solid var(--border);border-radius:8px">`;
+            html += `<p style="font-family:var(--font-sans);font-size:11px;letter-spacing:2px;color:var(--comment);margin-bottom:8px">${es ? 'ÚLTIMO PATRÓN DETECTADO' : 'LAST PATTERN DETECTED'}</p>`;
+            html += `<p style="font-family:var(--font-serif);font-size:14px;line-height:1.6">${lastPattern}</p>`;
+            html += `</div>`;
+        }
+
+        html += `</div>`;
+        container.innerHTML = html;
+    }
+
+    window.saveDecisionReview = function(id) {
+        const textarea = $(`#review-${id}`);
+        if (!textarea || !textarea.value.trim()) return;
+        const item = state.history.find(h => h.id === id);
+        if (item) {
+            item.decisionReview = textarea.value.trim();
+            localStorage.setItem('vu_history', JSON.stringify(state.history));
+            renderBitacora();
+        }
+    };
+
+    window.loadFromBitacora = function(id) {
+        const item = state.history.find(h => h.id === id);
+        if (!item) return;
+        switchTab('tool');
+        const output = $('#output');
+        output.innerHTML = '';
+        const block = document.createElement('div');
+        block.className = 'block';
+        block.innerHTML = `<div class="user-bubble">${item.candidate}</div><div class="analysis-text">${highlightText(item.analysis || '')}</div>`;
+        output.appendChild(block);
+    };
+
     function renderDesignWelcome(container, es) {
         container.innerHTML = `
             <div class="design-welcome">
-                <div class="design-welcome-title">${es ? 'εἶδος · diseño del yo' : 'εἶδος · self-design'}</div>
+                <div class="design-welcome-title">${es ? 'ἀρχιτεκτονική · arquitectura del yo' : 'ἀρχιτεκτονική · architecture of the self'}</div>
                 <p class="design-welcome-msg">${es
                     ? 'La mayoría de las personas nunca se han sentado a diseñar deliberadamente quién quieren ser. Heredaron sus valores, sus metas, su identidad. Este es el momento donde te conviertes en arquitecto de ti mismo.'
                     : 'Most people have never sat down to deliberately design who they want to be. They inherited their values, their goals, their identity. This is the moment you become the architect of yourself.'
@@ -2953,7 +3092,7 @@ ${historyContext || 'No previous history'}`;
 
         container.innerHTML = `
             <div class="design-portrait">
-                <div class="design-portrait-label">${es ? 'tu diseño' : 'your design'}</div>
+                <div class="design-portrait-label">${es ? 'TU ARQUITECTURA' : 'YOUR ARCHITECTURE'}</div>
                 ${design.portrait}
                 <div class="design-meta">${es ? `creado hace ${daysAgo} días` : `created ${daysAgo} days ago`}${needsReview ? ` · <span style="color:var(--gold)">${es ? 'revisión sugerida' : 'review suggested'}</span>` : ''}</div>
                 <div class="design-actions">
