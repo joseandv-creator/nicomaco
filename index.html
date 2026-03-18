@@ -70,15 +70,26 @@
 
         /* -- fixed header zone -- */
         .header-zone {
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
             background: var(--bg);
             padding-top: max(12px, env(safe-area-inset-top));
             padding-bottom: 4px;
-            margin: 0 -28px;
             padding-left: 28px;
             padding-right: 28px;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+        .header-zone + .tab-content,
+        .header-zone ~ .tab-content,
+        .header-zone ~ div {
+            /* offset for fixed header */
+        }
+        #screen-main {
+            padding-top: calc(env(safe-area-inset-top) + 100px);
         }
 
         /* -- header -- */
