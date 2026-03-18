@@ -1389,9 +1389,9 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         // Main content tabs
         $$('[data-tab]').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
 
-        // Export/Import
-        $('#btn-export').addEventListener('click', exportHierarchy);
-        $('#btn-import').addEventListener('change', e => { if (e.target.files[0]) importHierarchy(e.target.files[0]); e.target.value = ''; });
+        // Export/Import (buttons removed from UI)
+        if ($('#btn-export')) $('#btn-export').addEventListener('click', exportHierarchy);
+        if ($('#btn-import')) $('#btn-import').addEventListener('change', e => { if (e.target.files[0]) importHierarchy(e.target.files[0]); e.target.value = ''; });
 
         // Input
         const input = $('#input');
