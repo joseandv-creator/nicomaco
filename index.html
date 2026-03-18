@@ -736,7 +736,7 @@
                 </div>
                 <div class="header-nav">
                     <a href="#" id="nav-borrador" style="display:none;color:var(--orange)">borrador <span id="draft-badge" style="font-size:0.7em"></span></a>
-                    <a href="#" id="nav-cfg">cfg</a>
+                    <a href="#" id="nav-cfg" style="display:none">cfg</a>
                     <a href="#" id="nav-lang" style="color:var(--comment);text-decoration:none;font-size:18px">🇪🇸</a>
                 </div>
             </div>
@@ -1309,6 +1309,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         // Navigation
         $('#nav-cfg').addEventListener('click', e => { e.preventDefault(); showScreen('config'); });
+        $('#main-title').addEventListener('click', e => { e.preventDefault(); showScreen('config'); });
+        $('#main-title').style.cursor = 'pointer';
         $('#nav-borrador').addEventListener('click', e => { e.preventDefault(); showScreen('main'); switchTab('tool'); renderDrafts(); });
         updateDraftBadge();
 
@@ -1443,11 +1445,11 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const intro = document.createElement('div');
         intro.className = 'block welcome-block';
         intro.innerHTML = es
-            ? `<div class="welcome-title">A es A</div>
+            ? `<div class="welcome-title">Α ἐστιν Α</div>
                <div class="welcome-body">
                    <p>Filosofia aplicada a la toma de decisiones.</p>
                </div>`
-            : `<div class="welcome-title">A is A</div>
+            : `<div class="welcome-title">Α ἐστιν Α</div>
                <div class="welcome-body">
                    <p>Applied philosophy for decision-making.</p>
                </div>`;
