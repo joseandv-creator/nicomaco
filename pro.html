@@ -171,36 +171,44 @@
 
     // i18n
     const txt = es ? {
-        msg: 'En tres consultas, el sistema te vio.<br>Detecto el patron debajo de tus preguntas.<br>Pro te deja seguir descubriendote.',
-        deep: 'razonamiento mas profundo',
-        deepSub: 'el modelo mas avanzado de analisis filosofico',
-        unlimited: 'sin limite de consultas',
-        unlimitedSub: 'usa nicomaco todas las veces que necesites',
-        pattern: 'tu patron evoluciona',
-        patternSub: 'cada analisis alimenta el espejo — entre mas preguntas, mas te ve',
+        msg: 'En tres consultas, el sistema te vio.<br>Pro te deja seguir viendote.',
+        f1title: 'diseña quien quieres ser',
+        f1sub: 'una conversacion guiada que construye tu retrato filosofico — y cada analisis futuro te dice si te acercas o te alejas de el',
+        f2title: 'el modelo mas profundo',
+        f2sub: 'Claude Opus analiza con cadenas de razonamiento mas largas, detecta matices que otros modelos no ven',
+        f3title: 'sin limites',
+        f3sub: 'consultas ilimitadas, lentes filosoficos, recomendaciones de lectura, cartas a tu yo futuro',
+        f4title: 'tu evolucion visible',
+        f4sub: 'sintesis semanal de tu pensamiento, detector de contradicciones, perfil filosofico que se actualiza contigo',
+        f5title: 'lo que no preguntas',
+        f5sub: 'el sistema detecta que dimensiones de tu vida evitas examinar — y te las nombra',
         period: 'al mes',
         btn: 'continuar',
         note: 'cancela cuando quieras · pago seguro via stripe',
         back: '← nicómaco',
         successTitle: 'tu suscripcion esta activa',
-        successMsg: 'Consultas ilimitadas. Sin restricciones.<br>El espejo esta listo.',
+        successMsg: 'El espejo esta listo.<br>El diseño te espera.',
         successBtn: 'ir a nicómaco',
         successNote: 'recibiras un email de confirmacion de stripe',
         canceled: 'pago cancelado · puedes intentar de nuevo cuando quieras',
     } : {
-        msg: 'In three queries, the system saw you.<br>It detected the pattern beneath your questions.<br>Pro lets you keep discovering yourself.',
-        deep: 'deeper reasoning',
-        deepSub: 'the most advanced philosophical analysis model',
-        unlimited: 'unlimited queries',
-        unlimitedSub: 'use nicomaco as many times as you need',
-        pattern: 'your pattern evolves',
-        patternSub: 'each analysis feeds the mirror — the more you ask, the more it sees',
+        msg: 'In three queries, the system saw you.<br>Pro lets you keep seeing yourself.',
+        f1title: 'design who you want to be',
+        f1sub: 'a guided conversation that builds your philosophical portrait — and every future analysis tells you if you are moving closer or further from it',
+        f2title: 'the deepest model',
+        f2sub: 'Claude Opus analyzes with longer reasoning chains, detects nuances other models miss',
+        f3title: 'no limits',
+        f3sub: 'unlimited queries, philosophical lenses, reading recommendations, letters to your future self',
+        f4title: 'your evolution, visible',
+        f4sub: 'weekly synthesis of your thinking, contradiction detector, philosophical profile that updates with you',
+        f5title: 'what you don\'t ask',
+        f5sub: 'the system detects which dimensions of your life you avoid examining — and names them',
         period: 'per month',
         btn: 'continue',
         note: 'cancel anytime · secure payment via stripe',
         back: '← nicómaco',
         successTitle: 'your subscription is active',
-        successMsg: 'Unlimited queries. No restrictions.<br>The mirror is ready.',
+        successMsg: 'The mirror is ready.<br>Your design awaits.',
         successBtn: 'go to nicómaco',
         successNote: 'you will receive a confirmation email from stripe',
         canceled: 'payment canceled · you can try again anytime',
@@ -227,9 +235,11 @@
     function render() {
         document.getElementById('msg-main').innerHTML = txt.msg;
         document.getElementById('detail-block').innerHTML = `
-            <span>${txt.deep}</span>${txt.deepSub}<br><br>
-            <span>${txt.unlimited}</span>${txt.unlimitedSub}<br><br>
-            <span>${txt.pattern}</span>${txt.patternSub}
+            <span>${txt.f1title}</span>${txt.f1sub}<br><br>
+            <span>${txt.f2title}</span>${txt.f2sub}<br><br>
+            <span>${txt.f3title}</span>${txt.f3sub}<br><br>
+            <span>${txt.f4title}</span>${txt.f4sub}<br><br>
+            <span>${txt.f5title}</span>${txt.f5sub}
         `;
         document.getElementById('price-period').textContent = txt.period;
         document.getElementById('btn-checkout').textContent = txt.btn;
