@@ -388,6 +388,138 @@
             margin-bottom: 8px;
         }
 
+        /* -- design tab -- */
+        .design-welcome {
+            text-align: center;
+            padding: 40px 20px;
+            animation: blockFadeIn 0.8s ease-out;
+        }
+        .design-welcome-title {
+            font-family: var(--font-sans);
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+        .design-welcome-msg {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 20px;
+            line-height: 1.6;
+            color: var(--text);
+            max-width: 400px;
+            margin: 0 auto 32px;
+        }
+        .design-start-btn {
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--bg);
+            background: var(--text-bright);
+            border: none;
+            border-radius: 40px;
+            padding: 14px 32px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .design-start-btn:hover { opacity: 0.85; }
+        .design-pro-gate {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .design-pro-gate p {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 18px;
+            color: var(--comment);
+            margin-bottom: 24px;
+        }
+        .design-conversation {
+            padding: 20px 0;
+        }
+        .design-q {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 18px;
+            line-height: 1.6;
+            color: var(--text);
+            margin-bottom: 16px;
+            animation: blockFadeIn 0.6s ease-out;
+        }
+        .design-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-serif);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text);
+            padding: 12px 0;
+            outline: none;
+            resize: none;
+            min-height: 60px;
+        }
+        .design-input:focus { border-color: var(--gold); }
+        .design-input::placeholder { color: var(--comment); opacity: 0.4; }
+        .design-next {
+            margin-top: 12px;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 13px;
+            color: var(--gold);
+            background: none;
+            border: none;
+            cursor: pointer;
+            float: right;
+        }
+        .design-portrait {
+            padding: 32px 24px;
+            border: 1px solid var(--gold);
+            border-radius: 4px;
+            background: rgba(184,150,12,0.02);
+            font-family: var(--font-serif);
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text);
+            animation: blockFadeIn 1s ease-out;
+        }
+        .design-portrait-label {
+            font-family: var(--font-sans);
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .design-meta {
+            margin-top: 20px;
+            font-family: var(--font-sans);
+            font-size: 11px;
+            color: var(--comment);
+            text-align: center;
+        }
+        .design-actions {
+            margin-top: 20px;
+            text-align: center;
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+        .design-actions button {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 13px;
+            color: var(--gold);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
         /* -- morning prompt -- */
         .morning-prompt {
             margin-top: 24px;
@@ -1115,6 +1247,11 @@
                     <span class="tab-teaser en-only">θεμέλια · foundations</span>
                     <span class="tab-teaser es-only">θεμέλια · fundamentos</span>
                 </button>
+                <button class="tab" data-tab="design">
+                    <span class="tab-name">diseño</span>
+                    <span class="tab-teaser en-only">εἶδος · self-design</span>
+                    <span class="tab-teaser es-only">εἶδος · diseño del yo</span>
+                </button>
             </div>
 
             <div id="tab-tool" class="tab-content">
@@ -1373,6 +1510,11 @@
 
 
             </div>
+        </div>
+
+        <!-- ═══ DESIGN TAB ═══ -->
+        <div id="tab-design" class="tab-content" style="display:none">
+            <div id="design-container"></div>
         </div>
 
         <!-- footer -->
@@ -1689,6 +1831,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         $('#main-subtitle').textContent = t('subtitle');
         $$('[data-tab="tool"] .tab-name').forEach(el => el.textContent = t('tool'));
         $$('[data-tab="knowledge"] .tab-name').forEach(el => el.textContent = t('knowledge'));
+        $$('[data-tab="design"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'diseño' : 'design');
         // Update knowledge sub-nav
         $$('.knowledge-btn[data-section="motives"]').forEach(el => el.textContent = t('motives'));
         $$('.knowledge-btn[data-section="hierarchy"]').forEach(el => el.textContent = t('hierarchy'));
@@ -1943,6 +2086,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         $$('.tab-content').forEach(tc => tc.style.display = 'none');
         $(`#tab-${name}`).style.display = name === 'tool' ? 'flex' : '';
         if (name === 'knowledge') { renderIntegrated(); addTheoryShareTriggers(); }
+        if (name === 'design') { renderDesignTab(); }
     }
 
     function renderWelcome() {
@@ -2501,6 +2645,209 @@ Now respond as ${name}. From your philosophy, your era, your worldview. Maximum 
                 scrollToBottom();
             }
         } catch(e) {}
+    }
+
+    // ── Design of Self ──
+    const DESIGN_QUESTIONS = {
+        es: [
+            '¿Qué quieres que sea verdad sobre tu vida dentro de 5 años — no qué quieres tener, sino qué quieres que sea verdad?',
+            '¿Qué estás dispuesto a pagar por eso — en tiempo, en comodidad, en relaciones, en seguridad?',
+            '¿Qué no negociarias por ningún precio — qué límite define tu territorio?',
+            '¿Qué haces hoy que aleja esa versión de ti? Sé específico.',
+            '¿Qué harías diferente si supieras que nadie te está mirando — ni juzgando, ni aplaudiendo?',
+            '¿Cuál es la mentira más cómoda que te cuentas a ti mismo sobre por qué no has empezado?',
+            'Si la versión de ti que diseñaste pudiera verte ahora mismo — ¿qué te diría?',
+        ],
+        en: [
+            'What do you want to be true about your life in 5 years — not what you want to have, but what you want to be true?',
+            'What are you willing to pay for that — in time, comfort, relationships, security?',
+            'What would you not negotiate at any price — what limit defines your territory?',
+            'What are you doing today that pushes that version of you further away? Be specific.',
+            'What would you do differently if you knew no one was watching — neither judging nor applauding?',
+            'What is the most comfortable lie you tell yourself about why you haven\'t started?',
+            'If the version of yourself you designed could see you right now — what would they tell you?',
+        ]
+    };
+
+    function renderDesignTab() {
+        const container = $('#design-container');
+        if (!container) return;
+        const es = state.lang === 'es';
+
+        // Check if Pro (for now, allow all — gate later)
+        const isPro = !!authToken || true; // TODO: gate with real Pro check
+
+        // Load existing portrait
+        const saved = JSON.parse(localStorage.getItem('vu_design') || 'null');
+
+        if (saved && saved.portrait) {
+            renderPortrait(container, saved, es);
+        } else {
+            renderDesignWelcome(container, es);
+        }
+    }
+
+    function renderDesignWelcome(container, es) {
+        container.innerHTML = `
+            <div class="design-welcome">
+                <div class="design-welcome-title">${es ? 'εἶδος · diseño del yo' : 'εἶδος · self-design'}</div>
+                <p class="design-welcome-msg">${es
+                    ? 'La mayoría de las personas nunca se han sentado a diseñar deliberadamente quién quieren ser. Heredaron sus valores, sus metas, su identidad. Este es el momento donde te conviertes en arquitecto de ti mismo.'
+                    : 'Most people have never sat down to deliberately design who they want to be. They inherited their values, their goals, their identity. This is the moment you become the architect of yourself.'
+                }</p>
+                <button class="design-start-btn" id="design-start">${es ? 'comenzar' : 'begin'}</button>
+            </div>
+        `;
+        $('#design-start').addEventListener('click', () => startDesignConversation(container, es));
+    }
+
+    function startDesignConversation(container, es) {
+        const questions = DESIGN_QUESTIONS[es ? 'es' : 'en'];
+        const answers = [];
+        let currentQ = 0;
+
+        container.innerHTML = '<div class="design-conversation" id="design-convo"></div>';
+        const convo = $('#design-convo');
+
+        function showQuestion(idx) {
+            if (idx >= questions.length) {
+                synthesizePortrait(container, questions, answers, es);
+                return;
+            }
+
+            const qEl = document.createElement('div');
+            qEl.className = 'design-q';
+            qEl.textContent = questions[idx];
+            convo.appendChild(qEl);
+
+            const textarea = document.createElement('textarea');
+            textarea.className = 'design-input';
+            textarea.placeholder = es ? 'escribe aquí...' : 'write here...';
+            convo.appendChild(textarea);
+
+            const btn = document.createElement('button');
+            btn.className = 'design-next';
+            btn.textContent = idx < questions.length - 1
+                ? (es ? 'siguiente →' : 'next →')
+                : (es ? 'generar retrato →' : 'generate portrait →');
+            btn.addEventListener('click', () => {
+                const val = textarea.value.trim();
+                if (!val) return;
+                answers.push(val);
+                textarea.disabled = true;
+                textarea.style.opacity = '0.5';
+                btn.remove();
+                currentQ++;
+                showQuestion(currentQ);
+            });
+            convo.appendChild(btn);
+
+            textarea.focus();
+            textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        showQuestion(0);
+    }
+
+    async function synthesizePortrait(container, questions, answers, es) {
+        const convo = $('#design-convo');
+        convo.innerHTML = `<div class="design-q" style="text-align:center;color:var(--gold)">${es ? 'sintetizando tu retrato...' : 'synthesizing your portrait...'}</div>`;
+
+        const pairs = questions.map((q, i) => `P: ${q}\nR: ${answers[i]}`).join('\n\n');
+
+        // Also include analysis history for context
+        const historyContext = state.history.slice(0, 10).map(h => h.candidate).filter(c => c && !c.startsWith('[URL]')).join('; ');
+
+        const prompt = es
+            ? `Abajo están las respuestas de una persona a 7 preguntas de diseño personal. También tienes contexto de sus análisis previos.
+
+Tu trabajo: sintetizar un RETRATO DEL YO DISEÑADO. No un resumen de sus respuestas — una síntesis que les muestre quiénes están eligiendo ser, con una claridad que ellos mismos no podrían alcanzar solos.
+
+El retrato debe cubrir (como prosa fluida, sin etiquetas):
+- Lo que realmente valoran (no lo que dicen — lo que sus respuestas revelan)
+- Lo que quieren crear y por qué
+- El precio que están dispuestos a pagar y el que no
+- La brecha entre quién son ahora y quién diseñaron — nombrada con precisión
+- La primera acción concreta que cierra esa brecha
+
+Escribe como quien conoce a esta persona profundamente. 6-10 oraciones. Sin asteriscos. Sin halagar. Sin suavizar. El retrato debe ser tan preciso que al leerlo digan: "sí, eso es lo que quiero ser."
+
+Respuestas:
+${pairs}
+
+Contexto (preguntas previas al sistema):
+${historyContext || 'Sin historial previo'}`
+
+            : `Below are a person's answers to 7 self-design questions. You also have context from their previous analyses.
+
+Your job: synthesize a PORTRAIT OF THE DESIGNED SELF. Not a summary of their answers — a synthesis that shows them who they are choosing to be, with a clarity they couldn't reach alone.
+
+The portrait must cover (as flowing prose, no labels):
+- What they truly value (not what they say — what their answers reveal)
+- What they want to create and why
+- The price they're willing to pay and the one they won't
+- The gap between who they are now and who they designed — named with precision
+- The first concrete action that closes that gap
+
+Write as someone who knows this person deeply. 6-10 sentences. No asterisks. No flattery. No softening. The portrait should be so precise that reading it they say: "yes, that is who I want to be."
+
+Answers:
+${pairs}
+
+Context (previous system questions):
+${historyContext || 'No previous history'}`;
+
+        try {
+            const res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: prompt }],
+                    model: 'claude-sonnet-4-20250514',
+                    stream: false
+                }),
+            });
+
+            if (!res.ok) throw new Error('Failed');
+            const data = await res.json();
+            const portrait = data.content?.[0]?.text?.replace(/\*{1,3}/g, '').trim();
+
+            if (portrait) {
+                const design = {
+                    portrait,
+                    answers,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                };
+                localStorage.setItem('vu_design', JSON.stringify(design));
+                renderPortrait(container, design, es);
+            }
+        } catch(e) {
+            convo.innerHTML = `<div class="design-q" style="color:var(--comment)">${es ? 'Error al generar el retrato. Intenta de nuevo.' : 'Error generating portrait. Try again.'}</div>`;
+        }
+    }
+
+    function renderPortrait(container, design, es) {
+        const daysAgo = Math.floor((Date.now() - new Date(design.createdAt).getTime()) / (1000*60*60*24));
+        const needsReview = daysAgo >= 30;
+
+        container.innerHTML = `
+            <div class="design-portrait">
+                <div class="design-portrait-label">${es ? 'tu diseño' : 'your design'}</div>
+                ${design.portrait}
+                <div class="design-meta">${es ? `creado hace ${daysAgo} días` : `created ${daysAgo} days ago`}${needsReview ? ` · <span style="color:var(--gold)">${es ? 'revisión sugerida' : 'review suggested'}</span>` : ''}</div>
+                <div class="design-actions">
+                    <button id="design-share">${es ? 'compartir' : 'share'}</button>
+                    <button id="design-redo">${es ? 'rediseñar' : 'redesign'}</button>
+                </div>
+            </div>
+        `;
+
+        $('#design-share')?.addEventListener('click', () => generateShareImage(design.portrait));
+        $('#design-redo')?.addEventListener('click', () => {
+            localStorage.removeItem('vu_design');
+            renderDesignWelcome(container, es);
+        });
     }
 
     // ── Letter to Future Self ──
