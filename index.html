@@ -2481,8 +2481,7 @@ ${last10.map((q, i) => `${i+1}. "${q}"`).join('\n')}`;
         btnSh.className = 'btn-share-trigger';
         btnSh.textContent = state.lang === 'es' ? 'compartir' : 'share';
         btnSh.addEventListener('click', () => {
-            const item = state.history.find(h => h.id === id);
-            if (item) generateShareImage(item.analysis);
+            generateShareImage(fullText);
         });
         acts.appendChild(btnSh);
         block.appendChild(acts);
