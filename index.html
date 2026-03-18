@@ -77,7 +77,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        .header-left {}
+        .header-left { text-align: left; }
         .header-title {
             color: var(--text-bright);
             font-family: var(--font-serif);
@@ -85,8 +85,8 @@
             font-weight: 700;
             letter-spacing: 0.5px;
         }
-        .header-by { color: var(--comment); font-family: var(--font-sans); font-size: 11px; font-weight: 400; letter-spacing: 0.5px; margin-top: 2px; }
-        .header-sub { color: var(--comment); font-family: var(--font-sans); font-size: 12px; font-weight: 400; letter-spacing: 0.3px; margin-top: 2px; }
+        .header-by { color: var(--comment); font-family: var(--font-sans); font-size: 11px; font-weight: 400; letter-spacing: 0.5px; margin-top: 1px; }
+        .header-sub { display: none; }
         .header-nav {
             display: flex;
             gap: 16px;
@@ -643,12 +643,13 @@
         .welcome-block { text-align: center; padding: 80px 20px 60px; }
         .welcome-title {
             font-family: var(--font-serif);
-            font-size: 48px;
-            font-weight: 700;
+            font-size: 44px;
+            font-weight: 400;
+            font-style: italic;
             color: var(--text-bright);
-            margin-bottom: 20px;
-            letter-spacing: -0.5px;
-            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: 2px;
+            line-height: 1.2;
         }
         .welcome-body p {
             font-family: var(--font-sans);
@@ -714,12 +715,9 @@
                         <option value="claude-3-5-haiku-20241022">claude-3.5-haiku</option>
                     </select>
                 </div>
-                <div class="s-cmt" style="margin-top:20px;margin-bottom:8px">API key (required)</div>
-                <div class="cfg-line">
-                    <label>api_key:</label>
-                    <input type="password" id="cfg-key" placeholder="sk-ant-..." />
+                <div style="display:none">
+                    <input type="hidden" id="cfg-key" value="" />
                 </div>
-                <div class="s-cmt" style="font-size:11px">Stored locally, never transmitted to third parties. Get yours at console.anthropic.com</div>
                 <div style="margin-top:16px">
                     <button class="btn" id="cfg-save">save</button>
                 </div>
@@ -1614,9 +1612,9 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
                 codeEl.innerHTML += `\n\n<span class="s-cmt">// analysis cancelled</span>`;
             } else {
                 let errorMsg = esc(err.message);
-                let hint = '<span class="s-cmt">// check api_key in configuration</span>';
+                let hint = '';
                 if (err.message.includes('consultas') || err.message.includes('Daily limit')) {
-                    hint = `<span class="s-cmt">// agrega tu API key en cfg para uso ilimitado</span>`;
+                    hint = `<span class="s-cmt">// <a href="/pro.html" style="color:var(--gold)">nicomaco pro</a> — consultas ilimitadas con el modelo mas avanzado</span>`;
                 } else if (err.message.includes('credit balance') || err.message.includes('balance is too low')) {
                     hint = `<span class="s-warn">// try switching to a different model in cfg</span>\n<span class="s-cmt">// current: ${esc(state.model)}</span>`;
                 } else if (err.message.includes('Could not resolve') || err.message.includes('not found')) {
@@ -1692,7 +1690,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         // All traffic goes through Worker (system prompt is server-side)
         const payload = { model: state.model, messages, max_tokens: 4096, stream: true };
-        if (state.apiKey) payload.userApiKey = state.apiKey.replace(/[^\x20-\x7E]/g, '');
         res = await fetch(`${WORKER_URL}/api/analyze`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
