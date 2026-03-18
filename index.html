@@ -71,22 +71,25 @@
 
         /* -- header -- */
         .header {
-            margin-bottom: 32px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
             text-align: center;
-            position: relative;
         }
         .header-left { }
         .header-title {
             color: var(--text-bright);
             font-family: var(--font-serif);
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 600;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
-        .header-by { color: var(--comment); font-family: var(--font-sans); font-size: 11px; font-weight: 400; letter-spacing: 0.5px; margin: -2px auto 0; display: flex; justify-content: space-between; align-items: center; width: 130px; }
+        .header-by { color: var(--comment); font-family: var(--font-sans); font-size: 11px; font-weight: 400; letter-spacing: 0.3px; margin: 4px 0 0; }
+        .header-by a { text-decoration: none; margin-left: 6px; }
         .header-sub { display: none; }
         .header-nav {
             margin-top: 6px;
@@ -150,58 +153,51 @@
         .tabs {
             display: flex;
             gap: 0;
-            margin-bottom: 32px;
-            border-bottom: 1px solid var(--border);
+            margin: 20px 0 0;
         }
         .tab {
             flex: 1;
             background: none;
             border: none;
-            border-bottom: 2px solid transparent;
             color: var(--comment);
             font-family: var(--font-sans);
             cursor: pointer;
-            padding: 12px 16px 14px;
+            padding: 10px 8px 12px;
             transition: all 0.3s ease;
             text-align: center;
             position: relative;
         }
-        .tab .tab-symbol {
-            display: none;
-        }
+        .tab .tab-symbol { display: none; }
         .tab .tab-name {
             display: block;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 500;
-            letter-spacing: 0.8px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
             transition: color 0.3s;
         }
         .tab .tab-teaser {
             display: block;
-            font-size: 11px;
-            font-family: var(--font-sans);
+            font-size: 10px;
+            font-family: var(--font-serif);
             color: var(--comment);
-            margin-top: 4px;
-            opacity: 0.6;
+            margin-top: 3px;
+            opacity: 0.5;
+            font-style: italic;
             transition: opacity 0.3s;
         }
         .tab:hover .tab-name { color: var(--text-bright); }
-        .tab.active {
-            border-bottom-color: transparent;
-        }
         .tab.active::after {
             content: '';
             position: absolute;
-            bottom: -2px;
-            left: 25%;
-            right: 25%;
-            height: 2px;
+            bottom: 0;
+            left: 30%;
+            right: 30%;
+            height: 1.5px;
             background: var(--gold);
-            border-radius: 1px;
         }
         .tab.active .tab-name { color: var(--text-bright); font-weight: 600; }
-        .tab.active .tab-teaser { opacity: 1; }
+        .tab.active .tab-teaser { opacity: 0.8; }
 
         /* -- output -- */
         #output {
@@ -312,16 +308,16 @@
         .input-row {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             background: #FFFFFF;
-            border: none;
-            border-radius: 28px;
-            padding: 10px 10px 10px 24px;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
-            transition: box-shadow 0.3s ease;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 8px 8px 8px 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .input-row:focus-within {
-            box-shadow: 0 2px 16px rgba(0,0,0,0.1), 0 0 0 1px var(--gold);
+            border-color: var(--comment);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
         .input-chevron {
             display: none;
@@ -350,13 +346,13 @@
             background: var(--text-bright);
             color: #fff;
             border: none;
-            border-radius: 20px;
-            width: 40px;
-            height: 40px;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 15px;
             cursor: pointer;
             flex-shrink: 0;
             transition: all 0.3s ease;
@@ -404,20 +400,19 @@
         .history-toggle {
             background: none;
             border: none;
-            color: var(--comment);
-            font-size: 18px;
+            color: var(--border);
+            font-size: 14px;
             cursor: pointer;
-            padding: 0 4px;
+            padding: 0;
             transition: color 0.3s;
             flex-shrink: 0;
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
         }
-        .history-toggle:hover { color: var(--text-bright); background: var(--surface); }
+        .history-toggle:hover { color: var(--text-bright); }
         #history-panel {
             display: none;
             position: fixed;
@@ -765,7 +760,7 @@
         }
 
         /* -- welcome -- */
-        .welcome-block { text-align: center; padding: 80px 20px 60px; }
+        .welcome-block { text-align: center; padding: 40px 20px 30px; }
         .welcome-title {
             font-family: var(--font-serif);
             font-size: 56px;
@@ -859,8 +854,8 @@
         <div id="screen-main" class="screen">
             <div class="header">
                 <div class="header-left">
-                    <div class="header-title" id="main-title"><img src="icon-header.png" alt="" style="width:22px;height:22px;border-radius:4px;vertical-align:middle;margin-right:6px;position:relative;top:-1px">nicómaco</div>
-                    <div class="header-by"><span>by josean</span><a href="#" id="nav-lang" style="color:var(--comment);text-decoration:none;font-size:14px">🇪🇸</a></div>
+                    <div class="header-title" id="main-title"><img src="icon-header.png" alt="" style="width:24px;height:24px;border-radius:5px">nicómaco</div>
+                    <div class="header-by">by josean · <a href="#" id="nav-lang">🇪🇸</a></div>
                     <div class="header-sub" id="main-subtitle">filosofia aplicada a la toma de decisiones</div>
                 </div>
                 <div class="header-nav" style="display:none">
