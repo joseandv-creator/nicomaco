@@ -21,21 +21,22 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --bg: #faf7f2;
-            --surface: #f2ede5;
-            --elevated: #ece6db;
-            --border: #d4cbbf;
-            --text: #2c2c2c;
-            --text-bright: #1a1a1a;
-            --text-dim: #5a5347;
-            --comment: #7a6f63;
+            --bg: #FDFCFA;
+            --surface: #F5F2EC;
+            --elevated: #EDEAE3;
+            --border: #E0DCD4;
+            --text: #1D1D1F;
+            --text-bright: #000000;
+            --text-dim: #6E6E73;
+            --comment: #86868B;
             --blue: #1a5276;
             --green: #2e7d32;
             --purple: #6a1b9a;
             --yellow: #9e7c0c;
             --red: #b71c1c;
-            --cyan: #8b4513;
+            --cyan: #6B4C35;
             --orange: #bf6c00;
+            --gold: #B8960C;
             --font-serif: 'Crimson Text', 'Georgia', 'Times New Roman', serif;
             --font-sans: 'Inter', -apple-system, 'Segoe UI', sans-serif;
             --font-mono: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
@@ -50,17 +51,18 @@
             font-size: 17px;
             line-height: 1.8;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--comment); }
 
         #app {
-            max-width: 720px;
+            max-width: 680px;
             margin: 0 auto;
-            padding: 40px 24px 0;
+            padding: 48px 28px 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -68,38 +70,37 @@
 
         /* -- header -- */
         .header {
-            margin-bottom: 20px;
-            padding-bottom: 12px;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
         }
         .header-left {}
         .header-title {
-            color: var(--cyan);
-            font-family: var(--font-sans);
-            font-size: 15px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            color: var(--text-bright);
+            font-family: var(--font-serif);
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
-        .header-sub { color: var(--comment); font-family: var(--font-serif); font-size: 14px; font-style: italic; }
+        .header-sub { color: var(--comment); font-family: var(--font-sans); font-size: 12px; font-weight: 400; letter-spacing: 0.3px; margin-top: 2px; }
         .header-nav {
             display: flex;
-            gap: 14px;
+            gap: 16px;
             align-items: center;
         }
         .header-nav a {
             color: var(--comment);
             text-decoration: none;
             font-family: var(--font-sans);
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
-            letter-spacing: 0.5px;
-            transition: color 0.2s;
+            letter-spacing: 0.3px;
+            transition: color 0.3s ease;
         }
-        .header-nav a:hover { color: var(--cyan); }
+        .header-nav a:hover { color: var(--text-bright); }
 
         /* -- config -- */
         .screen { display: none; flex-direction: column; flex: 1; }
@@ -144,70 +145,49 @@
         /* -- tabs -- */
         .tabs {
             display: flex;
-            gap: 16px;
-            margin-bottom: 20px;
+            gap: 0;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border);
         }
         .tab {
             flex: 1;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
             color: var(--comment);
-            font-family: var(--font-serif);
+            font-family: var(--font-sans);
             cursor: pointer;
-            padding: 18px 16px 14px;
+            padding: 12px 16px 14px;
             transition: all 0.3s ease;
             text-align: center;
             position: relative;
         }
         .tab .tab-symbol {
-            display: block;
-            font-size: 26px;
-            line-height: 1;
-            margin-bottom: 8px;
-            color: var(--comment);
-            transition: color 0.3s;
+            display: none;
         }
         .tab .tab-name {
             display: block;
-            font-size: 17px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
             transition: color 0.3s;
         }
         .tab .tab-teaser {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             font-family: var(--font-sans);
             color: var(--comment);
-            font-style: italic;
-            opacity: 0.7;
+            margin-top: 4px;
+            opacity: 0.6;
             transition: opacity 0.3s;
         }
-        .tab:hover {
-            border-color: rgba(139,69,19,0.4);
-            background: var(--surface);
-        }
         .tab:hover .tab-name { color: var(--text-bright); }
-        .tab:hover .tab-symbol { color: var(--cyan); }
         .tab.active {
-            border-color: var(--cyan);
-            background: var(--surface);
-            box-shadow: 0 0 12px rgba(139,69,19,0.08);
+            border-bottom-color: var(--gold);
         }
-        .tab.active .tab-symbol { color: var(--cyan); }
-        .tab.active .tab-name { color: var(--cyan); }
+        .tab.active .tab-name { color: var(--text-bright); font-weight: 600; }
         .tab.active .tab-teaser { opacity: 1; }
-
-        /* Golden pulse on teoria when inactive */
-        .tab[data-tab="knowledge"]:not(.active) {
-            animation: teoria-pulse 3s ease-in-out infinite;
-        }
-        @keyframes teoria-pulse {
-            0%, 100% { border-color: var(--border); }
-            50% { border-color: rgba(212,175,55,0.5); box-shadow: 0 0 8px rgba(212,175,55,0.1); }
-        }
 
         /* -- output -- */
         #output {
@@ -253,15 +233,16 @@
         .s-orange { color: var(--orange); }
         .s-bright { color: var(--text-bright); }
         .user-bubble {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 14px 18px;
-            margin-bottom: 20px;
+            background: var(--text-bright);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 16px;
+            padding: 14px 20px;
+            margin-bottom: 24px;
             font-family: var(--font-sans);
             font-size: 15px;
-            color: var(--text-bright);
             line-height: 1.5;
+            margin-left: 20%;
         }
         .s-blue { color: var(--blue); }
         .s-yellow { color: var(--yellow); }
@@ -306,24 +287,28 @@
 
         /* -- input -- */
         #input-bar {
-            padding: 16px 0 16px;
+            padding: 20px 0;
             flex-shrink: 0;
             position: sticky;
             bottom: 0;
-            background: var(--bg);
+            background: linear-gradient(to bottom, transparent, var(--bg) 20%);
             z-index: 5;
+            padding-top: 32px;
         }
         .input-row {
             display: flex;
             align-items: flex-end;
-            gap: 8px;
-            background: var(--surface);
+            gap: 10px;
+            background: #FFFFFF;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px 12px 12px 16px;
+            border-radius: 14px;
+            padding: 14px 14px 14px 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
         }
         .input-row:focus-within {
-            border-color: var(--cyan);
+            border-color: var(--gold);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
         .input-chevron {
             display: none;
@@ -349,19 +334,21 @@
         }
         #input::placeholder { color: var(--comment); }
         .btn-send {
-            background: var(--cyan);
+            background: var(--text-bright);
             color: #fff;
             border: none;
-            border-radius: 6px;
-            padding: 8px 16px;
+            border-radius: 10px;
+            padding: 10px 20px;
             font-family: var(--font-sans);
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
             cursor: pointer;
             white-space: nowrap;
             flex-shrink: 0;
-            transition: opacity 0.2s;
+            transition: all 0.3s ease;
         }
+        .btn-send:hover { background: var(--cyan); }
         .btn-send:hover { opacity: 0.85; }
         .input-hints {
             color: var(--border);
@@ -402,18 +389,19 @@
         /* -- footer -- */
         .footer {
             border-top: 1px solid var(--border);
-            padding: 14px 0;
+            padding: 20px 0;
             margin-top: auto;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         .footer-sig {
-            color: var(--text);
-            font-size: 13px;
+            color: var(--comment);
+            font-size: 11px;
             font-family: var(--font-sans);
-            font-weight: 500;
-            letter-spacing: 0.3px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
         .footer-btc {
             color: var(--border);
@@ -452,18 +440,19 @@
         .knowledge-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); }
 
         /* -- motives styles -- */
-        .motives-section { margin-bottom: 28px; }
-        .motives-section p { color: var(--text); margin-bottom: 14px; }
+        .motives-section { margin-bottom: 40px; }
+        .motives-section p { color: var(--text); margin-bottom: 16px; font-size: 16px; line-height: 1.9; }
         .motives-section p.dim { color: var(--comment); }
-        .highlight { color: var(--text-bright); }
+        .highlight { color: var(--gold); font-weight: 600; }
 
         .section-title {
-            color: var(--cyan);
-            font-family: var(--font-serif);
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 18px;
-            letter-spacing: 0.5px;
+            color: var(--text-bright);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
 
         .pillars {
@@ -650,28 +639,31 @@
         }
 
         /* -- welcome -- */
-        .welcome-block { text-align: center; padding: 60px 20px 40px; }
+        .welcome-block { text-align: center; padding: 80px 20px 60px; }
         .welcome-title {
             font-family: var(--font-serif);
-            font-size: 32px;
+            font-size: 48px;
             font-weight: 700;
             color: var(--text-bright);
-            margin-bottom: 24px;
-            letter-spacing: 1px;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
         }
         .welcome-body p {
-            font-family: var(--font-serif);
-            font-size: 17px;
+            font-family: var(--font-sans);
+            font-size: 15px;
             color: var(--comment);
-            font-style: italic;
-            line-height: 1.9;
+            line-height: 1.8;
             margin-bottom: 4px;
+            font-weight: 400;
         }
         .welcome-accent {
-            color: var(--cyan) !important;
+            color: var(--gold) !important;
+            font-family: var(--font-serif) !important;
             font-style: italic !important;
-            margin-top: 16px !important;
-            font-size: 18px !important;
+            margin-top: 20px !important;
+            font-size: 19px !important;
+            letter-spacing: 0.2px !important;
         }
 
         /* -- bilingual toggle -- */
@@ -749,16 +741,14 @@
 
             <div class="tabs">
                 <button class="tab active" data-tab="tool">
-                    <span class="tab-symbol">🛠️</span>
                     <span class="tab-name">tool</span>
-                    <span class="tab-teaser en-only">write an idea, see where it leads</span>
-                    <span class="tab-teaser es-only">escribe una idea, ve a donde lleva</span>
+                    <span class="tab-teaser en-only">ὄργανον — the instrument</span>
+                    <span class="tab-teaser es-only">ὄργανον — el instrumento</span>
                 </button>
                 <button class="tab" data-tab="knowledge">
-                    <span class="tab-symbol">📖</span>
                     <span class="tab-name">teoría</span>
-                    <span class="tab-teaser en-only">23 centuries of instruments for thinking</span>
-                    <span class="tab-teaser es-only">23 siglos de instrumentos para pensar</span>
+                    <span class="tab-teaser en-only">θεωρία — the foundations</span>
+                    <span class="tab-teaser es-only">θεωρία — los fundamentos</span>
                 </button>
             </div>
 
