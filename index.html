@@ -62,11 +62,23 @@
         #app {
             max-width: 680px;
             margin: 0 auto;
-            padding: 28px 28px 0;
-            padding-top: max(28px, calc(16px + env(safe-area-inset-top)));
+            padding: 0 28px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+        }
+
+        /* -- fixed header zone -- */
+        .header-zone {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg);
+            padding-top: max(12px, env(safe-area-inset-top));
+            padding-bottom: 4px;
+            margin: 0 -28px;
+            padding-left: 28px;
+            padding-right: 28px;
         }
 
         /* -- header -- */
@@ -1224,34 +1236,36 @@
 
         <!-- main -->
         <div id="screen-main" class="screen">
-            <div class="header">
-                <div class="header-left">
-                    <div class="header-title" id="main-title">nicómaco</div>
-                    <div class="header-by">by josean · <a href="#" id="nav-lang" style="color:var(--comment)">🇪🇸</a></div>
-                    <div class="header-sub" id="main-subtitle">filosofia aplicada a la toma de decisiones</div>
+            <div class="header-zone">
+                <div class="header">
+                    <div class="header-left">
+                        <div class="header-title" id="main-title">nicómaco</div>
+                        <div class="header-by">by josean · <a href="#" id="nav-lang" style="color:var(--comment)">🇪🇸</a></div>
+                        <div class="header-sub" id="main-subtitle">filosofia aplicada a la toma de decisiones</div>
+                    </div>
+                    <div class="header-nav" style="display:none">
+                        <a href="#" id="nav-borrador" style="display:none;color:var(--orange)">borrador <span id="draft-badge" style="font-size:0.7em"></span></a>
+                        <a href="#" id="nav-cfg" style="display:none">cfg</a>
+                    </div>
                 </div>
-                <div class="header-nav" style="display:none">
-                    <a href="#" id="nav-borrador" style="display:none;color:var(--orange)">borrador <span id="draft-badge" style="font-size:0.7em"></span></a>
-                    <a href="#" id="nav-cfg" style="display:none">cfg</a>
-                </div>
-            </div>
 
-            <div class="tabs">
-                <button class="tab active" data-tab="tool">
-                    <span class="tab-name">tool</span>
-                    <span class="tab-teaser en-only">ὄργανον · instrument</span>
-                    <span class="tab-teaser es-only">ὄργανον · instrumento</span>
-                </button>
-                <button class="tab" data-tab="knowledge">
-                    <span class="tab-name">teoría</span>
-                    <span class="tab-teaser en-only">θεμέλια · foundations</span>
-                    <span class="tab-teaser es-only">θεμέλια · fundamentos</span>
-                </button>
-                <button class="tab" data-tab="design">
-                    <span class="tab-name">diseño</span>
-                    <span class="tab-teaser en-only">εἶδος · self-design</span>
-                    <span class="tab-teaser es-only">εἶδος · diseño del yo</span>
-                </button>
+                <div class="tabs">
+                    <button class="tab active" data-tab="tool">
+                        <span class="tab-name">tool</span>
+                        <span class="tab-teaser en-only">ὄργανον · instrument</span>
+                        <span class="tab-teaser es-only">ὄργανον · instrumento</span>
+                    </button>
+                    <button class="tab" data-tab="knowledge">
+                        <span class="tab-name">teoría</span>
+                        <span class="tab-teaser en-only">θεμέλια · foundations</span>
+                        <span class="tab-teaser es-only">θεμέλια · fundamentos</span>
+                    </button>
+                    <button class="tab" data-tab="design">
+                        <span class="tab-name">diseño</span>
+                        <span class="tab-teaser en-only">εἶδος · self-design</span>
+                        <span class="tab-teaser es-only">εἶδος · diseño del yo</span>
+                    </button>
+                </div>
             </div>
 
             <div id="tab-tool" class="tab-content">
