@@ -1916,28 +1916,17 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         const actions = wrap.querySelector('.share-canvas-actions');
 
-        // Share button — native share with image file
-        const btnShare = document.createElement('button');
-        btnShare.textContent = state.lang === 'es' ? 'compartir' : 'share';
-        btnShare.addEventListener('click', async () => {
-            try {
-                canvas.toBlob(async (blob) => {
-                    const file = new File([blob], 'nicomaco.png', { type: 'image/png' });
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({ files: [file] });
-                    } else if (navigator.share) {
-                        await navigator.share({ title: 'nicómaco', text: raw, url: 'https://nicomaco.org' });
-                    } else {
-                        const a = document.createElement('a');
-                        a.download = 'nicomaco.png';
-                        a.href = canvas.toDataURL('image/png');
-                        a.click();
-                    }
-                    wrap.remove();
-                }, 'image/png');
-            } catch(e) { if (e.name !== 'AbortError') wrap.remove(); }
+        // Save image button — only option
+        const btnSave = document.createElement('button');
+        btnSave.textContent = state.lang === 'es' ? 'guardar imagen' : 'save image';
+        btnSave.addEventListener('click', () => {
+            const a = document.createElement('a');
+            a.download = 'nicomaco.png';
+            a.href = canvas.toDataURL('image/png');
+            a.click();
+            wrap.remove();
         });
-        actions.appendChild(btnShare);
+        actions.appendChild(btnSave);
 
         // Close
         const btnClose = document.createElement('button');
