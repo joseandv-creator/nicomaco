@@ -1952,9 +1952,12 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         $$('.knowledge-btn[data-section="motives"]').forEach(el => el.textContent = t('motives'));
         $$('.knowledge-btn[data-section="hierarchy"]').forEach(el => el.textContent = t('hierarchy'));
         $$('.knowledge-btn[data-section="glossary"]').forEach(el => el.textContent = t('glossary'));
-        $('#input').placeholder = t('placeholder');
-        $('.input-hints').innerHTML = t('hints');
-        $('#cfg-save').textContent = t('save');
+        const inputEl = $('#input');
+        if (inputEl) inputEl.placeholder = t('placeholder');
+        const hintsEl = $('.input-hints');
+        if (hintsEl) hintsEl.innerHTML = t('hints');
+        const cfgSave = $('#cfg-save');
+        if (cfgSave) cfgSave.textContent = t('save');
         const btnExp = $('#btn-export');
         if (btnExp) btnExp.textContent = t('exportJSON');
         const lblImp = $('label[style*="cursor:pointer"]');
