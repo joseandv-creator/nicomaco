@@ -1727,6 +1727,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     // Helper: add email to every API call body
     function apiBody(obj) {
         if (state && state.email) obj.email = state.email;
+        if (state && state.authToken) obj.authToken = state.authToken;
         return JSON.stringify(obj);
     }
 
@@ -1856,6 +1857,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         apiKey: localStorage.getItem('vu_key') || '',
         model: localStorage.getItem('vu_model') || 'claude-sonnet-4-20250514',
         email: localStorage.getItem('vu_email') || '',
+        authToken: localStorage.getItem('vu_token') || '',
         history: JSON.parse(localStorage.getItem('vu_history') || '[]'),
         drafts: JSON.parse(localStorage.getItem('vu_drafts') || '[]').filter(d => d.t && d.d),
         currentTab: 'tool',
@@ -2142,14 +2144,37 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         if (name === 'log') { renderBitacora(); }
     }
 
-    window.registerEmail = function() {
-        const input = $('#email-register');
-        if (!input) return;
-        const email = input.value.trim().toLowerCase();
-        if (!email || !email.includes('@')) return;
-        state.email = email;
-        localStorage.setItem('vu_email', email);
-        renderWelcome();
+    window.authAction = async function(mode) {
+        const email = $('#auth-email')?.value?.trim().toLowerCase();
+        const pass = $('#auth-pass')?.value;
+        if (!email || !email.includes('@') || !pass || pass.length < 6) {
+            const es = state.lang === 'es';
+            $('#auth-error').textContent = es ? 'email válido y contraseña de 6+ caracteres' : 'valid email and 6+ character password';
+            return;
+        }
+        const btn = $(`#auth-btn-${mode}`);
+        if (btn) { btn.disabled = true; btn.textContent = '...'; }
+        try {
+            const res = await fetch(`${WORKER_URL}/api/auth/${mode}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password: pass })
+            });
+            const data = await res.json();
+            if (data.error) {
+                $('#auth-error').textContent = data.error;
+                if (btn) { btn.disabled = false; btn.textContent = mode === 'register' ? (state.lang === 'es' ? 'CREAR' : 'CREATE') : (state.lang === 'es' ? 'ENTRAR' : 'LOGIN'); }
+                return;
+            }
+            state.email = data.email;
+            state.authToken = data.token;
+            localStorage.setItem('vu_email', data.email);
+            localStorage.setItem('vu_token', data.token);
+            renderWelcome();
+        } catch(e) {
+            $('#auth-error').textContent = 'error de conexión';
+            if (btn) { btn.disabled = false; btn.textContent = mode; }
+        }
     };
 
     function renderWelcome() {
@@ -2278,23 +2303,25 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             }, 50);
         }
 
-        // Email registration prompt — after first analysis, if no email saved
+        // Auth prompt — after first analysis, if not logged in
         if (count >= 1 && !state.email) {
-            const emailBanner = document.createElement('div');
-            emailBanner.className = 'block';
-            emailBanner.style.cssText = 'text-align:center;margin-top:16px;padding:16px;border:1px solid var(--border);border-radius:8px;';
-            emailBanner.innerHTML = es
-                ? `<p style="font-size:13px;color:var(--comment);margin-bottom:10px">guarda tu historial y sincroniza entre dispositivos</p>
-                   <div style="display:flex;gap:8px;justify-content:center;align-items:center">
-                       <input type="email" id="email-register" placeholder="tu email" style="font-family:var(--font-serif);font-size:14px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);width:200px;outline:none">
-                       <button onclick="registerEmail()" style="font-family:var(--font-sans);font-size:12px;padding:8px 16px;background:var(--text);color:var(--bg);border:none;border-radius:6px;cursor:pointer;letter-spacing:1px">GUARDAR</button>
-                   </div>`
-                : `<p style="font-size:13px;color:var(--comment);margin-bottom:10px">save your history and sync across devices</p>
-                   <div style="display:flex;gap:8px;justify-content:center;align-items:center">
-                       <input type="email" id="email-register" placeholder="your email" style="font-family:var(--font-serif);font-size:14px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);width:200px;outline:none">
-                       <button onclick="registerEmail()" style="font-family:var(--font-sans);font-size:12px;padding:8px 16px;background:var(--text);color:var(--bg);border:none;border-radius:6px;cursor:pointer;letter-spacing:1px">SAVE</button>
-                   </div>`;
-            output.appendChild(emailBanner);
+            const authBanner = document.createElement('div');
+            authBanner.className = 'block';
+            authBanner.style.cssText = 'text-align:center;margin-top:16px;padding:16px;border:1px solid var(--border);border-radius:8px;';
+            const inputStyle = 'font-family:var(--font-serif);font-size:14px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);width:100%;outline:none;box-sizing:border-box';
+            const btnStyle = 'font-family:var(--font-sans);font-size:11px;padding:8px 16px;border:none;border-radius:6px;cursor:pointer;letter-spacing:1px';
+            authBanner.innerHTML = `
+                <p style="font-size:13px;color:var(--comment);margin-bottom:12px">${es ? 'crea tu cuenta para guardar tu progreso' : 'create your account to save your progress'}</p>
+                <div style="max-width:260px;margin:0 auto">
+                    <input type="email" id="auth-email" placeholder="email" style="${inputStyle};margin-bottom:8px">
+                    <input type="password" id="auth-pass" placeholder="${es ? 'contraseña (6+ caracteres)' : 'password (6+ chars)'}" style="${inputStyle};margin-bottom:10px">
+                    <div style="display:flex;gap:8px;justify-content:center">
+                        <button id="auth-btn-register" onclick="authAction('register')" style="${btnStyle};background:var(--text);color:var(--bg)">${es ? 'CREAR' : 'CREATE'}</button>
+                        <button id="auth-btn-login" onclick="authAction('login')" style="${btnStyle};background:none;border:1px solid var(--border);color:var(--comment)">${es ? 'ENTRAR' : 'LOGIN'}</button>
+                    </div>
+                    <p id="auth-error" style="font-size:12px;color:#c0392b;margin-top:8px"></p>
+                </div>`;
+            output.appendChild(authBanner);
         } else if (state.email) {
             const emailShow = document.createElement('div');
             emailShow.style.cssText = 'text-align:center;margin-top:8px;';
