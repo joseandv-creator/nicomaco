@@ -1267,15 +1267,23 @@
                 <div class="tabs">
                     <button class="tab active" data-tab="tool">
                         <span class="tab-name">tool</span>
+                        <span class="tab-teaser en-only">instrument</span>
+                        <span class="tab-teaser es-only">instrumento</span>
                     </button>
                     <button class="tab" data-tab="knowledge">
                         <span class="tab-name">teoría</span>
+                        <span class="tab-teaser en-only">foundations</span>
+                        <span class="tab-teaser es-only">fundamentos</span>
                     </button>
                     <button class="tab" data-tab="design">
                         <span class="tab-name">arquitectura</span>
+                        <span class="tab-teaser en-only">of the self</span>
+                        <span class="tab-teaser es-only">del yo</span>
                     </button>
                     <button class="tab" data-tab="log">
                         <span class="tab-name">bitácora</span>
+                        <span class="tab-teaser en-only">log</span>
+                        <span class="tab-teaser es-only">diario</span>
                     </button>
                 </div>
             </div>
@@ -3064,6 +3072,13 @@ In ONE sentence: does this question move them closer or further from their desig
 
         let html = `<div style="padding:20px 16px;">`;
 
+        // ── NEW CONVERSATION BUTTON ──
+        if (history.length > 0) {
+            html += `<div style="text-align:right;margin-bottom:16px">
+                <button onclick="newConversation()" style="font-family:var(--font-sans);font-size:10px;letter-spacing:2px;padding:6px 14px;background:none;border:1px solid var(--border);border-radius:4px;color:var(--comment);cursor:pointer">${es ? '+ NUEVA' : '+ NEW'}</button>
+            </div>`;
+        }
+
         // ── Feature 4: YOUR NUMBERS ──
         if (history.length > 0) {
             const decisions = history.filter(h => h.decision).length;
@@ -3220,8 +3235,9 @@ In ONE sentence: does this question move them closer or further from their desig
                     const q = h.candidate || '';
                     const isURL = q.startsWith('[URL]');
                     const display = isURL ? q.replace('[URL] ', '') : q;
-                    html += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">`;
-                    html += `<p style="font-family:var(--font-serif);font-size:15px;font-style:italic;cursor:pointer" onclick="loadFromBitacora('${h.id}')">"${display}"</p>`;
+                    html += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);position:relative">`;
+                    html += `<button onclick="deleteFromBitacora('${h.id}')" style="position:absolute;top:0;right:0;background:none;border:none;color:var(--border);font-size:16px;cursor:pointer;padding:4px">&times;</button>`;
+                    html += `<p style="font-family:var(--font-serif);font-size:15px;font-style:italic;cursor:pointer;padding-right:24px" onclick="loadFromBitacora('${h.id}')">"${display}"</p>`;
                     if (h.decision) {
                         html += `<p style="font-size:13px;margin-top:6px;color:var(--text)">→ ${es ? 'decidiste' : 'you decided'}: "${h.decision}"</p>`;
                         if (h.decisionReview) {
@@ -3256,6 +3272,20 @@ In ONE sentence: does this question move them closer or further from their desig
             localStorage.setItem('vu_history', JSON.stringify(state.history));
             renderBitacora();
         }
+    };
+
+    window.newConversation = function() {
+        state.conversationHistory = [];
+        switchTab('tool');
+        renderWelcome();
+    };
+
+    window.deleteFromBitacora = function(id) {
+        const idx = state.history.findIndex(h => h.id === id);
+        if (idx === -1) return;
+        state.history.splice(idx, 1);
+        localStorage.setItem('vu_history', JSON.stringify(state.history));
+        renderBitacora();
     };
 
     window.loadFromBitacora = function(id) {
