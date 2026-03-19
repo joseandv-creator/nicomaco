@@ -1288,7 +1288,7 @@
                         <span class="tab-name">architecture</span>
                     </button>
                     <button class="tab" data-tab="log">
-                        <span class="tab-name">log</span>
+                        <span class="tab-name">journal</span>
                     </button>
                 </div>
             </div>
@@ -1947,7 +1947,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         $$('[data-tab="tool"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'instrumento' : 'instrument');
         $$('[data-tab="knowledge"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'fundamentos' : 'foundations');
         $$('[data-tab="design"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'arquitectura del yo' : 'architecture of the self');
-        $$('[data-tab="log"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'bitácora' : 'log');
+        $$('[data-tab="log"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'bitácora' : 'journal');
         // Update knowledge sub-nav
         $$('.knowledge-btn[data-section="motives"]').forEach(el => el.textContent = t('motives'));
         $$('.knowledge-btn[data-section="hierarchy"]').forEach(el => el.textContent = t('hierarchy'));
