@@ -187,10 +187,11 @@
         .tab .tab-name {
             display: block;
             font-family: var(--font-sans);
-            font-size: 10px;
-            letter-spacing: 2px;
+            font-size: 9px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
             color: var(--comment);
+            white-space: nowrap;
             transition: color 0.3s;
         }
         .tab .tab-teaser {
@@ -3120,8 +3121,8 @@ In ONE sentence: does this question move them closer or further from their desig
 
         // ── NEW CONVERSATION BUTTON ──
         if (history.length > 0) {
-            html += `<div style="text-align:right;margin-bottom:16px">
-                <button onclick="newConversation()" style="font-family:var(--font-sans);font-size:10px;letter-spacing:2px;padding:6px 14px;background:none;border:1px solid var(--border);border-radius:4px;color:var(--comment);cursor:pointer">${es ? '+ NUEVA' : '+ NEW'}</button>
+            html += `<div style="text-align:center;margin-bottom:16px">
+                <button onclick="newConversation()" style="font-family:var(--font-sans);font-size:10px;letter-spacing:2px;padding:6px 14px;background:none;border:1px solid var(--border);border-radius:4px;color:var(--comment);cursor:pointer">${es ? '+ NUEVA CONVERSACIÓN' : '+ NEW CONVERSATION'}</button>
             </div>`;
         }
 
@@ -3284,7 +3285,7 @@ In ONE sentence: does this question move them closer or further from their desig
                     html += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);position:relative">`;
                     html += `<button onclick="deleteFromBitacora('${h.id}')" style="position:absolute;top:0;right:0;background:none;border:none;color:var(--border);font-size:16px;cursor:pointer;padding:4px">&times;</button>`;
                     const time = h.date ? new Date(h.date).toLocaleTimeString(es ? 'es-MX' : 'en-US', { hour: '2-digit', minute: '2-digit' }) : '';
-                    html += `<p style="font-family:var(--font-serif);font-size:15px;font-style:italic;cursor:pointer;padding-right:24px" onclick="loadFromBitacora('${h.id}')">"${display}" <span style="font-style:normal;font-size:11px;color:var(--border)">${time}</span></p>`;
+                    html += `<p style="font-family:var(--font-serif);font-size:15px;font-style:italic;cursor:pointer;padding-right:24px" onclick="loadFromBitacora('${h.id}')">"${display}" <span style="font-style:normal;font-size:11px;color:var(--comment)">${time}</span></p>`;
                     if (h.decision) {
                         html += `<p style="font-size:13px;margin-top:6px;color:var(--text)">→ ${es ? 'decidiste' : 'you decided'}: "${h.decision}"</p>`;
                         if (h.decisionReview) {
