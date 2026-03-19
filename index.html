@@ -1731,6 +1731,66 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         return JSON.stringify(obj);
     }
 
+    // ── Cloud Sync ──
+    async function syncPush() {
+        if (!state.authToken) return;
+        try {
+            await fetch(`${WORKER_URL}/api/sync/push`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.authToken}` },
+                body: JSON.stringify({
+                    history: state.history,
+                    design: JSON.parse(localStorage.getItem('vu_design') || 'null'),
+                    alignments: JSON.parse(localStorage.getItem('vu_alignments') || '[]'),
+                    letters: JSON.parse(localStorage.getItem('vu_letters') || '[]'),
+                    lastPattern: localStorage.getItem('vu_last_pattern') || null,
+                    morning: JSON.parse(localStorage.getItem('vu_morning') || 'null'),
+                    weekly: JSON.parse(localStorage.getItem('vu_weekly') || 'null'),
+                })
+            });
+        } catch(e) {}
+    }
+
+    async function syncPull() {
+        if (!state.authToken) return;
+        try {
+            const res = await fetch(`${WORKER_URL}/api/sync/pull`, {
+                headers: { 'Authorization': `Bearer ${state.authToken}` }
+            });
+            const data = await res.json();
+            if (data.empty) {
+                // No cloud data — push local to cloud
+                await syncPush();
+                return;
+            }
+            // Merge: cloud history + local history, deduplicate by id
+            const cloudHistory = data.history || [];
+            const localHistory = state.history || [];
+            const merged = [...localHistory];
+            for (const ch of cloudHistory) {
+                if (!merged.find(h => h.id === ch.id)) merged.push(ch);
+            }
+            merged.sort((a, b) => new Date(b.date) - new Date(a.date));
+            state.history = merged;
+            localStorage.setItem('vu_history', JSON.stringify(merged));
+            // Restore other data from cloud if local is empty
+            if (data.design && !localStorage.getItem('vu_design')) {
+                localStorage.setItem('vu_design', JSON.stringify(data.design));
+            }
+            if (data.alignments?.length && !localStorage.getItem('vu_alignments')) {
+                localStorage.setItem('vu_alignments', JSON.stringify(data.alignments));
+            }
+            if (data.letters?.length && !localStorage.getItem('vu_letters')) {
+                localStorage.setItem('vu_letters', JSON.stringify(data.letters));
+            }
+            if (data.lastPattern && !localStorage.getItem('vu_last_pattern')) {
+                localStorage.setItem('vu_last_pattern', data.lastPattern);
+            }
+            // Push merged data back to cloud
+            await syncPush();
+        } catch(e) {}
+    }
+
     // Owner mode — activate via ?owner=aristotle
     if (new URLSearchParams(window.location.search).get('owner') === 'aristotle') {
         localStorage.setItem('vu_owner', 'true');
@@ -2170,6 +2230,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             state.authToken = data.token;
             localStorage.setItem('vu_email', data.email);
             localStorage.setItem('vu_token', data.token);
+            // Sync: pull from cloud, merge with local
+            await syncPull();
             renderWelcome();
         } catch(e) {
             $('#auth-error').textContent = 'error de conexión';
@@ -3426,6 +3488,7 @@ ${historyContext || 'No previous history'}`;
                     updatedAt: new Date().toISOString(),
                 };
                 localStorage.setItem('vu_design', JSON.stringify(design));
+                syncPush();
                 renderPortrait(container, design, es);
             }
         } catch(e) {
@@ -4071,6 +4134,7 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
             gutterEl.textContent = gutterLines(highlighted.split('\n').length);
             state.history.unshift({ id, num, candidate: `[URL] ${url}`, analysis: fullText, date: new Date().toISOString(), messages, isURL: true });
             localStorage.setItem('vu_history', JSON.stringify(state.history));
+            syncPush();
             playCompletionSound();
 
             const acts = document.createElement('div');
@@ -4143,6 +4207,7 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
             addActions(block, id, text, fullText, messages);
             state.history.unshift({ id, num, candidate: text, analysis: fullText, date: new Date().toISOString(), messages: [...state.conversationHistory] });
             localStorage.setItem('vu_history', JSON.stringify(state.history));
+            syncPush();
             playCompletionSound();
 
             // Pattern detection layer — at 3rd, then every 10
