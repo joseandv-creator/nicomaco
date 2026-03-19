@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nicomaco-v2';
+const CACHE_NAME = 'nicomaco-v3';
 const ASSETS = [
   '/',
   '/index.html',
