@@ -3287,9 +3287,9 @@ In ONE sentence: does this question move them closer or further from their desig
                     const isURL = q.startsWith('[URL]');
                     const display = isURL ? q.replace('[URL] ', '') : q;
                     html += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);position:relative">`;
-                    html += `<button onclick="deleteFromBitacora('${h.id}')" style="position:absolute;top:0;right:0;background:none;border:none;color:var(--border);font-size:16px;cursor:pointer;padding:4px">&times;</button>`;
+                    html += `<button data-delete-id="${h.id}" style="position:absolute;top:0;right:0;background:none;border:none;color:var(--comment);font-size:18px;cursor:pointer;padding:4px 8px">&times;</button>`;
                     const time = h.date ? new Date(h.date).toLocaleTimeString(es ? 'es-MX' : 'en-US', { hour: '2-digit', minute: '2-digit' }) : '';
-                    html += `<p style="font-family:var(--font-serif);font-size:15px;font-style:italic;cursor:pointer;padding-right:24px" onclick="loadFromBitacora('${h.id}')">"${display}" <span style="font-style:normal;font-size:11px;color:var(--comment)">${time}</span></p>`;
+                    html += `<p data-load-id="${h.id}" style="font-family:var(--font-serif);font-size:15px;font-style:italic;cursor:pointer;padding-right:24px">"${display}" <span style="font-style:normal;font-size:11px;color:var(--comment)">${time}</span></p>`;
                     if (h.decision) {
                         html += `<p style="font-size:13px;margin-top:6px;color:var(--text)">→ ${es ? 'decidiste' : 'you decided'}: "${h.decision}"</p>`;
                         if (h.decisionReview) {
@@ -3313,6 +3313,36 @@ In ONE sentence: does this question move them closer or further from their desig
 
         html += `</div>`;
         container.innerHTML = html;
+
+        // Event delegation for delete and load
+        container.addEventListener('click', (e) => {
+            const del = e.target.closest('[data-delete-id]');
+            if (del) {
+                const id = del.dataset.deleteId;
+                const idx = state.history.findIndex(h => String(h.id) === String(id));
+                if (idx !== -1) {
+                    state.history.splice(idx, 1);
+                    localStorage.setItem('vu_history', JSON.stringify(state.history));
+                    syncPush();
+                    renderBitacora();
+                }
+                return;
+            }
+            const load = e.target.closest('[data-load-id]');
+            if (load) {
+                const id = load.dataset.loadId;
+                const item = state.history.find(h => String(h.id) === String(id));
+                if (!item) return;
+                const existing = $(`#bitacora-expand-${id}`);
+                if (existing) { existing.remove(); return; }
+                const parent = load.closest('div');
+                const expandDiv = document.createElement('div');
+                expandDiv.id = `bitacora-expand-${id}`;
+                expandDiv.style.cssText = 'margin-top:12px;padding:16px;border-left:2px solid var(--gold);font-family:var(--font-serif);font-size:14px;line-height:1.7;color:var(--text);animation:blockFadeIn 0.4s ease-out';
+                expandDiv.innerHTML = (item.analysis || '').replace(/\*{1,3}/g, '');
+                parent.appendChild(expandDiv);
+            }
+        });
     }
 
     window.saveDecisionReview = function(id) {
