@@ -185,16 +185,16 @@
         }
         .tab .tab-symbol { display: none; }
         .tab .tab-name {
-            display: none;
+            display: block;
+            font-family: var(--font-sans);
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--comment);
+            transition: color 0.3s;
         }
         .tab .tab-teaser {
-            display: block;
-            font-size: 13px;
-            font-family: var(--font-serif);
-            color: var(--comment);
-            font-style: italic;
-            letter-spacing: 0.5px;
-            transition: color 0.3s;
+            display: none;
         }
         .tab:hover .tab-name { color: var(--text-bright); }
         .tab.active::after {
@@ -1275,24 +1275,16 @@
 
                 <div class="tabs">
                     <button class="tab active" data-tab="tool">
-                        <span class="tab-name">tool</span>
-                        <span class="tab-teaser en-only">instrument</span>
-                        <span class="tab-teaser es-only">instrumento</span>
+                        <span class="tab-name">instrumento</span>
                     </button>
                     <button class="tab" data-tab="knowledge">
-                        <span class="tab-name">teoría</span>
-                        <span class="tab-teaser en-only">foundations</span>
-                        <span class="tab-teaser es-only">fundamentos</span>
+                        <span class="tab-name">fundamentos</span>
                     </button>
                     <button class="tab" data-tab="design">
                         <span class="tab-name">arquitectura</span>
-                        <span class="tab-teaser en-only">of the self</span>
-                        <span class="tab-teaser es-only">del yo</span>
                     </button>
                     <button class="tab" data-tab="log">
                         <span class="tab-name">bitácora</span>
-                        <span class="tab-teaser en-only">log</span>
-                        <span class="tab-teaser es-only">diario</span>
                     </button>
                 </div>
             </div>
@@ -1888,8 +1880,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const mainTitle = $('#main-title');
         if (mainTitle) mainTitle.textContent = 'NICÓMACO';
         $('#main-subtitle').textContent = t('subtitle');
-        $$('[data-tab="tool"] .tab-name').forEach(el => el.textContent = t('tool'));
-        $$('[data-tab="knowledge"] .tab-name').forEach(el => el.textContent = t('knowledge'));
+        $$('[data-tab="tool"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'instrumento' : 'instrument');
+        $$('[data-tab="knowledge"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'fundamentos' : 'foundations');
         $$('[data-tab="design"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'arquitectura' : 'architecture');
         $$('[data-tab="log"] .tab-name').forEach(el => el.textContent = lang === 'es' ? 'bitácora' : 'log');
         // Update knowledge sub-nav
@@ -2943,9 +2935,10 @@ Now respond as ${name}. From your philosophy, your era, your worldview. Maximum 
             const text = data.content?.[0]?.text?.replace(/\*{1,3}/g, '').trim() || '';
 
             if (text) {
+                const cleanText = text.replace(/\*{1,3}/g, '').trim();
                 const el = document.createElement('div');
                 el.className = 'lens-response';
-                el.innerHTML = `<div class="lens-response-name">${name}</div>${text.replace(/\*{1,3}/g, '').trim()}`;
+                el.innerHTML = `<div class="lens-response-name">${name}</div>${cleanText}<div style="margin-top:10px"><button class="lens-btn" onclick="generateShareImage(\`${cleanText.replace(/`/g, "'").replace(/\\/g, '\\\\')}\`)">${state.lang === 'es' ? 'compartir' : 'share'}</button></div>`;
                 block.appendChild(el);
                 scrollToBottom();
             }
@@ -3742,7 +3735,8 @@ ${previous}`;
             if (text.trim()) {
                 const el = document.createElement('div');
                 el.className = 'lens-response';
-                el.innerHTML = `<div class="lens-response-name">${es ? 'lectura recomendada' : 'recommended reading'}</div>${text.replace(/\*{1,3}/g, '').trim()}`;
+                const cleanRead = text.replace(/\*{1,3}/g, '').trim();
+                el.innerHTML = `<div class="lens-response-name">${es ? 'lectura recomendada' : 'recommended reading'}</div>${cleanRead}<div style="margin-top:10px"><button class="lens-btn" onclick="generateShareImage(\`${cleanRead.replace(/`/g, "'").replace(/\\/g, '\\\\')}\`)">${es ? 'compartir' : 'share'}</button></div>`;
                 block.appendChild(el);
                 scrollToBottom();
             }
@@ -4323,6 +4317,7 @@ ${allDecisions.length ? `\nDecisions:\n${allDecisions.join('\n')}` : ''}`;
             { id: 'aristotle', label: 'Aristóteles', en: 'Aristotle' },
             { id: 'rand', label: 'Rand', en: 'Rand' },
             { id: 'aurelius', label: 'Marco Aurelio', en: 'Marcus Aurelius' },
+            { id: 'mises', label: 'Mises', en: 'Mises' },
         ];
         for (const lens of lenses) {
             const btn = document.createElement('button');
