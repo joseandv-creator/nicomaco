@@ -1265,13 +1265,12 @@
                 <div class="header">
                     <div class="header-left">
                         <div class="header-title" id="main-title">nicómaco</div>
-                        <div class="header-by" style="display:none">by josean</div>
-                        <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:2px">
-                            <a href="#" id="nav-lang" style="color:var(--comment);text-decoration:none;font-size:14px">🇪🇸</a>
-                            <a href="#" id="nav-account" style="color:var(--comment);text-decoration:none;font-family:var(--font-sans);font-size:10px;letter-spacing:1px"></a>
-                        </div>
                         <div class="header-sub" id="main-subtitle">aprende a pensar sobre tu propia vida</div>
                     </div>
+                    <div style="position:absolute;top:12px;right:16px">
+                        <a href="#" id="nav-account" style="color:var(--border);text-decoration:none;font-family:var(--font-sans);font-size:9px;letter-spacing:1px"></a>
+                    </div>
+                    <a href="#" id="nav-lang" style="display:none">🇬🇧</a>
                     <div class="header-nav" style="display:none">
                         <a href="#" id="nav-borrador" style="display:none;color:var(--orange)">borrador <span id="draft-badge" style="font-size:0.7em"></span></a>
                         <a href="#" id="nav-cfg" style="display:none">cfg</a>
@@ -1941,7 +1940,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         state.lang = lang;
         localStorage.setItem('vu_lang', lang);
         const toggle = $('#nav-lang');
-        if (toggle) toggle.textContent = lang === 'es' ? '🇪🇸' : '🇬🇧';
+        if (toggle) toggle.textContent = lang === 'es' ? '🇬🇧' : '🇪🇸';
         const mainTitle = $('#main-title');
         if (mainTitle) mainTitle.textContent = 'NICÓMACO';
         $('#main-subtitle').textContent = t('subtitle');
@@ -2033,11 +2032,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         function updateAccountLink() {
             const link = $('#nav-account');
             if (!link) return;
-            if (state.email) {
-                link.textContent = state.email.split('@')[0];
-            } else {
-                link.textContent = state.lang === 'es' ? 'cuenta' : 'account';
-            }
+            link.textContent = state.email ? '●' : '○';
+            link.title = state.email || '';
         }
         updateAccountLink();
 
