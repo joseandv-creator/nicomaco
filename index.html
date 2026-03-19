@@ -1996,8 +1996,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         $('#cfg-save').addEventListener('click', saveConfig);
 
         // Navigation
-        $('#nav-cfg').addEventListener('click', e => { e.preventDefault(); showScreen('config'); });
-        $('#main-title').addEventListener('click', e => { e.preventDefault(); showScreen('config'); });
+        // Config screen disabled — no longer needed for end users
         $('#main-title').style.cursor = 'pointer';
         $('#nav-borrador').addEventListener('click', e => { e.preventDefault(); showScreen('main'); switchTab('tool'); renderDrafts(); });
         updateDraftBadge();
