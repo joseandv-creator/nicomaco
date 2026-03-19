@@ -1265,7 +1265,7 @@
                 <div class="header">
                     <div class="header-left">
                         <div class="header-title" id="main-title">nicómaco</div>
-                        <div class="header-by">by josean · <a href="#" id="nav-lang" style="color:var(--comment)">🇪🇸</a></div>
+                        <div class="header-by">by josean · <a href="#" id="nav-lang" style="color:var(--comment)">🇪🇸</a> · <a href="#" id="nav-account" style="color:var(--comment);font-size:12px"></a></div>
                         <div class="header-sub" id="main-subtitle">aprende a pensar sobre tu propia vida</div>
                     </div>
                     <div class="header-nav" style="display:none">
@@ -2024,6 +2024,96 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             setLang(state.lang === 'en' ? 'es' : 'en');
         });
         // Language is applied at the end of init() via setLang(state.lang)
+
+        // Account panel
+        function updateAccountLink() {
+            const link = $('#nav-account');
+            if (!link) return;
+            if (state.email) {
+                link.textContent = state.email.split('@')[0];
+            } else {
+                link.textContent = state.lang === 'es' ? 'cuenta' : 'account';
+            }
+        }
+        updateAccountLink();
+
+        $('#nav-account').addEventListener('click', e => {
+            e.preventDefault();
+            const es = state.lang === 'es';
+            const existing = $('#account-panel');
+            if (existing) { existing.remove(); return; }
+
+            const panel = document.createElement('div');
+            panel.id = 'account-panel';
+            panel.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);z-index:9999;display:flex;align-items:center;justify-content:center';
+
+            if (state.email) {
+                panel.innerHTML = `<div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:28px;max-width:300px;width:90%;text-align:center">
+                    <p style="font-family:var(--font-sans);font-size:10px;letter-spacing:2px;color:var(--comment);margin-bottom:12px">${es ? 'TU CUENTA' : 'YOUR ACCOUNT'}</p>
+                    <p style="font-family:var(--font-serif);font-size:16px;color:var(--text);margin-bottom:20px">${state.email}</p>
+                    <button id="account-logout" style="font-family:var(--font-sans);font-size:11px;letter-spacing:1px;padding:8px 20px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--comment);cursor:pointer;width:100%">${es ? 'CERRAR SESIÓN' : 'LOG OUT'}</button>
+                    <button id="account-close" style="font-family:var(--font-sans);font-size:11px;padding:8px 20px;background:none;border:none;color:var(--comment);cursor:pointer;margin-top:8px;width:100%">${es ? 'cerrar' : 'close'}</button>
+                </div>`;
+            } else {
+                const inputStyle = 'font-family:var(--font-serif);font-size:14px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);width:100%;outline:none;box-sizing:border-box';
+                panel.innerHTML = `<div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:28px;max-width:300px;width:90%;text-align:center">
+                    <p style="font-family:var(--font-sans);font-size:10px;letter-spacing:2px;color:var(--comment);margin-bottom:16px">${es ? 'INICIAR SESIÓN' : 'SIGN IN'}</p>
+                    <input type="email" id="panel-email" placeholder="email" style="${inputStyle};margin-bottom:8px">
+                    <input type="password" id="panel-pass" placeholder="${es ? 'contraseña' : 'password'}" style="${inputStyle};margin-bottom:12px">
+                    <div style="display:flex;gap:8px">
+                        <button id="panel-register" style="flex:1;font-family:var(--font-sans);font-size:11px;letter-spacing:1px;padding:8px;background:var(--text);color:var(--bg);border:none;border-radius:6px;cursor:pointer">${es ? 'CREAR' : 'CREATE'}</button>
+                        <button id="panel-login" style="flex:1;font-family:var(--font-sans);font-size:11px;letter-spacing:1px;padding:8px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--comment);cursor:pointer">${es ? 'ENTRAR' : 'LOGIN'}</button>
+                    </div>
+                    <p id="panel-error" style="font-size:12px;color:#c0392b;margin-top:8px"></p>
+                    <button id="account-close" style="font-family:var(--font-sans);font-size:11px;padding:8px 20px;background:none;border:none;color:var(--comment);cursor:pointer;margin-top:8px">${es ? 'cerrar' : 'close'}</button>
+                </div>`;
+            }
+
+            document.body.appendChild(panel);
+
+            $('#account-close').addEventListener('click', () => panel.remove());
+            panel.addEventListener('click', (e) => { if (e.target === panel) panel.remove(); });
+
+            if (state.email) {
+                $('#account-logout').addEventListener('click', () => {
+                    state.email = '';
+                    state.authToken = '';
+                    localStorage.removeItem('vu_email');
+                    localStorage.removeItem('vu_token');
+                    panel.remove();
+                    updateAccountLink();
+                    renderWelcome();
+                });
+            } else {
+                const doAuth = async (mode) => {
+                    const email = $('#panel-email')?.value?.trim().toLowerCase();
+                    const pass = $('#panel-pass')?.value;
+                    if (!email || !email.includes('@') || !pass || pass.length < 6) {
+                        $('#panel-error').textContent = es ? 'email válido y 6+ caracteres' : 'valid email and 6+ chars';
+                        return;
+                    }
+                    try {
+                        const res = await fetch(`${WORKER_URL}/api/auth/${mode}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, password: pass })
+                        });
+                        const data = await res.json();
+                        if (data.error) { $('#panel-error').textContent = data.error; return; }
+                        state.email = data.email;
+                        state.authToken = data.token;
+                        localStorage.setItem('vu_email', data.email);
+                        localStorage.setItem('vu_token', data.token);
+                        await syncPull();
+                        panel.remove();
+                        updateAccountLink();
+                        renderWelcome();
+                    } catch(e) { $('#panel-error').textContent = 'error'; }
+                };
+                $('#panel-register')?.addEventListener('click', () => doAuth('register'));
+                $('#panel-login')?.addEventListener('click', () => doAuth('login'));
+            }
+        });
 
         // BTC donation copy
         $('#footer-btc')?.addEventListener('click', () => {
