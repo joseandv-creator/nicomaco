@@ -1,6 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
+<head><script>
+(function(){
+  const H="b71aa58ee24eb8ab20543ab3153b639c04112cf88b1f1850cad60e5bf3826c86";
+  if(sessionStorage.getItem("_nk")==="1")return;
+  async function h(s){const e=new TextEncoder().encode(s);const b=await crypto.subtle.digest("SHA-256",e);return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+  document.documentElement.style.display="none";
+  const d=document.createElement("div");
+  d.id="_gate";
+  d.innerHTML=`<div style="position:fixed;inset:0;background:#faf7f2;display:flex;align-items:center;justify-content:center;z-index:99999;font-family:system-ui,sans-serif">
+    <div style="text-align:center"><p style="font-size:1.2rem;color:#333;margin-bottom:1rem">🔒</p>
+    <input id="_gp" type="password" placeholder="Contraseña" style="padding:10px 16px;border:1px solid #ccc;border-radius:8px;font-size:1rem;outline:none;width:200px">
+    <p id="_ge" style="color:#c00;font-size:.85rem;margin-top:8px;display:none">Incorrecta</p></div></div>`;
+  document.addEventListener("DOMContentLoaded",function(){
+    document.body.appendChild(d);
+    document.documentElement.style.display="";
+    const inp=document.getElementById("_gp");
+    inp.focus();
+    inp.addEventListener("keydown",async function(e){
+      if(e.key==="Enter"){
+        const v=await h(inp.value);
+        if(v===H){sessionStorage.setItem("_nk","1");d.remove()}
+        else{document.getElementById("_ge").style.display="block";inp.value=""}
+      }
+    })
+  })
+})();
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coherencia 2.0 — Nicomaco</title>

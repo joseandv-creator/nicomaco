@@ -1,6 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
+<head><script>
+(function(){
+  const H="b71aa58ee24eb8ab20543ab3153b639c04112cf88b1f1850cad60e5bf3826c86";
+  if(sessionStorage.getItem("_nk")==="1")return;
+  async function h(s){const e=new TextEncoder().encode(s);const b=await crypto.subtle.digest("SHA-256",e);return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+  document.documentElement.style.display="none";
+  const d=document.createElement("div");
+  d.id="_gate";
+  d.innerHTML=`<div style="position:fixed;inset:0;background:#faf7f2;display:flex;align-items:center;justify-content:center;z-index:99999;font-family:system-ui,sans-serif">
+    <div style="text-align:center"><p style="font-size:1.2rem;color:#333;margin-bottom:1rem">🔒</p>
+    <input id="_gp" type="password" placeholder="Contraseña" style="padding:10px 16px;border:1px solid #ccc;border-radius:8px;font-size:1rem;outline:none;width:200px">
+    <p id="_ge" style="color:#c00;font-size:.85rem;margin-top:8px;display:none">Incorrecta</p></div></div>`;
+  document.addEventListener("DOMContentLoaded",function(){
+    document.body.appendChild(d);
+    document.documentElement.style.display="";
+    const inp=document.getElementById("_gp");
+    inp.focus();
+    inp.addEventListener("keydown",async function(e){
+      if(e.key==="Enter"){
+        const v=await h(inp.value);
+        if(v===H){sessionStorage.setItem("_nk","1");d.remove()}
+        else{document.getElementById("_ge").style.display="block";inp.value=""}
+      }
+    })
+  })
+})();
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glosario Conceptual — Nicomaco</title>
@@ -618,7 +644,7 @@
 <div class="section" data-section="level-10">
     <div class="section-header">
         <span class="section-title">NIVEL 10</span>
-        <span class="section-count">23</span>
+        <span class="section-count">24</span>
         <span class="section-toggle">></span>
     </div>
     <div class="section-body">
@@ -668,7 +694,7 @@
             <div class="def-field"><span class="s-cons">→C</span> número</div>
             <div class="def-field"><span class="s-perc">↓P</span> cuantificación → procedimiento señalable → poner esta cuerda junto a la vara de un metro: llega hasta la marca tres — mide tres metros</div>
         </div>
-        <div class="cat-label">Estética</div>
+        <div class="cat-label">Epistemología</div>
         <div class="def">
             <span class="def-term">análisis</span>
             <div class="def-field"><span class="s-genus">⊂</span> voluntario</div>
@@ -676,6 +702,14 @@
             <div class="def-field"><span class="s-root">←R</span> todo, parte, identidad, naturaleza</div>
             <div class="def-field"><span class="s-cont">⊥</span> síntesis</div>
             <div class="def-field"><span class="s-perc">↓P</span> separar para identificar → descomposición señalable → tomar esta oración y distinguir sujeto, verbo, predicado: cada parte identificada por separado</div>
+        </div>
+        <div class="def">
+            <span class="def-term">evaluación</span>
+            <div class="def-field"><span class="s-genus">⊂</span> voluntario</div>
+            <div class="def-field"><span class="s-diff">Δ</span> acción de comparar un existente con los valores del consciente para determinar si lo promueve o lo amenaza — identificación de lo percibido como favorable o desfavorable a la vida del que evalúa</div>
+            <div class="def-field"><span class="s-root">←R</span> consciente, valor, bien, mal, percepción</div>
+            <div class="def-field"><span class="s-cons">→C</span> emoción</div>
+            <div class="def-field"><span class="s-perc">↓P</span> comparar con valores → juicio señalable → el gato ve al perro y determina: amenaza; ve el alimento y determina: favorable — la comparación de lo percibido con lo que promueve o daña su existencia es evaluación</div>
         </div>
         <div class="def">
             <span class="def-term">órgano</span>
@@ -727,8 +761,8 @@
         <div class="def">
             <span class="def-term">enfermedad</span>
             <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> estado de un organismo en que una o más funciones operan en contra de su naturaleza — disminución de la capacidad vital</div>
-            <div class="def-field"><span class="s-root">←R</span> organismo, función, naturaleza, vida</div>
+            <div class="def-field"><span class="s-diff">Δ</span> estado de un organismo en que una o más funciones están disminuidas o impedidas — reducción de la capacidad de acción vital</div>
+            <div class="def-field"><span class="s-root">←R</span> organismo, función, vida</div>
             <div class="def-field"><span class="s-cont">⊥</span> salud</div>
             <div class="def-field"><span class="s-perc">↓P</span> funcionamiento alterado → estado señalable → este hombre tose, tiene fiebre, no puede trabajar: sus funciones están alteradas — padece enfermedad</div>
         </div>
@@ -779,8 +813,8 @@
         <div class="def">
             <span class="def-term">salud</span>
             <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> estado de un organismo en que todas sus funciones operan conforme a su naturaleza — capacidad plena de acción vital</div>
-            <div class="def-field"><span class="s-root">←R</span> organismo, función, naturaleza, vida</div>
+            <div class="def-field"><span class="s-diff">Δ</span> estado de un organismo en que todas sus funciones operan plenamente — capacidad de acción vital sin impedimento</div>
+            <div class="def-field"><span class="s-root">←R</span> organismo, función, vida</div>
             <div class="def-field"><span class="s-cont">⊥</span> enfermedad</div>
             <div class="def-field"><span class="s-perc">↓P</span> funcionamiento pleno → estado señalable → este hombre respira sin dificultad, digiere bien, piensa con claridad: su organismo funciona como debe — tiene salud</div>
         </div>
@@ -876,8 +910,8 @@
         <div class="def">
             <span class="def-term">emoción</span>
             <div class="def-field"><span class="s-genus">⊂</span> involuntario</div>
-            <div class="def-field"><span class="s-diff">Δ</span> respuesta automática de un consciente procedente de la evaluación de existentes como favorables o desfavorables a sus valores</div>
-            <div class="def-field"><span class="s-root">←R</span> consciente, valor</div>
+            <div class="def-field"><span class="s-diff">Δ</span> respuesta automática de un consciente que resulta de la evaluación de existentes como favorables o desfavorables a sus valores — la forma involuntaria en que el organismo señala el resultado de una evaluación</div>
+            <div class="def-field"><span class="s-root">←R</span> consciente, valor, evaluación</div>
             <div class="def-field"><span class="s-perc">↓P</span> respuesta evaluativa → sentimiento señalable → ver un oso: miedo — respuesta ante lo evaluado como amenaza; encontrar alimento: satisfacción</div>
         </div>
         <div class="cat-label">Ética</div>
@@ -907,7 +941,7 @@
             <div class="def-field"><span class="s-cons">→C</span> abstracción</div>
             <div class="def-field"><span class="s-perc">↓P</span> integración de sensaciones → entidad percibida → ver esta taza: color + forma + dureza = una cosa, no tres datos sueltos</div>
         </div>
-        <div class="cat-label">Estética</div>
+        <div class="cat-label">Biología</div>
         <div class="def">
             <span class="def-term">tejido</span>
             <div class="def-field"><span class="s-genus">⊂</span> parte</div>
@@ -1013,11 +1047,11 @@
         <div class="def">
             <span class="def-term">inflamación</span>
             <div class="def-field"><span class="s-genus">⊂</span> proceso</div>
-            <div class="def-field"><span class="s-diff">Δ</span> respuesta del organismo ante un daño o agente extraño — movilización de defensas hacia el lugar afectado, produciendo calor, enrojecimiento, hinchazón y dolor</div>
-            <div class="def-field"><span class="s-root">←R</span> proceso, organismo, inmunidad, dolor, daño</div>
-            <div class="def-field"><span class="s-perc">↓P</span> respuesta al daño → estado señalable → la herida se enrojece, se hincha y duele: el cuerpo envió defensas al lugar dañado — esa respuesta local es la inflamación</div>
+            <div class="def-field"><span class="s-diff">Δ</span> respuesta del organismo ante un daño o agente extraño — movilización de defensas hacia el lugar afectado</div>
+            <div class="def-field"><span class="s-root">←R</span> proceso, organismo, inmunidad, daño</div>
+            <div class="def-field"><span class="s-perc">↓P</span> movilización de defensas → estado señalable → la herida se enrojece, se hincha y duele: el cuerpo envió defensas al lugar dañado — esa respuesta local es la inflamación</div>
         </div>
-        <div class="cat-label">Economía y finanzas</div>
+        <div class="cat-label">Ética</div>
         <div class="def">
             <span class="def-term">perdón</span>
             <div class="def-field"><span class="s-genus">⊂</span> voluntario</div>
@@ -1045,10 +1079,10 @@
         <div class="def">
             <span class="def-term">belleza</span>
             <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> atributo de una entidad cuyas cualidades producen en un consciente una respuesta emocional de admiración — la entidad se percibe como armoniosa</div>
-            <div class="def-field"><span class="s-root">←R</span> cualidad, emoción, percepción</div>
+            <div class="def-field"><span class="s-diff">Δ</span> atributo de una entidad cuyas cualidades presentan armonía perceptible — integración no contradictoria de forma, proporción y cualidad en un todo</div>
+            <div class="def-field"><span class="s-root">←R</span> cualidad, armonía, forma, todo, percepción</div>
             <div class="def-field"><span class="s-cont">⊥</span> fealdad</div>
-            <div class="def-field"><span class="s-perc">↓P</span> armonía admirada → respuesta señalable → este templo: la proporción de sus columnas y la armonía de sus líneas producen admiración al contemplarlo</div>
+            <div class="def-field"><span class="s-perc">↓P</span> armonía perceptible → entidad señalable → este templo: la proporción de sus columnas y la integración de sus líneas — al contemplarlo se percibe admiración; eso señala la belleza del objeto</div>
         </div>
         <div class="def">
             <span class="def-term">concreto</span>
@@ -1161,9 +1195,9 @@
         <div class="def">
             <span class="def-term">sublime</span>
             <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> atributo de un existente cuya magnitud o poder sobrepasa la escala habitual de la percepción — produce admiración mezclada con consciencia de la propia pequeñez</div>
-            <div class="def-field"><span class="s-root">←R</span> belleza, percepción, emoción, cantidad</div>
-            <div class="def-field"><span class="s-perc">↓P</span> magnitud sobrecogedora → respuesta señalable → de pie ante la montaña enorme y el cielo interminable: la admiración mezclada con asombro ante lo vasto — eso es lo sublime</div>
+            <div class="def-field"><span class="s-diff">Δ</span> atributo de un existente cuya magnitud o poder sobrepasa la escala habitual de la percepción humana — lo que excede la medida ordinaria sin perder armonía</div>
+            <div class="def-field"><span class="s-root">←R</span> belleza, percepción, cantidad</div>
+            <div class="def-field"><span class="s-perc">↓P</span> magnitud que excede la escala → existente señalable → de pie ante la montaña enorme y el cielo interminable: la magnitud sobrepasa la percepción habitual y produce asombro — eso es lo sublime</div>
         </div>
         <div class="cat-label">Psicología</div>
         <div class="def">
@@ -1365,7 +1399,7 @@
             <span class="def-term">metáfora</span>
             <div class="def-field"><span class="s-genus">⊂</span> relación</div>
             <div class="def-field"><span class="s-diff">Δ</span> uso de un concepto de un dominio para iluminar un aspecto de otro en virtud de una analogía — transferencia de significado</div>
-            <div class="def-field"><span class="s-root">←R</span> analogía, concepto, significado, virtud</div>
+            <div class="def-field"><span class="s-root">←R</span> analogía, concepto, significado</div>
             <div class="def-field"><span class="s-perc">↓P</span> transferencia → expresión señalable → «la vida es un viaje»: el concepto «viaje» ilumina aspectos de «vida» (dirección, obstáculos, destino) por analogía</div>
         </div>
         <div class="cat-label">Epistemología</div>
@@ -1545,7 +1579,7 @@
 <div class="section" data-section="level-18">
     <div class="section-header">
         <span class="section-title">NIVEL 18</span>
-        <span class="section-count">34</span>
+        <span class="section-count">33</span>
         <span class="section-toggle">></span>
     </div>
     <div class="section-body">
@@ -1701,13 +1735,7 @@
             <div class="def-field"><span class="s-cont">⊥</span> necesidad</div>
             <div class="def-field"><span class="s-perc">↓P</span> podría ser de otro modo → propiedad señalable → esta mesa es de roble pero podría haber sido de pino: el material es contingente — podría ser distinto sin dejar de ser mesa</div>
         </div>
-        <div class="def">
-            <span class="def-term">contingente</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> atributo de un existente cuya existencia depende de causas que podrían haber sido otras — lo que es pero podría no haber sido si las causas hubieran diferido</div>
-            <div class="def-field"><span class="s-root">←R</span> causa, posibilidad, necesidad</div>
-            <div class="def-field"><span class="s-perc">↓P</span> dependiente de causas variables → estado señalable → esta planta creció aquí porque la semilla cayó aquí: si hubiera caído allá, crecería allá — su ubicación es contingente</div>
-        </div>
+        <!-- contingente eliminado: redundante con contingencia (L18) — misma distinción desde otra perspectiva -->
         <div class="def">
             <span class="def-term">creencia</span>
             <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
@@ -1962,8 +1990,8 @@
         <div class="cat-label">Lógica</div>
         <div class="def">
             <span class="def-term">argumento</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> conjunto ordenado de proposiciones en que unas — las premisas — se ofrecen como razones de otra — la conclusión</div>
+            <div class="def-field"><span class="s-genus">⊂</span> relación</div>
+            <div class="def-field"><span class="s-diff">Δ</span> relación entre proposiciones en que unas — las premisas — se ofrecen como razones de otra — la conclusión</div>
             <div class="def-field"><span class="s-root">←R</span> proposición, premisa, conclusión</div>
             <div class="def-field"><span class="s-perc">↓P</span> estructura de razones → cadena señalable → «todo fuego quema, esto es fuego, luego esto quema»: las dos primeras proposiciones sostienen la tercera</div>
         </div>
@@ -2028,8 +2056,8 @@
         </div>
         <div class="def">
             <span class="def-term">determinismo</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> posición metafísica que sostiene que toda acción es efecto necesario de causas previas — dado el estado completo de los existentes, el siguiente se sigue necesariamente</div>
+            <div class="def-field"><span class="s-genus">⊂</span> proposición</div>
+            <div class="def-field"><span class="s-diff">Δ</span> proposición que sostiene que toda acción es efecto necesario de causas previas — dado el estado completo de los existentes, el siguiente se sigue necesariamente</div>
             <div class="def-field"><span class="s-root">←R</span> causa, necesidad, ley natural, acción, efecto</div>
             <div class="def-field"><span class="s-cont">⊥</span> libre albedrío</div>
             <div class="def-field"><span class="s-perc">↓P</span> todo determinado → tesis señalable → «esta piedra cayó porque fue empujada, y el empujón fue causado por otro, hasta el inicio: nada podría haber sido distinto» — esa posición es determinismo</div>
@@ -2843,8 +2871,8 @@
         <div class="cat-label">Metafísica</div>
         <div class="def">
             <span class="def-term">altruismo</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> principio de acción por el cual un consciente coloca el bienestar de otros como fin primario — obligación de sacrificarse por los demás como deber</div>
+            <div class="def-field"><span class="s-genus">⊂</span> principio</div>
+            <div class="def-field"><span class="s-diff">Δ</span> principio que coloca el bienestar de otros como fin primario de la acción — sostiene que el consciente debe sacrificar sus valores por los demás</div>
             <div class="def-field"><span class="s-root">←R</span> sacrificio, valor, norma, deber, principio</div>
             <div class="def-field"><span class="s-cont">⊥</span> egoísmo</div>
             <div class="def-field"><span class="s-perc">↓P</span> otros como fin primario → práctica señalable → este hombre renuncia a lo que necesita para darlo a desconocidos porque cree que su deber es servir</div>
@@ -2908,8 +2936,8 @@
         </div>
         <div class="def">
             <span class="def-term">opinión</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> aceptación de una proposición sin evidencia suficiente para certeza — creencia que carece de demostración completa</div>
+            <div class="def-field"><span class="s-genus">⊂</span> creencia</div>
+            <div class="def-field"><span class="s-diff">Δ</span> creencia sostenida sin evidencia suficiente para certeza — aceptación que carece de demostración completa</div>
             <div class="def-field"><span class="s-root">←R</span> proposición, evidencia, certeza, creencia, demostración</div>
             <div class="def-field"><span class="s-cont">⊥</span> conocimiento</div>
             <div class="def-field"><span class="s-perc">↓P</span> creencia sin prueba completa → posición señalable → «creo que lloverá» sin verificar las condiciones: acepto sin certeza</div>
@@ -4011,7 +4039,7 @@
         <div class="def">
             <span class="def-term">nostalgia</span>
             <div class="def-field"><span class="s-genus">⊂</span> emoción</div>
-            <div class="def-field"><span class="s-diff">Δ</span> añoranza de un estado pasado valorado — dolor dulce por lo que fue y ya no es</div>
+            <div class="def-field"><span class="s-diff">Δ</span> emoción ante la percepción de que un valor pasado ya no existe — añoranza dirigida a un estado anterior que se valora como perdido</div>
             <div class="def-field"><span class="s-root">←R</span> emoción, memoria, valor, tiempo, pérdida, dolor</div>
             <div class="def-field"><span class="s-perc">↓P</span> añoranza del pasado → sentimiento señalable → recuerda los veranos de infancia y siente tristeza mezclada con calidez: el anhelo de lo que fue es nostalgia</div>
         </div>
@@ -4267,8 +4295,8 @@
         <div class="cat-label">Psicología</div>
         <div class="def">
             <span class="def-term">celos</span>
-            <div class="def-field"><span class="s-genus">⊂</span> emoción</div>
-            <div class="def-field"><span class="s-diff">Δ</span> miedo de perder un valor relacional ante un rival — respuesta ante la amenaza de que otro ocupe el lugar que uno valora</div>
+            <div class="def-field"><span class="s-genus">⊂</span> miedo</div>
+            <div class="def-field"><span class="s-diff">Δ</span> miedo dirigido a la pérdida de un valor relacional ante un rival — respuesta ante la amenaza de que otro ocupe el lugar que uno valora</div>
             <div class="def-field"><span class="s-root">←R</span> miedo, amor, valor, persona, riesgo, respuesta</div>
             <div class="def-field"><span class="s-perc">↓P</span> miedo a perder al otro → sentimiento señalable → ve a su compañera hablar con otro y siente amenaza: el temor de ser reemplazado — eso son celos</div>
         </div>
@@ -4470,7 +4498,7 @@
         <div class="cat-label">Economía y finanzas</div>
         <div class="def">
             <span class="def-term">capitalismo</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
+            <div class="def-field"><span class="s-genus">⊂</span> sistema</div>
             <div class="def-field"><span class="s-diff">Δ</span> sistema social en que los medios de producción son propiedad privada y el intercambio se realiza en un mercado libre sin coacción gubernamental — organización económica basada en derechos individuales</div>
             <div class="def-field"><span class="s-root">←R</span> propiedad, producción, mercado, libertad, derecho, gobierno, coacción, intercambio, sistema</div>
             <div class="def-field"><span class="s-cont">⊥</span> socialismo</div>
@@ -4486,8 +4514,8 @@
         <div class="cat-label">Epistemología</div>
         <div class="def">
             <span class="def-term">anomia</span>
-            <div class="def-field"><span class="s-genus">⊂</span> concepto</div>
-            <div class="def-field"><span class="s-diff">Δ</span> estado de debilitamiento o ausencia de normas sociales compartidas donde los individuos pierden guía conductual y los vínculos que regulan la vida en común se disuelven</div>
+            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
+            <div class="def-field"><span class="s-diff">Δ</span> atributo de una sociedad en que las normas compartidas se han debilitado o disuelto — los individuos pierden guía conductual y los vínculos que regulan la vida en común se disuelven</div>
             <div class="def-field"><span class="s-root">←R</span> concepto, norma, sociedad, individuo, cultura</div>
             <div class="def-field"><span class="s-perc">↓P</span> normas disueltas → estado señalable → en una crisis económica profunda la gente deja de respetar acuerdos, nadie confía en nadie, las reglas que antes organizaban la convivencia se sienten arbitrarias o inexistentes — esa disolución del tejido normativo es anomia</div>
         </div>
@@ -4577,8 +4605,8 @@
         </div>
         <div class="def">
             <span class="def-term">civilización</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> grado avanzado de cultura — desarrollo en conocimiento, producción, instituciones y arte que permite una existencia humana más plena</div>
+            <div class="def-field"><span class="s-genus">⊂</span> cultura</div>
+            <div class="def-field"><span class="s-diff">Δ</span> cultura cuyo conocimiento, producción e instituciones se han desarrollado suficientemente para permitir especialización y acumulación intergeneracional</div>
             <div class="def-field"><span class="s-root">←R</span> cultura, conocimiento, producción, arte, institución</div>
             <div class="def-field"><span class="s-perc">↓P</span> cultura avanzada → nivel señalable → esta sociedad tiene escritura, ciencia, comercio, gobierno de leyes: el desarrollo integrado es civilización</div>
         </div>
@@ -4614,7 +4642,7 @@
         </div>
         <div class="def">
             <span class="def-term">estatismo</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
+            <div class="def-field"><span class="s-genus">⊂</span> principio</div>
             <div class="def-field"><span class="s-diff">Δ</span> principio que sostiene que el gobierno debe dirigir o controlar la actividad económica y social — expansión del poder estatal más allá de la protección de derechos</div>
             <div class="def-field"><span class="s-root">←R</span> gobierno, poder, coacción, libertad, producción, principio</div>
             <div class="def-field"><span class="s-perc">↓P</span> gobierno como director → posición señalable → «el gobierno debe decidir qué se produce, quién comercia y a qué precio»: subordinar la economía al Estado es estatismo</div>
@@ -4671,7 +4699,7 @@
         </div>
         <div class="def">
             <span class="def-term">socialismo</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
+            <div class="def-field"><span class="s-genus">⊂</span> sistema</div>
             <div class="def-field"><span class="s-diff">Δ</span> sistema social en que los medios de producción son propiedad colectiva o estatal — la producción se organiza por planificación centralizada, no por decisión individual</div>
             <div class="def-field"><span class="s-root">←R</span> propiedad, producción, gobierno, colectivismo, coacción, sistema</div>
             <div class="def-field"><span class="s-cont">⊥</span> capitalismo</div>
@@ -5251,16 +5279,16 @@
         </div>
         <div class="def">
             <span class="def-term">bancarrota</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> estado en que las deudas de un consciente o empresa superan su capacidad de pago — incapacidad de cumplir las obligaciones asumidas</div>
+            <div class="def-field"><span class="s-genus">⊂</span> relación</div>
+            <div class="def-field"><span class="s-diff">Δ</span> relación entre las deudas de un consciente o empresa y su capacidad de pago en que las primeras superan la segunda — incapacidad de cumplir las obligaciones asumidas</div>
             <div class="def-field"><span class="s-root">←R</span> deuda, obligación, empresa, pérdida</div>
             <div class="def-field"><span class="s-cont">⊥</span> solvencia</div>
             <div class="def-field"><span class="s-perc">↓P</span> insolvencia → estado señalable → debe más de lo que posee y no puede pagar: su estado es la bancarrota</div>
         </div>
         <div class="def">
             <span class="def-term">burbuja</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> estado de un mercado en que el precio de un activo excede persistentemente su valor fundamental — los compradores pagan más de lo que el activo produce porque esperan venderlo a un precio aún mayor</div>
+            <div class="def-field"><span class="s-genus">⊂</span> proceso</div>
+            <div class="def-field"><span class="s-diff">Δ</span> proceso de mercado en que el precio de un bien excede persistentemente su valor productivo — los compradores pagan más de lo que el bien produce porque esperan venderlo a un precio aún mayor</div>
             <div class="def-field"><span class="s-root">←R</span> mercado, precio, valor, especulación, error</div>
             <div class="def-field"><span class="s-perc">↓P</span> precio sin fundamento → estado señalable → esta tierra produce diez sacos al año pero se compra como si produjera cien, porque todos creen que otro pagará más mañana: la desconexión entre precio y valor es la burbuja</div>
         </div>
@@ -5309,8 +5337,8 @@
         </div>
         <div class="def">
             <span class="def-term">proteccionismo</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> política económica que restringe el comercio con otros territorios mediante aranceles y regulaciones — proteger a los productores locales de la competencia externa</div>
+            <div class="def-field"><span class="s-genus">⊂</span> norma</div>
+            <div class="def-field"><span class="s-diff">Δ</span> norma económica que restringe el comercio con otros territorios mediante aranceles y regulaciones — busca proteger a los productores locales de la competencia externa</div>
             <div class="def-field"><span class="s-root">←R</span> arancel, regulación, comercio, competencia, gobierno, política</div>
             <div class="def-field"><span class="s-cont">⊥</span> libre mercado</div>
             <div class="def-field"><span class="s-perc">↓P</span> restricción al comercio exterior → política señalable → el gobierno cobra aranceles a la tela extranjera para que solo se compre la local: la protección forzada es proteccionismo</div>
@@ -5389,8 +5417,8 @@
         <div class="cat-label">Metafísica</div>
         <div class="def">
             <span class="def-term">activo</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
-            <div class="def-field"><span class="s-diff">Δ</span> cualquier valor poseído que puede generar beneficio futuro — lo que se tiene y que vale</div>
+            <div class="def-field"><span class="s-genus">⊂</span> valor</div>
+            <div class="def-field"><span class="s-diff">Δ</span> valor poseído que puede generar beneficio futuro — lo que se tiene, se conserva y produce</div>
             <div class="def-field"><span class="s-root">←R</span> valor, propiedad, patrimonio</div>
             <div class="def-field"><span class="s-cont">⊥</span> pasivo</div>
             <div class="def-field"><span class="s-perc">↓P</span> lo que se posee → existente señalable → la tierra, el grano almacenado, las herramientas, el dinero guardado: cada uno es un activo</div>
@@ -5420,7 +5448,7 @@
         </div>
         <div class="def">
             <span class="def-term">pasivo</span>
-            <div class="def-field"><span class="s-genus">⊂</span> atributo</div>
+            <div class="def-field"><span class="s-genus">⊂</span> obligación</div>
             <div class="def-field"><span class="s-diff">Δ</span> obligación de entregar valor a otro en el futuro — lo que se debe</div>
             <div class="def-field"><span class="s-root">←R</span> obligación, deuda, patrimonio, valor</div>
             <div class="def-field"><span class="s-cont">⊥</span> activo</div>
